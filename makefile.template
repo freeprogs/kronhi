@@ -52,7 +52,7 @@ DOCS_DIR = $(docs_dir)
 VERSION_M4 = version.m4
 
 
-SRC_KRONHI = kronhi.c
+SRC_KRONHI_C = kronhi.c
 
 
 # Install section
@@ -76,12 +76,12 @@ build:
 	@[ -d $(SRC_BUILD_DIR) ] $&& rm -rf $(SRC_BUILD_DIR)
 	@mkdir $(SRC_BUILD_DIR)
 
-	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_KRONHI) > $(SRC_BUILD_DIR)/$(SRC_KRONHI)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_KRONHI_C) > $(SRC_BUILD_DIR)/$(SRC_KRONHI_C)
 
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
 	@mkdir $(BUILD_DIR)
 
-	@$(CC) $(CFLAGS) $(SRC_BUILD_DIR)/$(SRC_KRONHI) -o $(BUILD_DIR)/$(TARGET_BINARY)
+	@$(CC) $(CFLAGS) $(SRC_BUILD_DIR)/$(SRC_KRONHI_C) -o $(BUILD_DIR)/$(TARGET_BINARY)
 	@chmod u+x $(BUILD_DIR)/$(TARGET_BINARY)
 
 	@mkdir $(BUILD_DIR)/$(DOCS_DIR)
