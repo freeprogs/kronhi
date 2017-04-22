@@ -20,35 +20,24 @@
 #include <stdio.h>
 #include "cmdshell.h"
 
-int run_command_shell(void);
-
-int main(void)
+void cmdshell_start(void)
 {
-    int retval;
-
-    printf("Hello, Kronhi\n");
-
-    retval = run_command_shell();
-    if (retval != 0)
-        return 1;
-    return 0;
+    printf("cmdshell: start()\n");
 }
 
-int run_command_shell(void)
+enum cmdshell_code cmdshell_prompt_command(void)
 {
-    enum cmdshell_code retcmd;
+    printf("cmdshell: prompt_command()\n");
+    getchar();
+    return CMD_HELP;
+}
 
-    cmdshell_start();
-    while (1) {
-        retcmd = cmdshell_prompt_command();
-        if (retcmd == CMD_HELP) {
-            cmdshell_print_help();
-        }
-        else if (retcmd == CMD_QUIT) {
-            break;
-        }
-    }
-    cmdshell_end();
+void cmdshell_print_help(void)
+{
+    printf("cmdshell: print_help()\n");
+}
 
-    return 0;
+void cmdshell_end(void)
+{
+    printf("cmdshell: end()\n");
 }

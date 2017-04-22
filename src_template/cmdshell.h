@@ -17,38 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
-#include "cmdshell.h"
+#ifndef CMDSHELL_H
+#define CMDSHELL_H
 
-int run_command_shell(void);
+enum cmdshell_code {
+    CMD_HELP,
+    CMD_QUIT
+};
 
-int main(void)
-{
-    int retval;
+void cmdshell_start(void);
+enum cmdshell_code cmdshell_prompt_command(void);
+void cmdshell_print_help(void);
+void cmdshell_end(void);
 
-    printf("Hello, Kronhi\n");
-
-    retval = run_command_shell();
-    if (retval != 0)
-        return 1;
-    return 0;
-}
-
-int run_command_shell(void)
-{
-    enum cmdshell_code retcmd;
-
-    cmdshell_start();
-    while (1) {
-        retcmd = cmdshell_prompt_command();
-        if (retcmd == CMD_HELP) {
-            cmdshell_print_help();
-        }
-        else if (retcmd == CMD_QUIT) {
-            break;
-        }
-    }
-    cmdshell_end();
-
-    return 0;
-}
+#endif

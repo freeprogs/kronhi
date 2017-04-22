@@ -53,6 +53,8 @@ VERSION_M4 = version.m4
 
 
 SRC_KRONHI_C = kronhi.c
+SRC_CMDSHELL_C = cmdshell.c
+SRC_CMDSHELL_H = cmdshell.h
 
 
 # Install section
@@ -77,11 +79,16 @@ build:
 	@mkdir $(SRC_BUILD_DIR)
 
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_KRONHI_C) > $(SRC_BUILD_DIR)/$(SRC_KRONHI_C)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_CMDSHELL_C) > $(SRC_BUILD_DIR)/$(SRC_CMDSHELL_C)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_CMDSHELL_H) > $(SRC_BUILD_DIR)/$(SRC_CMDSHELL_H)        
 
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
 	@mkdir $(BUILD_DIR)
 
-	@$(CC) $(CFLAGS) $(SRC_BUILD_DIR)/$(SRC_KRONHI_C) -o $(BUILD_DIR)/$(TARGET_BINARY)
+	@$(CC) $(CFLAGS) \
+            $(SRC_BUILD_DIR)/$(SRC_KRONHI_C) \
+            $(SRC_BUILD_DIR)/$(SRC_CMDSHELL_C) \
+            -o $(BUILD_DIR)/$(TARGET_BINARY)
 	@chmod u+x $(BUILD_DIR)/$(TARGET_BINARY)
 
 	@mkdir $(BUILD_DIR)/$(DOCS_DIR)
