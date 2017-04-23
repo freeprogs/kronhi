@@ -26,8 +26,6 @@ int main(void)
 {
     int retval;
 
-    printf("Hello, Kronhi\n");
-
     retval = run_command_shell();
     if (retval != 0)
         return 1;

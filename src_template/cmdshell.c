@@ -28,7 +28,7 @@ int str_isspace(const char *s);
 
 void cmdshell_start(void)
 {
-    printf("cmdshell: start()\n");
+    ;
 }
 
 enum cmdshell_code
@@ -76,7 +76,7 @@ void cmdshell_print_help(void)
 
 void cmdshell_end(void)
 {
-    printf("cmdshell: end()\n");
+    ;
 }
 
 /* str_isspace: check string for whitespace content
