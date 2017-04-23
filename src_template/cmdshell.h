@@ -22,6 +22,9 @@
 
 #define CMDSHELL_MAXINPUT  1000  /* maximum command shell input line length */
 
+/* count number of elements of an array */
+#define ARRAY_SIZE(array) (sizeof (array) / sizeof (array)[0])
+
 enum cmdshell_code {
     CMD_HELP,
     CMD_QUIT,

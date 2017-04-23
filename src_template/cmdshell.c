@@ -25,6 +25,7 @@
 #include "input.h"
 
 int str_isspace(const char *s);
+void info_printer(const char *lines[], int n);
 
 void cmdshell_start(void)
 {
@@ -81,7 +82,15 @@ void cmdshell_print_error(const char *fmt, ...)
 
 void cmdshell_print_help(void)
 {
-    printf("cmdshell: print_help()\n");
+    const char *lines[] = {
+        "\n",
+        "Help info:\n",
+        "\n",
+        "help  --  print this info\n",
+        "quit  --  exit the command shell\n",
+        "\n"
+    };
+    info_printer(lines, ARRAY_SIZE(lines));
 }
 
 void cmdshell_end(void)
@@ -97,4 +106,13 @@ int str_isspace(const char *s)
     while (isspace(*s))
         s++;
     return *s == '\0';
+}
+
+/* info_printer: print lines to standard output */
+void info_printer(const char *lines[], int n)
+{
+    int i;
+
+    for (i = 0; i < n; i++)
+        fprintf(stdout, "%s", lines[i]);
 }
