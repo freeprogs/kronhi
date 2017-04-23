@@ -18,40 +18,27 @@
 */
 
 #include <stdio.h>
-#include "cmdshell.h"
+#include "input.h"
 
-int run_command_shell(void);
-
-int main(void)
+/* input_line: read a line from stdin with a prompt
+               1 - was read a character at least
+               0 - nothing was read */
+int input_line(const char *prompt, char in[], int maxsize)
 {
-    int retval;
+    char line[INPUT_MAXLINE];
+    char fmt[INPUT_MAXFORMAT];
+    int ret;
 
-    printf("Hello, Kronhi\n");
+    sprintf(fmt, "%%%d[^\n]", maxsize - 1);
 
-    retval = run_command_shell();
-    if (retval != 0)
-        return 1;
-    return 0;
-}
+    printf("%s", prompt);
+    fflush(stdout);
 
-int run_command_shell(void)
-{
-    enum cmdshell_code retcmd;
-
-    cmdshell_start();
-    while (1) {
-        retcmd = cmdshell_prompt_command();
-        if (retcmd == CMD_HELP) {
-            cmdshell_print_help();
-        }
-        else if (retcmd == CMD_QUIT) {
-            break;
-        }
-        else if (retcmd == CMD_UNKNOWN) {
-            cmdshell_print_error("unknown command, input `help'");
-        }
+    ret = 0;
+    if (fgets(line, sizeof line, stdin)) {
+        *in = '\0';
+        sscanf(line, fmt, in);
+        ret = *in != '\0';
     }
-    cmdshell_end();
-
-    return 0;
+    return ret;
 }

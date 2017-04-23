@@ -22,11 +22,13 @@
 
 enum cmdshell_code {
     CMD_HELP,
-    CMD_QUIT
+    CMD_QUIT,
+    CMD_UNKNOWN
 };
 
 void cmdshell_start(void);
 enum cmdshell_code cmdshell_prompt_command(void);
+void cmdshell_print_error(const char *msg);
 void cmdshell_print_help(void);
 void cmdshell_end(void);
 

@@ -18,7 +18,12 @@
 */
 
 #include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 #include "cmdshell.h"
+#include "input.h"
+
+int str_isspace(const char *s);
 
 void cmdshell_start(void)
 {
@@ -27,9 +32,31 @@ void cmdshell_start(void)
 
 enum cmdshell_code cmdshell_prompt_command(void)
 {
-    printf("cmdshell: prompt_command()\n");
-    getchar();
-    return CMD_HELP;
+    char input[1000];
+    int retval;
+
+    while (1) {
+        retval = input_line("Command: ", input, sizeof input);
+        if (!retval || str_isspace(input)) {
+            putchar('\n'); /* avoid prompts join when Ctrl + D is
+                              pressed */
+        }
+        else if (strcmp(input, "help") == 0) {
+            return CMD_HELP;
+        }
+        else if (strcmp(input, "quit") == 0) {
+            return CMD_QUIT;
+        }
+        else {
+            break;
+        }
+    }
+    return CMD_UNKNOWN;
+}
+
+void cmdshell_print_error(const char *msg)
+{
+    printf("cmdshell: error: %s\n", msg);
 }
 
 void cmdshell_print_help(void)
@@ -40,4 +67,14 @@ void cmdshell_print_help(void)
 void cmdshell_end(void)
 {
     printf("cmdshell: end()\n");
+}
+
+/* str_isspace: check string for whitespace content
+                1 - all chars are whitespace
+                0 - non-whitespace char found */
+int str_isspace(const char *s)
+{
+    while (isspace(*s))
+        s++;
+    return *s == '\0';
 }

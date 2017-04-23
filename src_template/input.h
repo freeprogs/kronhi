@@ -17,41 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
-#include "cmdshell.h"
+#ifndef INPUT_H
+#define INPUT_H
 
-int run_command_shell(void);
+#define INPUT_MAXLINE   1000  /* maximum input line length */
+#define INPUT_MAXFORMAT 100   /* maximum intput format length  */
 
-int main(void)
-{
-    int retval;
+int input_line(const char *prompt, char in[], int maxsize);
 
-    printf("Hello, Kronhi\n");
-
-    retval = run_command_shell();
-    if (retval != 0)
-        return 1;
-    return 0;
-}
-
-int run_command_shell(void)
-{
-    enum cmdshell_code retcmd;
-
-    cmdshell_start();
-    while (1) {
-        retcmd = cmdshell_prompt_command();
-        if (retcmd == CMD_HELP) {
-            cmdshell_print_help();
-        }
-        else if (retcmd == CMD_QUIT) {
-            break;
-        }
-        else if (retcmd == CMD_UNKNOWN) {
-            cmdshell_print_error("unknown command, input `help'");
-        }
-    }
-    cmdshell_end();
-
-    return 0;
-}
+#endif
