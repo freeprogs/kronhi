@@ -29,6 +29,7 @@ enum cmdshell_code {
 };
 
 void cmdshell_start(void);
+void cmdshell_print_message(const char *fmt, ...);
 enum cmdshell_code
 cmdshell_prompt_command(const char *prompt, char in[], int maxsize);
 void cmdshell_print_error(const char *fmt, ...);

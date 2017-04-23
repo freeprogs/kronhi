@@ -31,6 +31,16 @@ void cmdshell_start(void)
     ;
 }
 
+void cmdshell_print_message(const char *fmt, ...)
+{
+    va_list args;
+
+    va_start(args, fmt);
+    vfprintf(stdout, fmt, args);
+    putc('\n', stdout);
+    va_end(args);
+}
+
 enum cmdshell_code
 cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
 {

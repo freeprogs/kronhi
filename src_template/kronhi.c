@@ -38,6 +38,7 @@ int run_command_shell(void)
     char reply[CMDSHELL_MAXINPUT];
 
     cmdshell_start();
+    cmdshell_print_message("Input `help' for help or `quit' for exit.");
     while (1) {
         retcmd = cmdshell_prompt_command("Command: ", reply, sizeof reply);
         if (retcmd == CMD_HELP) {
@@ -51,6 +52,7 @@ int run_command_shell(void)
                 "unknown command \"%s\", input `help'", reply);
         }
     }
+    cmdshell_print_message("Bye bye.");
     cmdshell_end();
 
     return 0;
