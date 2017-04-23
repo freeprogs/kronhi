@@ -20,6 +20,8 @@
 #ifndef CMDSHELL_H
 #define CMDSHELL_H
 
+#define CMDSHELL_MAXINPUT  1000  /* maximum command shell input line length */
+
 enum cmdshell_code {
     CMD_HELP,
     CMD_QUIT,
@@ -27,8 +29,9 @@ enum cmdshell_code {
 };
 
 void cmdshell_start(void);
-enum cmdshell_code cmdshell_prompt_command(void);
-void cmdshell_print_error(const char *msg);
+enum cmdshell_code
+cmdshell_prompt_command(const char *prompt, char in[], int maxsize);
+void cmdshell_print_error(const char *fmt, ...);
 void cmdshell_print_help(void);
 void cmdshell_end(void);
 

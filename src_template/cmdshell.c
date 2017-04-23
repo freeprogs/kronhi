@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdarg.h>
 #include "cmdshell.h"
 #include "input.h"
 
@@ -30,13 +31,15 @@ void cmdshell_start(void)
     printf("cmdshell: start()\n");
 }
 
-enum cmdshell_code cmdshell_prompt_command(void)
+enum cmdshell_code
+cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
 {
-    char input[1000];
+    char input[CMDSHELL_MAXINPUT];
     int retval;
 
+    *in = '\0';
     while (1) {
-        retval = input_line("Command: ", input, sizeof input);
+        retval = input_line(prompt, input, sizeof input);
         if (!retval || str_isspace(input)) {
             putchar('\n'); /* avoid prompts join when Ctrl + D is
                               pressed */
@@ -48,15 +51,22 @@ enum cmdshell_code cmdshell_prompt_command(void)
             return CMD_QUIT;
         }
         else {
+            strcpy(in, input);
             break;
         }
     }
     return CMD_UNKNOWN;
 }
 
-void cmdshell_print_error(const char *msg)
+void cmdshell_print_error(const char *fmt, ...)
 {
-    printf("cmdshell: error: %s\n", msg);
+    va_list args;
+
+    va_start(args, fmt);
+    fprintf(stderr, "cmdshell: error: ");
+    vfprintf(stderr, fmt, args);
+    putc('\n', stderr);
+    va_end(args);
 }
 
 void cmdshell_print_help(void)

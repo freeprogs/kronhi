@@ -37,10 +37,11 @@ int main(void)
 int run_command_shell(void)
 {
     enum cmdshell_code retcmd;
+    char reply[CMDSHELL_MAXINPUT];
 
     cmdshell_start();
     while (1) {
-        retcmd = cmdshell_prompt_command();
+        retcmd = cmdshell_prompt_command("Command: ", reply, sizeof reply);
         if (retcmd == CMD_HELP) {
             cmdshell_print_help();
         }
@@ -48,7 +49,8 @@ int run_command_shell(void)
             break;
         }
         else if (retcmd == CMD_UNKNOWN) {
-            cmdshell_print_error("unknown command, input `help'");
+            cmdshell_print_error(
+                "unknown command \"%s\", input `help'", reply);
         }
     }
     cmdshell_end();
