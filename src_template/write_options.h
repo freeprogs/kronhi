@@ -17,31 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CMDSHELL_H
-#define CMDSHELL_H
+#ifndef WRITE_OPTIONS_H
+#define WRITE_OPTIONS_H
 
-#include "write_options.h"
+#include <stdio.h>
+#include <string.h>
 
-#define CMDSHELL_MAXINPUT  1000  /* maximum command shell input line length */
+#define WRITE_OPTIONS_MAXPATH 1000  /* maximum path string option length */
 
-/* count number of elements of an array */
-#define ARRAY_SIZE(array) (sizeof (array) / sizeof (array)[0])
-
-enum cmdshell_code {
-    CMD_INIT_WRITE,
-    CMD_HELP,
-    CMD_QUIT,
-    CMD_UNKNOWN
+enum cipher_type {
+    CIPHER_XOR,
+    CIPHER_NONE
 };
 
-void cmdshell_start(void);
-void cmdshell_print_message(const char *fmt, ...);
-enum cmdshell_code
-cmdshell_prompt_command(const char *prompt, char in[], int maxsize);
-void cmdshell_print_error(const char *fmt, ...);
-void cmdshell_print_help(void);
-int cmdshell_init_write(
-    char src[], char dst[], char offset[], char cipher[]);
-void cmdshell_end(void);
+struct write_options {
+    char src[WRITE_OPTIONS_MAXPATH];
+    char dst[WRITE_OPTIONS_MAXPATH];
+    size_t offset;
+    enum cipher_type cipher;
+};
+
+int write_options_init(
+    struct write_options *popts,
+    const char *src, const char *dst,
+    const char *offset, const char *cipher);
+void write_options_clear(struct write_options *popts);
 
 #endif

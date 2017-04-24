@@ -61,6 +61,9 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
         else if (strcmp(input, "quit") == 0) {
             return CMD_QUIT;
         }
+        else if (strcmp(input, "init write") == 0) {
+            return CMD_INIT_WRITE;
+        }
         else {
             strcpy(in, input);
             break;
@@ -86,11 +89,83 @@ void cmdshell_print_help(void)
         "\n",
         "Help info:\n",
         "\n",
-        "help  --  print this info\n",
-        "quit  --  exit the command shell\n",
+        "init write  --  initialize options for writing\n",
+        "                (source, destination, offset, cipher)\n"
+        "help        --  print this info\n",
+        "quit        --  exit the command shell\n",
         "\n"
     };
     info_printer(lines, ARRAY_SIZE(lines));
+}
+
+int cmdshell_init_write(
+    char src[], char dst[], char offset[], char cipher[])
+{
+    char input[CMDSHELL_MAXINPUT];
+    int retval, retin;
+    int f_bad_offset, f_bad_cipher;
+
+    *input = '\0';
+    f_bad_offset = f_bad_cipher = 0;
+
+    retin = input_line("Input source (path): ", input, sizeof input);
+    if (!retin || str_isspace(input)) {
+        printf("Ok unchanged \"%s\"\n", src);
+    }
+    else {
+        strcpy(src, input);
+        printf("Ok \"%s\"\n", input);
+    }
+
+    *input = '\0';
+    retin = input_line("Input destination (path): ", input, sizeof input);
+    if (!retin || str_isspace(input)) {
+        printf("Ok unchanged \"%s\"\n", dst);
+    }
+    else {
+        strcpy(dst, input);
+        printf("Ok \"%s\"\n", input);
+    }
+
+    *input = '\0';
+    retin = input_line("Input offset (number >= 0): ", input, sizeof input);
+    if (!retin || str_isspace(input)) {
+        printf("Ok unchanged \"%s\"\n", offset);
+    }
+    else {
+        size_t tmp;
+        if (sscanf(input, "%lu", (long unsigned *) &tmp) == 1) {
+            strcpy(offset, input);
+            printf("Ok \"%s\"\n", input);
+        }
+        else {
+            f_bad_offset = 1;
+            printf("Fail \"%s\", should be a number\n", input);
+        }
+    }
+
+    *input = '\0';
+    retin = input_line("Input cipher (xor, none): ", input, sizeof input);
+    if (!retin || str_isspace(input)) {
+        printf("Ok unchanged \"%s\"\n", cipher);
+    }
+    else {
+        if (strcmp(input, "xor") == 0) {
+            strcpy(cipher, input);
+            printf("Ok \"%s\"\n", input);
+        }
+        else if (strcmp(input, "none") == 0) {
+            strcpy(cipher, input);
+            printf("Ok \"%s\"\n", input);
+        }
+        else {
+            f_bad_cipher = 1;
+            printf("Fail \"%s\", unknown type\n", input);
+        }
+    }
+
+    retval = !(f_bad_offset || f_bad_cipher);
+    return retval;
 }
 
 void cmdshell_end(void)
