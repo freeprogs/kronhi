@@ -27,11 +27,13 @@
 int str_isspace(const char *s);
 void info_printer(const char *lines[], int n);
 
+/* cmdshell_start: run starting operations */
 void cmdshell_start(void)
 {
     ;
 }
 
+/* cmdshell_print_message: print formatted message to stdout */
 void cmdshell_print_message(const char *fmt, ...)
 {
     va_list args;
@@ -42,6 +44,8 @@ void cmdshell_print_message(const char *fmt, ...)
     va_end(args);
 }
 
+/* cmdshell_prompt_command: print prompt and ask for a command
+                            return the input command code */
 enum cmdshell_code
 cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
 {
@@ -72,6 +76,7 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
     return CMD_UNKNOWN;
 }
 
+/* cmdshell_print_error: print formatted error message to stdout */
 void cmdshell_print_error(const char *fmt, ...)
 {
     va_list args;
@@ -83,6 +88,7 @@ void cmdshell_print_error(const char *fmt, ...)
     va_end(args);
 }
 
+/* cmdshell_print_help: print help info */
 void cmdshell_print_help(void)
 {
     const char *lines[] = {
@@ -98,6 +104,9 @@ void cmdshell_print_help(void)
     info_printer(lines, ARRAY_SIZE(lines));
 }
 
+/* cmdshell_init_write: input options for write command
+                        return 0 when wrong commands were input
+                        return 1 when right commands were input */
 int cmdshell_init_write(
     char src[], char dst[], char offset[], char cipher[])
 {
@@ -168,6 +177,7 @@ int cmdshell_init_write(
     return retval;
 }
 
+/* cmdshell_end: run ending operations */
 void cmdshell_end(void)
 {
     ;
