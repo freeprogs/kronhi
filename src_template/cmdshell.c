@@ -68,6 +68,9 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
         else if (strcmp(input, "init write") == 0) {
             return CMD_INIT_WRITE;
         }
+        else if (strcmp(input, "status") == 0) {
+            return CMD_STATUS;
+        }
         else {
             strcpy(in, input);
             break;
@@ -97,6 +100,8 @@ void cmdshell_print_help(void)
         "\n",
         "init write  --  initialize options for writing\n",
         "                (source, destination, offset, cipher)\n"
+        "status      --  show set program options\n",
+        "\n",
         "help        --  print this info\n",
         "quit        --  exit the command shell\n",
         "\n"
@@ -175,6 +180,23 @@ int cmdshell_init_write(
 
     retval = !(f_bad_offset || f_bad_cipher);
     return retval;
+}
+
+/* cmdshell_print_status: print status of set options to standard output */
+void cmdshell_print_status(
+    const char *wsrc, const char *wdst,
+    const char *woffset, const char *wcipher)
+{
+    printf(
+        "\n"
+        "Write options:\n"
+        "  Source:             \"%s\"\n"
+        "  Destination:        \"%s\"\n"
+        "  Destination Offset: %s\n"
+        "  Destination Cipher: %s\n"
+        "\n"
+        ,
+        wsrc, wdst, woffset, wcipher);
 }
 
 /* cmdshell_end: run ending operations */

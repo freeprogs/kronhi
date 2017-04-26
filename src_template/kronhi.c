@@ -59,6 +59,13 @@ int run_command_shell(void)
                 cmdshell_print_error("can't input write options");
             }
         }
+        else if (retcmd == CMD_STATUS) {
+            const char *wsrc = write_options_tostr_source(&wopts);
+            const char *wdst = write_options_tostr_destination(&wopts);
+            const char *woffset = write_options_tostr_offset(&wopts);
+            const char *wcipher = write_options_tostr_cipher(&wopts);
+            cmdshell_print_status(wsrc, wdst, woffset, wcipher);
+        }
         else if (retcmd == CMD_HELP) {
             cmdshell_print_help();
         }

@@ -29,6 +29,7 @@
 
 enum cmdshell_code {
     CMD_INIT_WRITE,
+    CMD_STATUS,
     CMD_HELP,
     CMD_QUIT,
     CMD_UNKNOWN
@@ -42,6 +43,9 @@ void cmdshell_print_error(const char *fmt, ...);
 void cmdshell_print_help(void);
 int cmdshell_init_write(
     char src[], char dst[], char offset[], char cipher[]);
+void cmdshell_print_status(
+    const char *wsrc, const char *wdst,
+    const char *woffset, const char *wcipher);
 void cmdshell_end(void);
 
 #endif

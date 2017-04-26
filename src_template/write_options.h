@@ -24,6 +24,7 @@
 #include <string.h>
 
 #define WRITE_OPTIONS_MAXPATH 1000  /* maximum path string option length */
+#define WRITE_OPTIONS_MAXREPR 1000  /* maximum repr string option length */
 
 enum cipher_type {
     CIPHER_XOR,
@@ -42,5 +43,9 @@ int write_options_init(
     const char *src, const char *dst,
     const char *offset, const char *cipher);
 void write_options_clear(struct write_options *popts);
+char *write_options_tostr_source(struct write_options *popts);
+char *write_options_tostr_destination(struct write_options *popts);
+char *write_options_tostr_offset(struct write_options *popts);
+char *write_options_tostr_cipher(struct write_options *popts);
 
 #endif
