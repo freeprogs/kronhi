@@ -278,8 +278,8 @@ void cmdshell_print_status(
         "Read options:\n"
         "  Source:             \"%s\"\n"
         "  Destination:        \"%s\"\n"
-        "  Destination Offset: %s\n"
-        "  Destination Cipher: %s\n"
+        "  Source Offset:      %s\n"
+        "  Source Cipher:      %s\n"
         "\n"
         ,
         wsrc, wdst, woffset, wcipher,
