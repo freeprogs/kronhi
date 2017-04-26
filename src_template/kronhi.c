@@ -32,16 +32,41 @@ int main(void)
     return 0;
 }
 
+/* run_command_shell: run command shell in a loop */
 int run_command_shell(void)
 {
     enum cmdshell_code retcmd;
     char reply[CMDSHELL_MAXINPUT];
 
+    struct write_options wopts;
+    char src[CMDSHELL_MAXINPUT] = "";
+    char dst[CMDSHELL_MAXINPUT] = "";
+    char offset[CMDSHELL_MAXINPUT] = "0";
+    char cipher[CMDSHELL_MAXINPUT] = "none";
+
     cmdshell_start();
     cmdshell_print_message("Input `help' for help or `quit' for exit.");
+    write_options_clear(&wopts);
     while (1) {
         retcmd = cmdshell_prompt_command("Command: ", reply, sizeof reply);
-        if (retcmd == CMD_HELP) {
+        if (retcmd == CMD_INIT_WRITE) {
+            if (cmdshell_init_write(src, dst, offset, cipher)) {
+                if (!write_options_init(&wopts, src, dst, offset, cipher)) {
+                    cmdshell_print_error("can't set write options");
+                }
+            }
+            else {
+                cmdshell_print_error("can't input write options");
+            }
+        }
+        else if (retcmd == CMD_STATUS) {
+            const char *wsrc = write_options_tostr_source(&wopts);
+            const char *wdst = write_options_tostr_destination(&wopts);
+            const char *woffset = write_options_tostr_offset(&wopts);
+            const char *wcipher = write_options_tostr_cipher(&wopts);
+            cmdshell_print_status(wsrc, wdst, woffset, wcipher);
+        }
+        else if (retcmd == CMD_HELP) {
             cmdshell_print_help();
         }
         else if (retcmd == CMD_QUIT) {
@@ -52,6 +77,7 @@ int run_command_shell(void)
                 "unknown command \"%s\", input `help'", reply);
         }
     }
+    write_options_clear(&wopts);
     cmdshell_print_message("Bye bye.");
     cmdshell_end();
 

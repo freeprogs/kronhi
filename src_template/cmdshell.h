@@ -20,12 +20,16 @@
 #ifndef CMDSHELL_H
 #define CMDSHELL_H
 
+#include "write_options.h"
+
 #define CMDSHELL_MAXINPUT  1000  /* maximum command shell input line length */
 
 /* count number of elements of an array */
 #define ARRAY_SIZE(array) (sizeof (array) / sizeof (array)[0])
 
 enum cmdshell_code {
+    CMD_INIT_WRITE,
+    CMD_STATUS,
     CMD_HELP,
     CMD_QUIT,
     CMD_UNKNOWN
@@ -37,6 +41,11 @@ enum cmdshell_code
 cmdshell_prompt_command(const char *prompt, char in[], int maxsize);
 void cmdshell_print_error(const char *fmt, ...);
 void cmdshell_print_help(void);
+int cmdshell_init_write(
+    char src[], char dst[], char offset[], char cipher[]);
+void cmdshell_print_status(
+    const char *wsrc, const char *wdst,
+    const char *woffset, const char *wcipher);
 void cmdshell_end(void);
 
 #endif

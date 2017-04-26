@@ -21,8 +21,8 @@
 #include "input.h"
 
 /* input_line: read a line from stdin with a prompt
-               1 - was read a character at least
-               0 - nothing was read */
+               return 1 when was read a character at least
+               return 0 when nothing was read */
 int input_line(const char *prompt, char in[], int maxsize)
 {
     char line[INPUT_MAXLINE];
