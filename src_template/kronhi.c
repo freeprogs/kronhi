@@ -59,7 +59,7 @@ int run_command_shell(void)
                 cmdshell_print_error("can't input write options");
             }
         }
-        if (retcmd == CMD_HELP) {
+        else if (retcmd == CMD_HELP) {
             cmdshell_print_help();
         }
         else if (retcmd == CMD_QUIT) {
