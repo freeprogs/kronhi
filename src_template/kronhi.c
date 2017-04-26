@@ -32,6 +32,7 @@ int main(void)
     return 0;
 }
 
+/* run_command_shell: run command shell in a loop */
 int run_command_shell(void)
 {
     enum cmdshell_code retcmd;
