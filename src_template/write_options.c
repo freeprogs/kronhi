@@ -19,6 +19,9 @@
 
 #include "write_options.h"
 
+/* write_options_init: set write options from strings
+                       return 0 when wrong values
+                       return 1 when right values */
 int write_options_init(
     struct write_options *popts,
     const char *src, const char *dst,
@@ -47,6 +50,7 @@ int write_options_init(
     return retval;
 }
 
+/* write_options_clear: clear write options */
 void write_options_clear(struct write_options *popts)
 {
     *popts->src = '\0';
