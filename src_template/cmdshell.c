@@ -33,7 +33,7 @@ void cmdshell_start(void)
     ;
 }
 
-/* cmdshell_print_message: print formatted message to stdout */
+/* cmdshell_print_message: print formatted message to standard output */
 void cmdshell_print_message(const char *fmt, ...)
 {
     va_list args;
@@ -76,7 +76,7 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
     return CMD_UNKNOWN;
 }
 
-/* cmdshell_print_error: print formatted error message to stdout */
+/* cmdshell_print_error: print formatted error message to standard output */
 void cmdshell_print_error(const char *fmt, ...)
 {
     va_list args;
@@ -88,7 +88,7 @@ void cmdshell_print_error(const char *fmt, ...)
     va_end(args);
 }
 
-/* cmdshell_print_help: print help info */
+/* cmdshell_print_help: print help info to standard output */
 void cmdshell_print_help(void)
 {
     const char *lines[] = {
