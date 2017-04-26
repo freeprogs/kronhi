@@ -26,16 +26,16 @@
 #define WRITE_OPTIONS_MAXPATH 1000  /* maximum path string option length */
 #define WRITE_OPTIONS_MAXREPR 1000  /* maximum repr string option length */
 
-enum cipher_type {
-    CIPHER_XOR,
-    CIPHER_NONE
+enum write_cipher_type {
+    W_CIPHER_XOR,
+    W_CIPHER_NONE
 };
 
 struct write_options {
     char src[WRITE_OPTIONS_MAXPATH];
     char dst[WRITE_OPTIONS_MAXPATH];
     size_t offset;
-    enum cipher_type cipher;
+    enum write_cipher_type cipher;
 };
 
 int write_options_init(

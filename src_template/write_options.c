@@ -38,10 +38,10 @@ int write_options_init(
         f_bad_offset = 1;
     }
     if (strcmp(cipher, "xor") == 0) {
-        popts->cipher = CIPHER_XOR;
+        popts->cipher = W_CIPHER_XOR;
     }
     else if (strcmp(cipher, "none") == 0) {
-        popts->cipher = CIPHER_NONE;
+        popts->cipher = W_CIPHER_NONE;
     }
     else {
         f_bad_cipher = 1;
@@ -56,7 +56,7 @@ void write_options_clear(struct write_options *popts)
     *popts->src = '\0';
     *popts->dst = '\0';
     popts->offset = 0;
-    popts->cipher = CIPHER_NONE;
+    popts->cipher = W_CIPHER_NONE;
 }
 
 /* write_options_tostr_source: convert source option to string */
@@ -88,9 +88,9 @@ char *write_options_tostr_cipher(struct write_options *popts)
 {
     static char out[WRITE_OPTIONS_MAXREPR];
 
-    if (popts->cipher == CIPHER_XOR)
+    if (popts->cipher == W_CIPHER_XOR)
         sprintf(out, "%s", "xor");
-    else if (popts->cipher == CIPHER_NONE)
+    else if (popts->cipher == W_CIPHER_NONE)
         sprintf(out, "%s", "none");
     else
         sprintf(out, "%s", "undefined");
