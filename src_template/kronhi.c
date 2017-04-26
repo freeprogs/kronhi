@@ -39,6 +39,7 @@ int run_command_shell(void)
     char reply[CMDSHELL_MAXINPUT];
 
     struct write_options wopts;
+    struct read_options ropts;
     char src[CMDSHELL_MAXINPUT] = "";
     char dst[CMDSHELL_MAXINPUT] = "";
     char offset[CMDSHELL_MAXINPUT] = "0";
@@ -47,6 +48,7 @@ int run_command_shell(void)
     cmdshell_start();
     cmdshell_print_message("Input `help' for help or `quit' for exit.");
     write_options_clear(&wopts);
+    read_options_clear(&ropts);
     while (1) {
         retcmd = cmdshell_prompt_command("Command: ", reply, sizeof reply);
         if (retcmd == CMD_INIT_WRITE) {
@@ -59,12 +61,27 @@ int run_command_shell(void)
                 cmdshell_print_error("can't input write options");
             }
         }
+        else if (retcmd == CMD_INIT_READ) {
+            if (cmdshell_init_read(src, dst, offset, cipher)) {
+                if (!read_options_init(&ropts, src, dst, offset, cipher)) {
+                    cmdshell_print_error("can't set read options");
+                }
+            }
+            else {
+                cmdshell_print_error("can't input read options");
+            }
+        }
         else if (retcmd == CMD_STATUS) {
             const char *wsrc = write_options_tostr_source(&wopts);
             const char *wdst = write_options_tostr_destination(&wopts);
             const char *woffset = write_options_tostr_offset(&wopts);
             const char *wcipher = write_options_tostr_cipher(&wopts);
-            cmdshell_print_status(wsrc, wdst, woffset, wcipher);
+            const char *rsrc = read_options_tostr_source(&ropts);
+            const char *rdst = read_options_tostr_destination(&ropts);
+            const char *roffset = read_options_tostr_offset(&ropts);
+            const char *rcipher = read_options_tostr_cipher(&ropts);
+            cmdshell_print_status(wsrc, wdst, woffset, wcipher,
+                                  rsrc, rdst, roffset, rcipher);
         }
         else if (retcmd == CMD_HELP) {
             cmdshell_print_help();
@@ -78,6 +95,7 @@ int run_command_shell(void)
         }
     }
     write_options_clear(&wopts);
+    read_options_clear(&ropts);
     cmdshell_print_message("Bye bye.");
     cmdshell_end();
 

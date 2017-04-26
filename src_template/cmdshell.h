@@ -21,6 +21,7 @@
 #define CMDSHELL_H
 
 #include "write_options.h"
+#include "read_options.h"
 
 #define CMDSHELL_MAXINPUT  1000  /* maximum command shell input line length */
 
@@ -29,6 +30,7 @@
 
 enum cmdshell_code {
     CMD_INIT_WRITE,
+    CMD_INIT_READ,
     CMD_STATUS,
     CMD_HELP,
     CMD_QUIT,
@@ -43,9 +45,13 @@ void cmdshell_print_error(const char *fmt, ...);
 void cmdshell_print_help(void);
 int cmdshell_init_write(
     char src[], char dst[], char offset[], char cipher[]);
+int cmdshell_init_read(
+    char src[], char dst[], char offset[], char cipher[]);
 void cmdshell_print_status(
     const char *wsrc, const char *wdst,
-    const char *woffset, const char *wcipher);
+    const char *woffset, const char *wcipher,
+    const char *rsrc, const char *rdst,
+    const char *roffset, const char *rcipher);
 void cmdshell_end(void);
 
 #endif
