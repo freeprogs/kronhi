@@ -68,8 +68,14 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
         else if (strcmp(input, "init write") == 0) {
             return CMD_INIT_WRITE;
         }
-        else if (strcmp(input, "status") == 0) {
-            return CMD_STATUS;
+        else if (strcmp(input, "init read") == 0) {
+            return CMD_INIT_READ;
+        }
+        else if (strcmp(input, "status write") == 0) {
+            return CMD_STATUS_WRITE;
+        }
+        else if (strcmp(input, "status read") == 0) {
+            return CMD_STATUS_READ;
         }
         else {
             strcpy(in, input);
@@ -98,12 +104,15 @@ void cmdshell_print_help(void)
         "\n",
         "Help info:\n",
         "\n",
-        "init write  --  initialize options for writing\n",
-        "                (source, destination, offset, cipher)\n"
-        "status      --  show set program options\n",
+        "init write    --  initialize options for writing\n",
+        "                  (source, destination, offset, cipher)\n"
+        "init read     --  initialize options for reading\n",
+        "                  (source, destination, offset, cipher)\n"
+        "status write  --  show set write options\n",
+        "status read   --  show set read options\n",
         "\n",
-        "help        --  print this info\n",
-        "quit        --  exit the command shell\n",
+        "help          --  print this info\n",
+        "quit          --  exit the command shell\n",
         "\n"
     };
     info_printer(lines, ARRAY_SIZE(lines));
@@ -182,8 +191,82 @@ int cmdshell_init_write(
     return retval;
 }
 
-/* cmdshell_print_status: print status of set options to standard output */
-void cmdshell_print_status(
+/* cmdshell_init_read: input options for read command
+                       return 0 when wrong commands were input
+                       return 1 when right commands were input */
+int cmdshell_init_read(
+    char src[], char dst[], char offset[], char cipher[])
+{
+    char input[CMDSHELL_MAXINPUT];
+    int retval, retin;
+    int f_bad_offset, f_bad_cipher;
+
+    *input = '\0';
+    f_bad_offset = f_bad_cipher = 0;
+
+    retin = input_line("Input source (path): ", input, sizeof input);
+    if (!retin || str_isspace(input)) {
+        printf("Ok unchanged \"%s\"\n", src);
+    }
+    else {
+        strcpy(src, input);
+        printf("Ok \"%s\"\n", input);
+    }
+
+    *input = '\0';
+    retin = input_line("Input destination (path): ", input, sizeof input);
+    if (!retin || str_isspace(input)) {
+        printf("Ok unchanged \"%s\"\n", dst);
+    }
+    else {
+        strcpy(dst, input);
+        printf("Ok \"%s\"\n", input);
+    }
+
+    *input = '\0';
+    retin = input_line("Input offset (number >= 0): ", input, sizeof input);
+    if (!retin || str_isspace(input)) {
+        printf("Ok unchanged \"%s\"\n", offset);
+    }
+    else {
+        size_t tmp;
+        if (sscanf(input, "%lu", (long unsigned *) &tmp) == 1) {
+            strcpy(offset, input);
+            printf("Ok \"%s\"\n", input);
+        }
+        else {
+            f_bad_offset = 1;
+            printf("Fail \"%s\", should be a number\n", input);
+        }
+    }
+
+    *input = '\0';
+    retin = input_line("Input cipher (xor, none): ", input, sizeof input);
+    if (!retin || str_isspace(input)) {
+        printf("Ok unchanged \"%s\"\n", cipher);
+    }
+    else {
+        if (strcmp(input, "xor") == 0) {
+            strcpy(cipher, input);
+            printf("Ok \"%s\"\n", input);
+        }
+        else if (strcmp(input, "none") == 0) {
+            strcpy(cipher, input);
+            printf("Ok \"%s\"\n", input);
+        }
+        else {
+            f_bad_cipher = 1;
+            printf("Fail \"%s\", unknown type\n", input);
+        }
+    }
+
+    retval = !(f_bad_offset || f_bad_cipher);
+    return retval;
+}
+
+/* cmdshell_print_status_write:
+   print status of set write options to standard output */
+void cmdshell_print_status_write(
     const char *wsrc, const char *wdst,
     const char *woffset, const char *wcipher)
 {
@@ -197,6 +280,24 @@ void cmdshell_print_status(
         "\n"
         ,
         wsrc, wdst, woffset, wcipher);
+}
+
+/* cmdshell_print_status_read:
+   print status of set read options to standard output */
+void cmdshell_print_status_read(
+    const char *rsrc, const char *rdst,
+    const char *roffset, const char *rcipher)
+{
+    printf(
+        "\n"
+        "Read options:\n"
+        "  Source:             \"%s\"\n"
+        "  Destination:        \"%s\"\n"
+        "  Source Offset:      %s\n"
+        "  Source Cipher:      %s\n"
+        "\n"
+        ,
+        rsrc, rdst, roffset, rcipher);
 }
 
 /* cmdshell_end: run ending operations */

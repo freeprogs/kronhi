@@ -17,35 +17,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WRITE_OPTIONS_H
-#define WRITE_OPTIONS_H
+#ifndef READ_OPTIONS_H
+#define READ_OPTIONS_H
 
 #include <stdio.h>
 #include <string.h>
 
-#define WRITE_OPTIONS_MAXPATH 1000  /* maximum path string option length */
-#define WRITE_OPTIONS_MAXREPR 1000  /* maximum repr string option length */
+#define READ_OPTIONS_MAXPATH 1000  /* maximum path string option length */
+#define READ_OPTIONS_MAXREPR 1000  /* maximum repr string option length */
 
-enum write_cipher_type {
-    W_CIPHER_XOR,
-    W_CIPHER_NONE
+enum read_cipher_type {
+    R_CIPHER_XOR,
+    R_CIPHER_NONE
 };
 
-struct write_options {
-    char src[WRITE_OPTIONS_MAXPATH];
-    char dst[WRITE_OPTIONS_MAXPATH];
+struct read_options {
+    char src[READ_OPTIONS_MAXPATH];
+    char dst[READ_OPTIONS_MAXPATH];
     size_t offset;
-    enum write_cipher_type cipher;
+    enum read_cipher_type cipher;
 };
 
-int write_options_init(
-    struct write_options *popts,
+int read_options_init(
+    struct read_options *popts,
     const char *src, const char *dst,
     const char *offset, const char *cipher);
-void write_options_clear(struct write_options *popts);
-char *write_options_tostr_source(struct write_options *popts);
-char *write_options_tostr_destination(struct write_options *popts);
-char *write_options_tostr_offset(struct write_options *popts);
-char *write_options_tostr_cipher(struct write_options *popts);
+void read_options_clear(struct read_options *popts);
+char *read_options_tostr_source(struct read_options *popts);
+char *read_options_tostr_destination(struct read_options *popts);
+char *read_options_tostr_offset(struct read_options *popts);
+char *read_options_tostr_cipher(struct read_options *popts);
 
 #endif

@@ -59,6 +59,8 @@ SRC_INPUT_C = input.c
 SRC_INPUT_H = input.h
 SRC_WRITE_OPTIONS_C = write_options.c
 SRC_WRITE_OPTIONS_H = write_options.h
+SRC_READ_OPTIONS_C = read_options.c
+SRC_READ_OPTIONS_H = read_options.h
 
 
 # Install section
@@ -89,6 +91,8 @@ build:
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_INPUT_H) > $(SRC_BUILD_DIR)/$(SRC_INPUT_H)
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_WRITE_OPTIONS_C) > $(SRC_BUILD_DIR)/$(SRC_WRITE_OPTIONS_C)
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_WRITE_OPTIONS_H) > $(SRC_BUILD_DIR)/$(SRC_WRITE_OPTIONS_H)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_READ_OPTIONS_C) > $(SRC_BUILD_DIR)/$(SRC_READ_OPTIONS_C)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_READ_OPTIONS_H) > $(SRC_BUILD_DIR)/$(SRC_READ_OPTIONS_H)
 
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
 	@mkdir $(BUILD_DIR)
@@ -98,6 +102,7 @@ build:
             $(SRC_BUILD_DIR)/$(SRC_CMDSHELL_C) \
             $(SRC_BUILD_DIR)/$(SRC_INPUT_C) \
             $(SRC_BUILD_DIR)/$(SRC_WRITE_OPTIONS_C) \
+            $(SRC_BUILD_DIR)/$(SRC_READ_OPTIONS_C) \
             -o $(BUILD_DIR)/$(TARGET_BINARY)
 	@chmod u+x $(BUILD_DIR)/$(TARGET_BINARY)
 
