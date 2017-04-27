@@ -71,17 +71,19 @@ int run_command_shell(void)
                 cmdshell_print_error("can't input read options");
             }
         }
-        else if (retcmd == CMD_STATUS) {
+        else if (retcmd == CMD_STATUS_WRITE) {
             const char *wsrc = write_options_tostr_source(&wopts);
             const char *wdst = write_options_tostr_destination(&wopts);
             const char *woffset = write_options_tostr_offset(&wopts);
             const char *wcipher = write_options_tostr_cipher(&wopts);
+            cmdshell_print_status_write(wsrc, wdst, woffset, wcipher);
+        }
+        else if (retcmd == CMD_STATUS_READ) {
             const char *rsrc = read_options_tostr_source(&ropts);
             const char *rdst = read_options_tostr_destination(&ropts);
             const char *roffset = read_options_tostr_offset(&ropts);
             const char *rcipher = read_options_tostr_cipher(&ropts);
-            cmdshell_print_status(wsrc, wdst, woffset, wcipher,
-                                  rsrc, rdst, roffset, rcipher);
+            cmdshell_print_status_read(rsrc, rdst, roffset, rcipher);
         }
         else if (retcmd == CMD_HELP) {
             cmdshell_print_help();
