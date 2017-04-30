@@ -38,12 +38,8 @@ int run_command_shell(void)
     enum cmdshell_code retcmd;
     char reply[CMDSHELL_MAXINPUT];
 
-    struct write_options wopts;
-    struct read_options ropts;
-    char src[CMDSHELL_MAXINPUT] = "";
-    char dst[CMDSHELL_MAXINPUT] = "";
-    char offset[CMDSHELL_MAXINPUT] = "0";
-    char cipher[CMDSHELL_MAXINPUT] = "none";
+    struct write_options wopts = { "", "", 0, W_CIPHER_NONE };
+    struct read_options ropts = { "", "", 0, R_CIPHER_NONE };
 
     cmdshell_start();
     cmdshell_print_message("Input `help' for help or `quit' for exit.");
@@ -52,6 +48,14 @@ int run_command_shell(void)
     while (1) {
         retcmd = cmdshell_prompt_command("Command: ", reply, sizeof reply);
         if (retcmd == CMD_INIT_WRITE) {
+            char src[CMDSHELL_MAXINPUT];
+            char dst[CMDSHELL_MAXINPUT];
+            char offset[CMDSHELL_MAXINPUT];
+            char cipher[CMDSHELL_MAXINPUT];
+            write_options_tostr_source(&wopts, src);
+            write_options_tostr_destination(&wopts, dst);
+            write_options_tostr_offset(&wopts, offset);
+            write_options_tostr_cipher(&wopts, cipher);
             if (cmdshell_init_write(src, dst, offset, cipher)) {
                 if (!write_options_init(&wopts, src, dst, offset, cipher)) {
                     cmdshell_print_error("can't set write options");
@@ -62,6 +66,14 @@ int run_command_shell(void)
             }
         }
         else if (retcmd == CMD_INIT_READ) {
+            char src[CMDSHELL_MAXINPUT];
+            char dst[CMDSHELL_MAXINPUT];
+            char offset[CMDSHELL_MAXINPUT];
+            char cipher[CMDSHELL_MAXINPUT];
+            read_options_tostr_source(&ropts, src);
+            read_options_tostr_destination(&ropts, dst);
+            read_options_tostr_offset(&ropts, offset);
+            read_options_tostr_cipher(&ropts, cipher);
             if (cmdshell_init_read(src, dst, offset, cipher)) {
                 if (!read_options_init(&ropts, src, dst, offset, cipher)) {
                     cmdshell_print_error("can't set read options");
@@ -72,18 +84,26 @@ int run_command_shell(void)
             }
         }
         else if (retcmd == CMD_STATUS_WRITE) {
-            const char *wsrc = write_options_tostr_source(&wopts);
-            const char *wdst = write_options_tostr_destination(&wopts);
-            const char *woffset = write_options_tostr_offset(&wopts);
-            const char *wcipher = write_options_tostr_cipher(&wopts);
-            cmdshell_print_status_write(wsrc, wdst, woffset, wcipher);
+            char src[CMDSHELL_MAXINPUT];
+            char dst[CMDSHELL_MAXINPUT];
+            char offset[CMDSHELL_MAXINPUT];
+            char cipher[CMDSHELL_MAXINPUT];
+            write_options_tostr_source(&wopts, src);
+            write_options_tostr_destination(&wopts, dst);
+            write_options_tostr_offset(&wopts, offset);
+            write_options_tostr_cipher(&wopts, cipher);
+            cmdshell_print_status_write(src, dst, offset, cipher);
         }
         else if (retcmd == CMD_STATUS_READ) {
-            const char *rsrc = read_options_tostr_source(&ropts);
-            const char *rdst = read_options_tostr_destination(&ropts);
-            const char *roffset = read_options_tostr_offset(&ropts);
-            const char *rcipher = read_options_tostr_cipher(&ropts);
-            cmdshell_print_status_read(rsrc, rdst, roffset, rcipher);
+            char src[CMDSHELL_MAXINPUT];
+            char dst[CMDSHELL_MAXINPUT];
+            char offset[CMDSHELL_MAXINPUT];
+            char cipher[CMDSHELL_MAXINPUT];
+            read_options_tostr_source(&ropts, src);
+            read_options_tostr_destination(&ropts, dst);
+            read_options_tostr_offset(&ropts, offset);
+            read_options_tostr_cipher(&ropts, cipher);
+            cmdshell_print_status_read(src, dst, offset, cipher);
         }
         else if (retcmd == CMD_HELP) {
             cmdshell_print_help();
