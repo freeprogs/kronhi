@@ -20,9 +20,12 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#define INPUT_MAXLINE   1000  /* maximum input line length */
-#define INPUT_MAXFORMAT 100   /* maximum intput format length  */
+#define INPUT_MAXLINE   1000   /* maximum input line length */
+#define INPUT_MAXTEXT   65536  /* maximum input text length */
+#define INPUT_MAXFORMAT 100    /* maximum intput format length  */
 
 int input_line(const char *prompt, char in[], int maxsize);
+int input_text_end(
+    const char *prompt, char in[], size_t maxsize, const char *end);
 
 #endif

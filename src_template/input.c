@@ -18,6 +18,7 @@
 */
 
 #include <stdio.h>
+#include <string.h>
 #include "input.h"
 
 /* input_line: read a line from stdin with a prompt
@@ -40,5 +41,37 @@ int input_line(const char *prompt, char in[], int maxsize)
         sscanf(line, fmt, in);
         ret = *in != '\0';
     }
+    return ret;
+}
+
+/* input_text_end:
+   read a text from stdin with a prompt and ending on a line;
+   skip input lines until ending line if there is no room;
+   return 1 when was read a character at least
+   return 0 when nothing was read */
+int input_text_end(
+    const char *prompt, char in[], size_t maxsize, const char *end)
+{
+    char line[INPUT_MAXLINE];
+    size_t linelen;
+    char endline[INPUT_MAXLINE];
+    int ret;
+
+    printf("%s", prompt);
+    fflush(stdout);
+
+    sprintf(endline, "%s\n", end);
+
+    ret = 0;
+    *in = '\0';
+    while (fgets(line, sizeof line, stdin)) {
+        if (strcmp(line, endline) == 0)
+            break;
+        if ((linelen = strlen(line)) < maxsize) {
+            strcat(in, line);
+            maxsize -= linelen;
+        }
+    }
+    ret = *in != '\0';
     return ret;
 }
