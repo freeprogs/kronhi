@@ -38,13 +38,13 @@ struct write_options {
 };
 
 int write_options_init(
-    struct write_options *popts,
+    struct write_options *opts,
     const char *src, const char *dst,
     const char *offset, const char *cipher);
-void write_options_clear(struct write_options *popts);
-char *write_options_tostr_source(struct write_options *popts, char out[]);
-char *write_options_tostr_destination(struct write_options *popts, char out[]);
-char *write_options_tostr_offset(struct write_options *popts, char out[]);
-char *write_options_tostr_cipher(struct write_options *popts, char out[]);
+void write_options_clear(struct write_options *opts);
+char *write_options_tostr_source(struct write_options *opts, char out[]);
+char *write_options_tostr_destination(struct write_options *opts, char out[]);
+char *write_options_tostr_offset(struct write_options *opts, char out[]);
+char *write_options_tostr_cipher(struct write_options *opts, char out[]);
 
 #endif
