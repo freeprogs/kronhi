@@ -60,34 +60,27 @@ void write_options_clear(struct write_options *popts)
 }
 
 /* write_options_tostr_source: convert source option to string */
-char *write_options_tostr_source(struct write_options *popts)
+char *write_options_tostr_source(struct write_options *popts, char out[])
 {
-    static char out[WRITE_OPTIONS_MAXREPR];
-    strcpy(out, popts->src);
-    return out;
+    return strcpy(out, popts->src);
 }
 
 /* write_options_tostr_destination: convert destination option to string */
-char *write_options_tostr_destination(struct write_options *popts)
+char *write_options_tostr_destination(struct write_options *popts, char out[])
 {
-    static char out[WRITE_OPTIONS_MAXREPR];
-    strcpy(out, popts->dst);
-    return out;
+    return strcpy(out, popts->dst);
 }
 
 /* write_options_tostr_offset: convert offset option to string */
-char *write_options_tostr_offset(struct write_options *popts)
+char *write_options_tostr_offset(struct write_options *popts, char out[])
 {
-    static char out[WRITE_OPTIONS_MAXREPR];
     sprintf(out, "%lu", (unsigned long) popts->offset);
     return out;
 }
 
 /* write_options_tostr_cipher: convert cipher option to string*/
-char *write_options_tostr_cipher(struct write_options *popts)
+char *write_options_tostr_cipher(struct write_options *popts, char out[])
 {
-    static char out[WRITE_OPTIONS_MAXREPR];
-
     if (popts->cipher == W_CIPHER_XOR)
         sprintf(out, "%s", "xor");
     else if (popts->cipher == W_CIPHER_NONE)
