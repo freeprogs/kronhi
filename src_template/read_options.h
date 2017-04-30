@@ -38,13 +38,13 @@ struct read_options {
 };
 
 int read_options_init(
-    struct read_options *popts,
+    struct read_options *opts,
     const char *src, const char *dst,
     const char *offset, const char *cipher);
-void read_options_clear(struct read_options *popts);
-char *read_options_tostr_source(struct read_options *popts, char out[]);
-char *read_options_tostr_destination(struct read_options *popts, char out[]);
-char *read_options_tostr_offset(struct read_options *popts, char out[]);
-char *read_options_tostr_cipher(struct read_options *popts, char out[]);
+void read_options_clear(struct read_options *opts);
+char *read_options_tostr_source(struct read_options *opts, char out[]);
+char *read_options_tostr_destination(struct read_options *opts, char out[]);
+char *read_options_tostr_offset(struct read_options *opts, char out[]);
+char *read_options_tostr_cipher(struct read_options *opts, char out[]);
 
 #endif
