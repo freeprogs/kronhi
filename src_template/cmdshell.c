@@ -77,6 +77,9 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
         else if (strcmp(input, "status write") == 0) {
             return CMD_STATUS_WRITE;
         }
+        else if (strcmp(input, "status write dir") == 0) {
+            return CMD_STATUS_WRITE_DIR;
+        }
         else if (strcmp(input, "status read") == 0) {
             return CMD_STATUS_READ;
         }
@@ -107,17 +110,18 @@ void cmdshell_print_help(void)
         "\n",
         "Help info:\n",
         "\n",
-        "init write      --  initialize options for writing\n",
-        "                    (source, destination, offset, cipher)\n"
-        "init write dir  --  initialize write directory data\n",
+        "init write        --  initialize options for writing\n",
+        "                      (source, destination, offset, cipher)\n"
+        "init write dir    --  initialize write directory data\n",
         "                      (description)\n",
-        "init read       --  initialize options for reading\n",
-        "                    (source, destination, offset, cipher)\n"
-        "status write    --  show set write options\n",
-        "status read     --  show set read options\n",
+        "init read         --  initialize options for reading\n",
+        "                      (source, destination, offset, cipher)\n"
+        "status write      --  show set write options\n",
+        "status write dir  --  show write directory contents\n",
+        "status read       --  show set read options\n",
         "\n",
-        "help            --  print this info\n",
-        "quit            --  exit the command shell\n",
+        "help              --  print this info\n",
+        "quit              --  exit the command shell\n",
         "\n"
     };
     info_printer(lines, ARRAY_SIZE(lines));
@@ -285,6 +289,19 @@ void cmdshell_print_status_write(
         "\n"
         ,
         wsrc, wdst, woffset, wcipher);
+}
+
+/* cmdshell_print_status_write_dir:
+   print status of write directory to standard output */
+void cmdshell_print_status_write_dir(const char *desc)
+{
+    printf(
+        "\n"
+        "Write directory description:\n"
+        "%s"
+        "\n"
+        ,
+        (*desc != '\0' ? desc : "empty\n"));
 }
 
 /* cmdshell_print_status_read:

@@ -127,6 +127,11 @@ int run_command_shell(void)
             write_options_tostr_cipher(&wopts, cipher);
             cmdshell_print_status_write(src, dst, offset, cipher);
         }
+        else if (retcmd == CMD_STATUS_WRITE_DIR) {
+            char desc[DIRECTORY_MAXDESCRIPTION];
+            directory_description_get(&wdir, desc);
+            cmdshell_print_status_write_dir(desc);
+        }
         else if (retcmd == CMD_STATUS_READ) {
             char src[CMDSHELL_MAXINPUT];
             char dst[CMDSHELL_MAXINPUT];

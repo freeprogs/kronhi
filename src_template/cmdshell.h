@@ -37,6 +37,7 @@ enum cmdshell_code {
     CMD_INIT_WRITE_DIR,
     CMD_INIT_READ,
     CMD_STATUS_WRITE,
+    CMD_STATUS_WRITE_DIR,
     CMD_STATUS_READ,
     CMD_HELP,
     CMD_QUIT,
@@ -63,6 +64,7 @@ int cmdshell_init_read(
 void cmdshell_print_status_write(
     const char *wsrc, const char *wdst,
     const char *woffset, const char *wcipher);
+void cmdshell_print_status_write_dir(const char *desc);
 void cmdshell_print_status_read(
     const char *rsrc, const char *rdst,
     const char *roffset, const char *rcipher);
