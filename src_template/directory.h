@@ -17,16 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef DIRECTORY_H
+#define DIRECTORY_H
 
-#define INPUT_MAXLINE   1000   /* maximum input line length */
-#define INPUT_MAXTEXT   65536  /* maximum input text length */
-#define INPUT_MAXFORMAT 100    /* maximum intput format length  */
+/* maximum length of directory description */
+#define DIRECTORY_MAXDESCRIPTION  65535
 
-int input_line(const char *prompt, char in[], int maxsize);
-int input_text_end(
-    const char *prompt, char in[], size_t maxsize, const char *end);
-int input_from_file(char in[], size_t maxsize, const char *ifname);
+struct directory {
+    char description[DIRECTORY_MAXDESCRIPTION];
+    size_t nfiles;
+};
+
+void directory_description_set(struct directory *dir, const char *s);
+char *directory_description_get(struct directory *dir, char out[]);
 
 #endif

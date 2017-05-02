@@ -19,6 +19,8 @@
 
 #include <stdio.h>
 #include "cmdshell.h"
+#include "directory.h"
+#include "input.h"
 
 int run_command_shell(void);
 
@@ -40,6 +42,8 @@ int run_command_shell(void)
 
     struct write_options wopts = { "", "", 0, W_CIPHER_NONE };
     struct read_options ropts = { "", "", 0, R_CIPHER_NONE };
+
+    struct directory wdir;
 
     cmdshell_start();
     cmdshell_print_message("Input `help' for help or `quit' for exit.");
@@ -63,6 +67,35 @@ int run_command_shell(void)
             }
             else {
                 cmdshell_print_error("can't input write options");
+            }
+        }
+        else if (retcmd == CMD_INIT_WRITE_DIR) {
+            enum cmdshell_dir_code retdir;
+            char dirdesc[CMDSHELL_MAXTEXTINPUT] = "";
+            char dirdescfile[CMDSHELL_MAXINPUT] = "";
+
+            retdir = cmdshell_init_write_dir(dirdesc, dirdescfile);
+            if (retdir == CMD_DIR_INTER) {
+                directory_description_set(&wdir, dirdesc);
+            }
+            else if (retdir == CMD_DIR_FILE) {
+                if (input_from_file(dirdesc, sizeof dirdesc, dirdescfile)) {
+                    directory_description_set(&wdir, dirdesc);
+                    cmdshell_print_message(
+                        "Directory description has loaded from \"%s\"",
+                        dirdescfile);
+                }
+                else {
+                    cmdshell_print_error(
+                        "can't load directory description: \"%s\"",
+                        dirdescfile);
+                }
+            }
+            else if (retdir == CMD_DIR_NOOP) {
+                cmdshell_print_message("Directory description hasn't changed");
+            }
+            else if (retdir == CMD_DIR_UNKNOWN) {
+                cmdshell_print_error("can't input write directory contents");
             }
         }
         else if (retcmd == CMD_INIT_READ) {

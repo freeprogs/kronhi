@@ -23,19 +23,31 @@
 #include "write_options.h"
 #include "read_options.h"
 
-#define CMDSHELL_MAXINPUT  1000  /* maximum command shell input line length */
+/* maximum command shell input line length */
+#define CMDSHELL_MAXINPUT      1000
+
+/* maximum command shell input text length */
+#define CMDSHELL_MAXTEXTINPUT  65536
 
 /* count number of elements of an array */
 #define ARRAY_SIZE(array) (sizeof (array) / sizeof (array)[0])
 
 enum cmdshell_code {
     CMD_INIT_WRITE,
+    CMD_INIT_WRITE_DIR,
     CMD_INIT_READ,
     CMD_STATUS_WRITE,
     CMD_STATUS_READ,
     CMD_HELP,
     CMD_QUIT,
     CMD_UNKNOWN
+};
+
+enum cmdshell_dir_code {
+    CMD_DIR_INTER,
+    CMD_DIR_FILE,
+    CMD_DIR_NOOP,
+    CMD_DIR_UNKNOWN
 };
 
 void cmdshell_start(void);
@@ -54,6 +66,8 @@ void cmdshell_print_status_write(
 void cmdshell_print_status_read(
     const char *rsrc, const char *rdst,
     const char *roffset, const char *rcipher);
+enum cmdshell_dir_code
+cmdshell_init_write_dir(char descinter[], char descfile[]);
 void cmdshell_end(void);
 
 #endif

@@ -75,3 +75,28 @@ int input_text_end(
     ret = *in != '\0';
     return ret;
 }
+
+/* input_from_file: read a string from file
+                    return 1 when was read a character at least
+                    return 0 when nothing was read */
+int input_from_file(char in[], size_t maxsize, const char *ifname)
+{
+    int retval;
+    FILE *ifp;
+
+    retval = 1;
+    ifp = fopen(ifname, "rb");
+    if (ifp == NULL) {
+        retval = 0;
+    }
+    else {
+        size_t ret = fread(in, 1, maxsize - 1, ifp);
+        if (ret > 0)
+            in[ret] = '\0';
+        else
+            retval = 0;
+    }
+    if (ifp != NULL)
+        fclose(ifp);
+    return retval;
+}
