@@ -20,6 +20,8 @@
 #ifndef DIRECTORY_H
 #define DIRECTORY_H
 
+#include <string.h>
+
 /* maximum length of directory description */
 #define DIRECTORY_MAXDESCRIPTION  65535
 

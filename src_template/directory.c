@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string.h>
 #include "directory.h"
 
 /* directory_description_set: set description for directory */
