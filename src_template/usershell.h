@@ -17,14 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "usershell.h"
+#ifndef USERSHELL_H
+#define USERSHELL_H
 
-int main(void)
-{
-    int retval;
+#include <stdio.h>
+#include "cmdshell.h"
+#include "directory.h"
+#include "input.h"
 
-    retval = run_command_shell();
-    if (retval != 0)
-        return 1;
-    return 0;
-}
+int run_command_shell(void);
+
+#endif
