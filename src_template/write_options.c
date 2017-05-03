@@ -78,7 +78,7 @@ char *write_options_tostr_offset(struct write_options *opts, char out[])
     return out;
 }
 
-/* write_options_tostr_cipher: convert cipher option to string*/
+/* write_options_tostr_cipher: convert cipher option to string */
 char *write_options_tostr_cipher(struct write_options *opts, char out[])
 {
     if (opts->cipher == W_CIPHER_XOR)
