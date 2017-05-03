@@ -35,7 +35,7 @@ int run_command_shell(void)
     write_options_clear(&wopts);
     read_options_clear(&ropts);
     while (1) {
-        retcmd = cmdshell_prompt_command("Command: ", reply, sizeof reply);
+        retcmd = cmdshell_prompt_command("Command> ", reply, sizeof reply);
         if (retcmd == CMD_INIT_WRITE) {
             char src[CMDSHELL_MAXINPUT];
             char dst[CMDSHELL_MAXINPUT];
