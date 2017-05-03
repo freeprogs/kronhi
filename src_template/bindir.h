@@ -17,20 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "binarycmd.h"
+#ifndef BINDIR_H
+#define BINDIR_H
 
-int binarycmd_write_dir(
-    char destination[], size_t offset,
-    char dirdesc[], enum write_cipher_type cipher)
-{
-    struct bindir *dir;
+#include <stdio.h>
+#include <stdlib.h>
 
-    dir = bindir_create();
-    bindir_desc_set(dir, dirdesc);
-    bindir_num_of_files_set(dir, 0);
-    bindir_file_offset_set(dir, 0);
-    bindir_print(dir);
-    bindir_free(dir);
+struct bindir {
+    unsigned char type_sign;
+    unsigned short descsize;
+    unsigned char *descp;
+    unsigned long num_of_files;
+    size_t file_offset;
+};
 
-    return 1;
-}
+struct bindir *bindir_create(void);
+void bindir_desc_set(struct bindir *dir, char *dirdesc);
+void bindir_num_of_files_set(struct bindir *dir, unsigned long num);
+void bindir_file_offset_set(struct bindir *dir, size_t offset);
+void bindir_print(struct bindir *dir);
+void bindir_free(struct bindir *dir);
+
+#endif

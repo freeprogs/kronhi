@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 #include "write_options.h"
+#include "bindir.h"
 
 int binarycmd_write_dir(
     char destination[], size_t offset,
