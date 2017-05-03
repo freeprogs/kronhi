@@ -52,7 +52,7 @@ DOCS_DIR = $(docs_dir)
 VERSION_M4 = version.m4
 
 
-SRC_KRONHI_C = kronhi.c
+SRC_MAIN_C = main.c
 SRC_USERSHELL_C = usershell.c
 SRC_USERSHELL_H = usershell.h
 SRC_CMDSHELL_C = cmdshell.c
@@ -88,7 +88,7 @@ build:
 	@[ -d $(SRC_BUILD_DIR) ] $&& rm -rf $(SRC_BUILD_DIR)
 	@mkdir $(SRC_BUILD_DIR)
 
-	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_KRONHI_C) > $(SRC_BUILD_DIR)/$(SRC_KRONHI_C)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_MAIN_C) > $(SRC_BUILD_DIR)/$(SRC_MAIN_C)
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_USERSHELL_C) > $(SRC_BUILD_DIR)/$(SRC_USERSHELL_C)
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_USERSHELL_H) > $(SRC_BUILD_DIR)/$(SRC_USERSHELL_H)
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_CMDSHELL_C) > $(SRC_BUILD_DIR)/$(SRC_CMDSHELL_C)
@@ -106,7 +106,7 @@ build:
 	@mkdir $(BUILD_DIR)
 
 	@$(CC) $(CFLAGS) \
-            $(SRC_BUILD_DIR)/$(SRC_KRONHI_C) \
+            $(SRC_BUILD_DIR)/$(SRC_MAIN_C) \
             $(SRC_BUILD_DIR)/$(SRC_USERSHELL_C) \
             $(SRC_BUILD_DIR)/$(SRC_CMDSHELL_C) \
             $(SRC_BUILD_DIR)/$(SRC_INPUT_C) \
