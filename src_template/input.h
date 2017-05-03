@@ -20,6 +20,9 @@
 #ifndef INPUT_H
 #define INPUT_H
 
+#include <stdio.h>
+#include <string.h>
+
 #define INPUT_MAXLINE   1000   /* maximum input line length */
 #define INPUT_MAXTEXT   65536  /* maximum input text length */
 #define INPUT_MAXFORMAT 100    /* maximum intput format length  */

@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
-#include <string.h>
 #include "input.h"
 
 /* input_line: read a line from stdin with a prompt
