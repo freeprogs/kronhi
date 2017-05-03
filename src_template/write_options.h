@@ -46,5 +46,8 @@ char *write_options_tostr_source(struct write_options *opts, char out[]);
 char *write_options_tostr_destination(struct write_options *opts, char out[]);
 char *write_options_tostr_offset(struct write_options *opts, char out[]);
 char *write_options_tostr_cipher(struct write_options *opts, char out[]);
+char *write_options_destination_get(struct write_options *opts, char out[]);
+size_t write_options_offset_get(struct write_options *opts);
+enum write_cipher_type write_options_cipher_get(struct write_options *opts);
 
 #endif

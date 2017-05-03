@@ -17,15 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef USERSHELL_H
-#define USERSHELL_H
-
-#include <stdio.h>
-#include "cmdshell.h"
-#include "directory.h"
-#include "input.h"
 #include "binarycmd.h"
 
-int run_command_shell(void);
-
-#endif
+int binarycmd_write_dir(
+    char destination[], size_t offset,
+    char dirdesc[], enum write_cipher_type cipher)
+{
+    printf("Write directory:\n"
+           "destination: %s\n"
+           "offset: %lu\n"
+           "description:\n"
+           "%s\n"
+           "cipher: %s\n",
+           destination,
+           (unsigned long) offset,
+           dirdesc,
+           (cipher == W_CIPHER_XOR ? "xor" : "none"));
+    return 1;
+}

@@ -89,3 +89,21 @@ char *write_options_tostr_cipher(struct write_options *opts, char out[])
         sprintf(out, "%s", "undefined");
     return out;
 }
+
+/* write_options_destination_get: get destination option */
+char *write_options_destination_get(struct write_options *opts, char out[])
+{
+    return strcpy(out, opts->dst);
+}
+
+/* write_options_offset_get: get offset option */
+size_t write_options_offset_get(struct write_options *opts)
+{
+    return opts->offset;
+}
+
+/* write_options_cipher_get: get cipher option */
+enum write_cipher_type write_options_cipher_get(struct write_options *opts)
+{
+    return opts->cipher;
+}

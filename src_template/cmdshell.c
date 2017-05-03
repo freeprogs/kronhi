@@ -78,6 +78,9 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
         else if (strcmp(input, "status read") == 0) {
             return CMD_STATUS_READ;
         }
+        else if (strcmp(input, "write dir") == 0) {
+            return CMD_WRITE_DIR;
+        }
         else {
             strcpy(in, input);
             break;
@@ -114,6 +117,7 @@ void cmdshell_print_help(void)
         "status write      --  show set write options\n",
         "status write dir  --  show write directory contents\n",
         "status read       --  show set read options\n",
+        "write dir         --  write directory data to destination\n",
         "\n",
         "help              --  print this info\n",
         "quit              --  exit the command shell\n",

@@ -128,6 +128,22 @@ int run_command_shell(void)
             read_options_tostr_cipher(&ropts, cipher);
             cmdshell_print_status_read(src, dst, offset, cipher);
         }
+        else if (retcmd == CMD_WRITE_DIR) {
+            char dest[CMDSHELL_MAXINPUT];
+            char dirdesc[DIRECTORY_MAXDESCRIPTION];
+            size_t offset;
+            enum write_cipher_type cipher;
+            write_options_destination_get(&wopts, dest);
+            offset = write_options_offset_get(&wopts);
+            directory_description_get(&wdir, dirdesc);
+            cipher = write_options_cipher_get(&wopts);
+            if (!binarycmd_write_dir(dest, offset, dirdesc, cipher)) {
+                cmdshell_print_error(
+                    "can't write directory: \"%s:%lu:%s\"",
+                    dest, (unsigned long) offset,
+                    (cipher == W_CIPHER_XOR ? "xor" : "none"));
+            }
+        }
         else if (retcmd == CMD_HELP) {
             cmdshell_print_help();
         }
