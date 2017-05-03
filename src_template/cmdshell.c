@@ -17,12 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <stdarg.h>
 #include "cmdshell.h"
-#include "input.h"
 
 int str_isspace(const char *s);
 void info_printer(const char *lines[], int n);

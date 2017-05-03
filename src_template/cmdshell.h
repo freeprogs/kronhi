@@ -20,6 +20,11 @@
 #ifndef CMDSHELL_H
 #define CMDSHELL_H
 
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdarg.h>
+#include "input.h"
 #include "write_options.h"
 #include "read_options.h"
 
