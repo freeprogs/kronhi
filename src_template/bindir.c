@@ -65,9 +65,10 @@ void bindir_num_of_files_set(struct bindir *dir, unsigned long num)
     dir->num_of_files = num;
 }
 
+/* bindir_file_offset_set: set in directory the file offset field */
 void bindir_file_offset_set(struct bindir *dir, size_t offset)
 {
-    printf("bindir_file_offset_set()\n");
+    dir->file_offset = offset;
 }
 
 void bindir_print(struct bindir *dir)
