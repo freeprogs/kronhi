@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include "write_options.h"
 #include "bindir.h"
+#include "hexdump.h"
 
 /* maximum length of writable directory header */
 #define BINDIR_MAXHEADER  1 + 2 + 65535 + 4 + 4

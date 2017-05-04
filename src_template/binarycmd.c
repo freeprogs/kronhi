@@ -33,6 +33,7 @@ int binarycmd_write_dir(
     bindir_file_offset_set(dir, 0);
     bindir_print(dir);
     dirheadersize = bindir_make_bin_header(dir, dirheader);
+    hexdump_dump(dirheader, dirheadersize);
     bindir_free(dir);
 
     return 1;

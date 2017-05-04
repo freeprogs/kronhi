@@ -69,6 +69,8 @@ SRC_BINARYCMD_C = binarycmd.c
 SRC_BINARYCMD_H = binarycmd.h
 SRC_BINDIR_C = bindir.c
 SRC_BINDIR_H = bindir.h
+SRC_HEXDUMP_C = hexdump.c
+SRC_HEXDUMP_H = hexdump.h
 
 
 # Install section
@@ -109,6 +111,8 @@ build:
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_BINARYCMD_H) > $(SRC_BUILD_DIR)/$(SRC_BINARYCMD_H)
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_BINDIR_C) > $(SRC_BUILD_DIR)/$(SRC_BINDIR_C)
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_BINDIR_H) > $(SRC_BUILD_DIR)/$(SRC_BINDIR_H)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_HEXDUMP_C) > $(SRC_BUILD_DIR)/$(SRC_HEXDUMP_C)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_HEXDUMP_H) > $(SRC_BUILD_DIR)/$(SRC_HEXDUMP_H)
 
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
 	@mkdir $(BUILD_DIR)
@@ -123,6 +127,7 @@ build:
             $(SRC_BUILD_DIR)/$(SRC_DIRECTORY_C) \
             $(SRC_BUILD_DIR)/$(SRC_BINARYCMD_C) \
             $(SRC_BUILD_DIR)/$(SRC_BINDIR_C) \
+            $(SRC_BUILD_DIR)/$(SRC_HEXDUMP_C) \
             -o $(BUILD_DIR)/$(TARGET_BINARY)
 	@chmod u+x $(BUILD_DIR)/$(TARGET_BINARY)
 
