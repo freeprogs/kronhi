@@ -24,12 +24,15 @@ int binarycmd_write_dir(
     char dirdesc[], enum write_cipher_type cipher)
 {
     struct bindir *dir;
+    unsigned char dirheader[BINDIR_MAXHEADER];
+    size_t dirheadersize;
 
     dir = bindir_create();
     bindir_desc_set(dir, dirdesc);
     bindir_num_of_files_set(dir, 0);
     bindir_file_offset_set(dir, 0);
     bindir_print(dir);
+    dirheadersize = bindir_make_bin_header(dir, dirheader);
     bindir_free(dir);
 
     return 1;

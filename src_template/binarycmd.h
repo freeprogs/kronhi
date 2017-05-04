@@ -24,6 +24,9 @@
 #include "write_options.h"
 #include "bindir.h"
 
+/* maximum length of writable directory header */
+#define BINDIR_MAXHEADER  1 + 2 + 65535 + 4 + 4
+
 int binarycmd_write_dir(
     char destination[], size_t offset,
     char dirdesc[], enum write_cipher_type cipher);

@@ -46,5 +46,6 @@ void bindir_num_of_files_set(struct bindir *dir, unsigned long num);
 void bindir_file_offset_set(struct bindir *dir, size_t offset);
 void bindir_print(struct bindir *dir);
 void bindir_free(struct bindir *dir);
+size_t bindir_make_bin_header(struct bindir *dir, unsigned char dirheader[]);
 
 #endif

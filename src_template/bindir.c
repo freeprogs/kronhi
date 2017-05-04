@@ -93,3 +93,23 @@ void bindir_free(struct bindir *dir)
     free(dir->descp);
     free(dir);
 }
+
+/* bindir_make_bin_header: make continuous binary header from directory fields
+                           return the size of written header */
+size_t bindir_make_bin_header(struct bindir *dir, unsigned char dirheader[])
+{
+    size_t i;
+
+    i = 0;
+    dirheader[0] = dir->type_sign;
+    i += 1;
+    memcpy(dirheader + i, &dir->descsize, sizeof dir->descsize);
+    i += sizeof dir->descsize;
+    memcpy(dirheader + i, dir->descp, dir->descsize);
+    i += dir->descsize;
+    memcpy(dirheader + i, &dir->num_of_files, sizeof dir->num_of_files);
+    i += sizeof dir->num_of_files;
+    memcpy(dirheader + i, &dir->file_offset, sizeof dir->file_offset);
+    i += sizeof dir->file_offset;
+    return i;
+}
