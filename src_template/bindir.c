@@ -59,9 +59,10 @@ int bindir_desc_set(struct bindir *dir, char *dirdesc)
     return dir->descp != NULL;
 }
 
+/* bindir_num_of_files_set: set in directory the number of files field */
 void bindir_num_of_files_set(struct bindir *dir, unsigned long num)
 {
-    printf("bindir_num_of_files_set()\n");
+    dir->num_of_files = num;
 }
 
 void bindir_file_offset_set(struct bindir *dir, size_t offset)
