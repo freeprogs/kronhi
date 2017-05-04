@@ -25,7 +25,7 @@ struct bindir *bindir_create(void)
     return NULL;
 }
 
-void bindir_desc_set(struct bindir *dir, char *dirdesc)
+int bindir_desc_set(struct bindir *dir, char *dirdesc)
 {
     printf("bindir_desc_set()\n");
 }

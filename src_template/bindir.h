@@ -32,7 +32,7 @@ struct bindir {
 };
 
 struct bindir *bindir_create(void);
-void bindir_desc_set(struct bindir *dir, char *dirdesc);
+int bindir_desc_set(struct bindir *dir, char *dirdesc);
 void bindir_num_of_files_set(struct bindir *dir, unsigned long num);
 void bindir_file_offset_set(struct bindir *dir, size_t offset);
 void bindir_print(struct bindir *dir);
