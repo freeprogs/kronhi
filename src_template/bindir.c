@@ -19,10 +19,20 @@
 
 #include "bindir.h"
 
+/* bindir_create: create directory in memory with zeroed fields */
 struct bindir *bindir_create(void)
 {
-    printf("bindir_create()\n");
-    return NULL;
+    struct bindir *p;
+
+    p = malloc(sizeof(struct bindir));
+    if (p != NULL) {
+        p->type_sign = 'd';
+        p->descsize = 0;
+        p->descp = NULL;
+        p->num_of_files = 0;
+        p->file_offset = 0;
+    }
+    return p;
 }
 
 int bindir_desc_set(struct bindir *dir, char *dirdesc)
