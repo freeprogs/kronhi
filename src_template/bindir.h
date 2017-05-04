@@ -23,6 +23,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+ * struct bindir contents:
+ * type_sign     --  the sign of the directory header
+ * descsize      --  the directory description size
+ * descp         --  the directory description itself
+ * num_of_files  --  the number of files in the directory
+ * file_offset   --  the offset of the first file in the directory
+*/
 struct bindir {
     unsigned char type_sign;
     unsigned short descsize;
