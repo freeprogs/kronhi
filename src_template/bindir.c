@@ -87,7 +87,9 @@ void bindir_print(struct bindir *dir)
         (unsigned long) dir->file_offset);
 }
 
+/* bindir_free: free memory of directory itself and directory fields */
 void bindir_free(struct bindir *dir)
 {
-    printf("bindir_free()\n");
+    free(dir->descp);
+    free(dir);
 }
