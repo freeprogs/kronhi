@@ -35,9 +35,28 @@ struct bindir *bindir_create(void)
     return p;
 }
 
+/* bindir_desc_set:
+   set in directory the description field and description size field
+   return 1 if description successfully allocated in memory
+   return 0 if not enough memory */
 int bindir_desc_set(struct bindir *dir, char *dirdesc)
 {
-    printf("bindir_desc_set()\n");
+    size_t len;
+    char *p;
+
+    if (dir->descp != NULL) {
+        free(dir->descp);
+        dir->descsize = 0;
+        dir->descp = NULL;
+    }
+    len = strlen(dirdesc);
+    p = malloc(len);
+    if (p != NULL) {
+        strncpy(p, dirdesc, len);
+        dir->descp = (unsigned char *) p;
+        dir->descsize = len;
+    }
+    return dir->descp != NULL;
 }
 
 void bindir_num_of_files_set(struct bindir *dir, unsigned long num)
