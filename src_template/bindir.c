@@ -71,9 +71,20 @@ void bindir_file_offset_set(struct bindir *dir, size_t offset)
     dir->file_offset = offset;
 }
 
+/* bindir_print: print directory fields to the standard output */
 void bindir_print(struct bindir *dir)
 {
-    printf("bindir_print()\n");
+    printf(
+        "Directory:\n"
+        "type:         %c\n"
+        "descsize:     %hu\n"
+        "descp:\n%.*s\n"
+        "num_of_files: %lu\n"
+        "file_offset:  %lu\n",
+        dir->type_sign, dir->descsize,
+        (int) dir->descsize, dir->descp,
+        dir->num_of_files,
+        (unsigned long) dir->file_offset);
 }
 
 void bindir_free(struct bindir *dir)
