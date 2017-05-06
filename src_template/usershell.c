@@ -31,7 +31,7 @@ int run_command_shell(void)
     struct directory wdir;
 
     cmdshell_start();
-    cmdshell_print_message("Input `help' for help or `quit' for exit.");
+    cmdshell_print_message("Input `help' for help or `quit' for exit.\n");
     write_options_clear(&wopts);
     read_options_clear(&ropts);
     while (1) {
