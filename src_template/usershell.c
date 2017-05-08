@@ -159,7 +159,7 @@ int run_command_shell(void)
                     dest, (unsigned long) offset);
             }
             else if (retbin == BINCMD_ERROR_FILE_WRITE) {
-                cmdshell_print_error("directory header written incorrectly");
+                cmdshell_print_error("can't write directory to file");
             }
             else if (retbin == BINCMD_OK) {
                 cmdshell_print_message(
