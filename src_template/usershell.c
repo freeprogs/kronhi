@@ -154,7 +154,7 @@ int run_command_shell(void)
             }
             else if (retbin == BINCMD_ERROR_FILE_SIZE) {
                 cmdshell_print_error(
-                    "not enough space for directory header: "
+                    "not enough space for directory: "
                     "\"%s\" offset %lu",
                     dest, (unsigned long) offset);
             }
