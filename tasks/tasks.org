@@ -11,7 +11,8 @@
   :ARCHIVE:  tasks_archive.org::* Архив задач
   :END:
 
-** TASK Сделать настройку и запись пустой директории
+** DONE Сделать настройку и запись пустой директории
+   CLOSED: [2017-05-09 Вт 10:37]
    :PROPERTIES:
    :issue_id: 1
    :issue_type: task
