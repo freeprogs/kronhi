@@ -129,6 +129,7 @@ int run_command_shell(void)
             cmdshell_print_status_read(src, dst, offset, cipher);
         }
         else if (retcmd == CMD_WRITE_DIR) {
+            enum binarycmd_code retbin;
             char dest[CMDSHELL_MAXINPUT];
             char dirdesc[DIRECTORY_MAXDESCRIPTION];
             size_t offset;
@@ -137,11 +138,33 @@ int run_command_shell(void)
             offset = write_options_offset_get(&wopts);
             directory_description_get(&wdir, dirdesc);
             cipher = write_options_cipher_get(&wopts);
-            if (!binarycmd_write_dir(dest, offset, dirdesc, cipher)) {
+
+            retbin = binarycmd_write_dir(dest, offset, dirdesc, cipher);
+            if (retbin == BINCMD_ERROR_DIR_MEMORY) {
+                cmdshell_print_error("not enough memory for directory header");
+            }
+            else if (retbin == BINCMD_ERROR_DIR_HEADER) {
+                cmdshell_print_error("directory header is made corrupted");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_NOFILE) {
+                cmdshell_print_error("file not found: \"%s\"", dest);
+            }
+            else if (retbin == BINCMD_ERROR_FILE_PERM_WRITE) {
+                cmdshell_print_error("can't write to file: \"%s\"", dest);
+            }
+            else if (retbin == BINCMD_ERROR_FILE_SIZE) {
                 cmdshell_print_error(
-                    "can't write directory: \"%s:%lu:%s\"",
-                    dest, (unsigned long) offset,
-                    (cipher == W_CIPHER_XOR ? "xor" : "none"));
+                    "not enough space for directory header: "
+                    "\"%s\" offset %lu",
+                    dest, (unsigned long) offset);
+            }
+            else if (retbin == BINCMD_ERROR_FILE_WRITE) {
+                cmdshell_print_error("directory header written incorrectly");
+            }
+            else if (retbin == BINCMD_OK) {
+                cmdshell_print_message(
+                    "Directory has written to \"%s\" with offset %lu",
+                    dest, (unsigned long) offset);
             }
         }
         else if (retcmd == CMD_HELP) {

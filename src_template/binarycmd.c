@@ -28,13 +28,25 @@ int binarycmd_write_dir(
     size_t dirheadersize;
 
     dir = bindir_create();
+    if (dir == NULL)
+        return BINCMD_ERROR_DIR_MEMORY;
     bindir_desc_set(dir, dirdesc);
     bindir_num_of_files_set(dir, 0);
     bindir_file_offset_set(dir, 0);
     bindir_print(dir);
     dirheadersize = bindir_make_bin_header(dir, dirheader);
     hexdump_dump(dirheader, dirheadersize);
+    if (dirheadersize == 0)
+        return BINCMD_ERROR_DIR_HEADER;
     bindir_free(dir);
 
-    return 1;
+    if (!file_test_exists(destination))
+        return BINCMD_ERROR_FILE_NOFILE;
+    if (!file_test_write_perm(destination))
+        return BINCMD_ERROR_FILE_PERM_WRITE;
+    if (!file_test_size(destination, offset, dirheadersize))
+        return BINCMD_ERROR_FILE_SIZE;
+    if (!file_write(destination, offset, dirheader, dirheadersize))
+        return BINCMD_ERROR_FILE_WRITE;
+    return BINCMD_OK;
 }

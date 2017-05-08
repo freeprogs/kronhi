@@ -73,6 +73,8 @@ SRC_HEXDUMP_C = hexdump.c
 SRC_HEXDUMP_H = hexdump.h
 SRC_ENDIAN_C = endian.c
 SRC_ENDIAN_H = endian.h
+SRC_FILE_OPERATION_C = file_operation.c
+SRC_FILE_OPERATION_H = file_operation.h
 
 
 # Install section
@@ -117,6 +119,8 @@ build:
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_HEXDUMP_H) > $(SRC_BUILD_DIR)/$(SRC_HEXDUMP_H)
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_ENDIAN_C) > $(SRC_BUILD_DIR)/$(SRC_ENDIAN_C)
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_ENDIAN_H) > $(SRC_BUILD_DIR)/$(SRC_ENDIAN_H)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_FILE_OPERATION_C) > $(SRC_BUILD_DIR)/$(SRC_FILE_OPERATION_C)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_FILE_OPERATION_H) > $(SRC_BUILD_DIR)/$(SRC_FILE_OPERATION_H)
 
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
 	@mkdir $(BUILD_DIR)
@@ -133,6 +137,7 @@ build:
             $(SRC_BUILD_DIR)/$(SRC_BINDIR_C) \
             $(SRC_BUILD_DIR)/$(SRC_HEXDUMP_C) \
             $(SRC_BUILD_DIR)/$(SRC_ENDIAN_C) \
+            $(SRC_BUILD_DIR)/$(SRC_FILE_OPERATION_C) \
             -o $(BUILD_DIR)/$(TARGET_BINARY)
 	@chmod u+x $(BUILD_DIR)/$(TARGET_BINARY)
 

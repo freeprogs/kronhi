@@ -17,30 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BINARYCMD_H
-#define BINARYCMD_H
+#ifndef FILE_OPERATION_H
+#define FILE_OPERATION_H
 
 #include <stdio.h>
-#include "write_options.h"
-#include "bindir.h"
-#include "file_operation.h"
-#include "hexdump.h"
 
-/* maximum length of writable directory header */
-#define BINDIR_MAXHEADER  1 + 2 + 65535 + 4 + 4
-
-enum binarycmd_code {
-    BINCMD_ERROR_DIR_MEMORY,
-    BINCMD_ERROR_DIR_HEADER,
-    BINCMD_ERROR_FILE_NOFILE,
-    BINCMD_ERROR_FILE_PERM_WRITE,
-    BINCMD_ERROR_FILE_SIZE,
-    BINCMD_ERROR_FILE_WRITE,
-    BINCMD_OK
-};
-
-int binarycmd_write_dir(
-    char destination[], size_t offset,
-    char dirdesc[], enum write_cipher_type cipher);
+int file_test_exists(const char *path);
+int file_test_write_perm(const char *path);
+int file_test_size(const char *path, size_t offset, size_t datasize);
+int file_write(const char *path, size_t offset, void *data, size_t datasize);
 
 #endif
