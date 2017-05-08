@@ -3,13 +3,25 @@
 #+TODO: BUG(b!) | FIXED(f) REJECT(r)
 #+PRIORITIES: A F C
 #+TAGS: current(c) testing(t)
-#+CONSTANTS: last_issue_id=4
+#+CONSTANTS: last_issue_id=5
 
 * Задачи
   :PROPERTIES:
   :COLUMNS:  %3issue_id(ID) %4issue_type(TYPE) %TODO %40ITEM %SCHEDULED %DEADLINE %1PRIORITY
   :ARCHIVE:  tasks_archive.org::* Архив задач
   :END:
+
+** TASK Добавить использование бинарников в описании директории
+   :PROPERTIES:
+   :issue_id: 5
+   :issue_type: task
+   :END:
+
+   [2017-05-09 Вт]
+
+   Нужно иметь возможность вставить любые данные в пределах допустимой
+   длины описания директории. Это может быть бинарный файл, нули из
+   нулевого устройства или просто рандомные байты.
 
 
 * Баги
