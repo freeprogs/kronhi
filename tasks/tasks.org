@@ -3,7 +3,7 @@
 #+TODO: BUG(b!) | FIXED(f) REJECT(r)
 #+PRIORITIES: A F C
 #+TAGS: current(c) testing(t)
-#+CONSTANTS: last_issue_id=1
+#+CONSTANTS: last_issue_id=2
 
 * Задачи
   :PROPERTIES:
@@ -17,6 +17,22 @@
   :COLUMNS:  %3issue_id(ID) %4issue_type(TYPE) %TODO %40ITEM %SCHEDULED %DEADLINE %1PRIORITY
   :ARCHIVE:  tasks_archive.org::* Архив багов
   :END:
+
+** BUG Увеличить offset для перемещения по большим файлам
+   :PROPERTIES:
+   :issue_id: 2
+   :issue_type: bug
+   :END:
+
+   [2017-05-09 Вт]
+
+   На данный момент для offset'а используется size_t, что ограничивает
+   его размером 4Gb.
+   Нужно использовать либо тип double либо тип с длинной арифметикой с
+   набором методов. Так как тип double не являяется нативным типом для
+   этого, лучше использовать тип с длинной арифметикой.
+   Так же тип с длинной арифметикой нужно соединить с вводом/выводом в
+   оболочке.
 
 
 * Окружение
