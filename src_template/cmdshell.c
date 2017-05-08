@@ -17,12 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <stdarg.h>
 #include "cmdshell.h"
-#include "input.h"
 
 int str_isspace(const char *s);
 void info_printer(const char *lines[], int n);
@@ -68,14 +63,23 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
         else if (strcmp(input, "init write") == 0) {
             return CMD_INIT_WRITE;
         }
+        else if (strcmp(input, "init write dir") == 0) {
+            return CMD_INIT_WRITE_DIR;
+        }
         else if (strcmp(input, "init read") == 0) {
             return CMD_INIT_READ;
         }
         else if (strcmp(input, "status write") == 0) {
             return CMD_STATUS_WRITE;
         }
+        else if (strcmp(input, "status write dir") == 0) {
+            return CMD_STATUS_WRITE_DIR;
+        }
         else if (strcmp(input, "status read") == 0) {
             return CMD_STATUS_READ;
+        }
+        else if (strcmp(input, "write dir") == 0) {
+            return CMD_WRITE_DIR;
         }
         else {
             strcpy(in, input);
@@ -104,15 +108,19 @@ void cmdshell_print_help(void)
         "\n",
         "Help info:\n",
         "\n",
-        "init write    --  initialize options for writing\n",
-        "                  (source, destination, offset, cipher)\n"
-        "init read     --  initialize options for reading\n",
-        "                  (source, destination, offset, cipher)\n"
-        "status write  --  show set write options\n",
-        "status read   --  show set read options\n",
+        "init write        --  initialize options for writing\n",
+        "                      (source, destination, offset, cipher)\n"
+        "init write dir    --  initialize write directory data\n",
+        "                      (description)\n",
+        "init read         --  initialize options for reading\n",
+        "                      (source, destination, offset, cipher)\n"
+        "status write      --  show set write options\n",
+        "status write dir  --  show write directory contents\n",
+        "status read       --  show set read options\n",
+        "write dir         --  write directory data to destination\n",
         "\n",
-        "help          --  print this info\n",
-        "quit          --  exit the command shell\n",
+        "help              --  print this info\n",
+        "quit              --  exit the command shell\n",
         "\n"
     };
     info_printer(lines, ARRAY_SIZE(lines));
@@ -282,6 +290,19 @@ void cmdshell_print_status_write(
         wsrc, wdst, woffset, wcipher);
 }
 
+/* cmdshell_print_status_write_dir:
+   print status of write directory to standard output */
+void cmdshell_print_status_write_dir(const char *desc)
+{
+    printf(
+        "\n"
+        "Write directory description:\n"
+        "%s"
+        "\n"
+        ,
+        (*desc != '\0' ? desc : "empty\n"));
+}
+
 /* cmdshell_print_status_read:
    print status of set read options to standard output */
 void cmdshell_print_status_read(
@@ -298,6 +319,59 @@ void cmdshell_print_status_read(
         "\n"
         ,
         rsrc, rdst, roffset, rcipher);
+}
+
+/* cmdshell_init_write_dir: input settings for write directory
+                            return the input setting code */
+enum cmdshell_dir_code
+cmdshell_init_write_dir(char descinter[], char descfile[])
+{
+    enum cmdshell_dir_code retval;
+    int retin;
+    char input[CMDSHELL_MAXINPUT];
+    char text[CMDSHELL_MAXTEXTINPUT];
+
+    *input = '\0';
+
+    retin = input_line(
+        "Input description method (i (interactive), f (file)): ",
+        input, sizeof input);
+    if (!retin || str_isspace(input)) {
+        retval = CMD_DIR_NOOP;
+        printf("Ok unchanged text and filename\n");
+    }
+    else if (strcmp(input, "i") == 0) {
+        retin = input_text_end(
+            "Input description (end with single . on line):\n",
+            text, sizeof text, ".");
+        if (!retin) {
+            *descinter = '\0';
+            retval = CMD_DIR_INTER;
+            printf("Ok text empty\n");
+        }
+        else {
+            strcpy(descinter, text);
+            retval = CMD_DIR_INTER;
+            printf("Ok text\n%s\n", text);
+        }
+    }
+    else if (strcmp(input, "f") == 0) {
+        retin = input_line("Input file name (path): ", input, sizeof input);
+        if (!retin || str_isspace(input)) {
+            retval = CMD_DIR_NOOP;
+            printf("Ok unchanged filename\n");
+        }
+        else {
+            strcpy(descfile, input);
+            retval = CMD_DIR_FILE;
+            printf("Ok filename \"%s\"\n", input);
+        }
+    }
+    else {
+        retval = CMD_DIR_UNKNOWN;
+        printf("Fail unknown command \"%s\"\n", input);
+    }
+    return retval;
 }
 
 /* cmdshell_end: run ending operations */

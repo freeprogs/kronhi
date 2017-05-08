@@ -23,7 +23,7 @@
                       return 0 when wrong values
                       return 1 when right values */
 int read_options_init(
-    struct read_options *popts,
+    struct read_options *opts,
     const char *src, const char *dst,
     const char *offset, const char *cipher)
 {
@@ -32,16 +32,16 @@ int read_options_init(
 
     f_bad_offset = f_bad_cipher = 0;
 
-    strcpy(popts->src, src);
-    strcpy(popts->dst, dst);
-    if (sscanf(offset, "%lu", (unsigned long *) &popts->offset) != 1) {
+    strcpy(opts->src, src);
+    strcpy(opts->dst, dst);
+    if (sscanf(offset, "%lu", (unsigned long *) &opts->offset) != 1) {
         f_bad_offset = 1;
     }
     if (strcmp(cipher, "xor") == 0) {
-        popts->cipher = R_CIPHER_XOR;
+        opts->cipher = R_CIPHER_XOR;
     }
     else if (strcmp(cipher, "none") == 0) {
-        popts->cipher = R_CIPHER_NONE;
+        opts->cipher = R_CIPHER_NONE;
     }
     else {
         f_bad_cipher = 1;
@@ -51,46 +51,39 @@ int read_options_init(
 }
 
 /* read_options_clear: clear read options */
-void read_options_clear(struct read_options *popts)
+void read_options_clear(struct read_options *opts)
 {
-    *popts->src = '\0';
-    *popts->dst = '\0';
-    popts->offset = 0;
-    popts->cipher = R_CIPHER_NONE;
+    *opts->src = '\0';
+    *opts->dst = '\0';
+    opts->offset = 0;
+    opts->cipher = R_CIPHER_NONE;
 }
 
 /* read_options_tostr_source: convert source option to string */
-char *read_options_tostr_source(struct read_options *popts)
+char *read_options_tostr_source(struct read_options *opts, char out[])
 {
-    static char out[READ_OPTIONS_MAXREPR];
-    strcpy(out, popts->src);
-    return out;
+    return strcpy(out, opts->src);
 }
 
 /* read_options_tostr_destination: convert destination option to string */
-char *read_options_tostr_destination(struct read_options *popts)
+char *read_options_tostr_destination(struct read_options *opts, char out[])
 {
-    static char out[READ_OPTIONS_MAXREPR];
-    strcpy(out, popts->dst);
-    return out;
+    return strcpy(out, opts->dst);
 }
 
 /* read_options_tostr_offset: convert offset option to string */
-char *read_options_tostr_offset(struct read_options *popts)
+char *read_options_tostr_offset(struct read_options *opts, char out[])
 {
-    static char out[READ_OPTIONS_MAXREPR];
-    sprintf(out, "%lu", (unsigned long) popts->offset);
+    sprintf(out, "%lu", (unsigned long) opts->offset);
     return out;
 }
 
 /* read_options_tostr_cipher: convert cipher option to string*/
-char *read_options_tostr_cipher(struct read_options *popts)
+char *read_options_tostr_cipher(struct read_options *opts, char out[])
 {
-    static char out[READ_OPTIONS_MAXREPR];
-
-    if (popts->cipher == R_CIPHER_XOR)
+    if (opts->cipher == R_CIPHER_XOR)
         sprintf(out, "%s", "xor");
-    else if (popts->cipher == R_CIPHER_NONE)
+    else if (opts->cipher == R_CIPHER_NONE)
         sprintf(out, "%s", "none");
     else
         sprintf(out, "%s", "undefined");

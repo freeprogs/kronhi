@@ -17,19 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef BINARYCMD_H
+#define BINARYCMD_H
 
 #include <stdio.h>
-#include <string.h>
+#include "write_options.h"
+#include "bindir.h"
+#include "file_operation.h"
 
-#define INPUT_MAXLINE   1000   /* maximum input line length */
-#define INPUT_MAXTEXT   65536  /* maximum input text length */
-#define INPUT_MAXFORMAT 100    /* maximum intput format length  */
+/* maximum length of writable directory header */
+#define BINDIR_MAXHEADER  1 + 2 + 65535 + 4 + 4
 
-int input_line(const char *prompt, char in[], int maxsize);
-int input_text_end(
-    const char *prompt, char in[], size_t maxsize, const char *end);
-int input_from_file(char in[], size_t maxsize, const char *ifname);
+enum binarycmd_code {
+    BINCMD_ERROR_DIR_MEMORY,
+    BINCMD_ERROR_DIR_HEADER,
+    BINCMD_ERROR_FILE_NOFILE,
+    BINCMD_ERROR_FILE_PERM_WRITE,
+    BINCMD_ERROR_FILE_SIZE,
+    BINCMD_ERROR_FILE_WRITE,
+    BINCMD_OK
+};
+
+int binarycmd_write_dir(
+    char destination[], size_t offset,
+    char dirdesc[], enum write_cipher_type cipher);
 
 #endif

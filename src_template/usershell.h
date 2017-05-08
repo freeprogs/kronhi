@@ -17,19 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef USERSHELL_H
+#define USERSHELL_H
 
 #include <stdio.h>
-#include <string.h>
+#include "cmdshell.h"
+#include "directory.h"
+#include "input.h"
+#include "binarycmd.h"
 
-#define INPUT_MAXLINE   1000   /* maximum input line length */
-#define INPUT_MAXTEXT   65536  /* maximum input text length */
-#define INPUT_MAXFORMAT 100    /* maximum intput format length  */
-
-int input_line(const char *prompt, char in[], int maxsize);
-int input_text_end(
-    const char *prompt, char in[], size_t maxsize, const char *end);
-int input_from_file(char in[], size_t maxsize, const char *ifname);
+int run_command_shell(void);
 
 #endif

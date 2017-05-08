@@ -17,19 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef FILE_OPERATION_H
+#define FILE_OPERATION_H
+
+/* Linux definition for opening big files (greater 2Gb) */
+#define _FILE_OFFSET_BITS  64
 
 #include <stdio.h>
-#include <string.h>
 
-#define INPUT_MAXLINE   1000   /* maximum input line length */
-#define INPUT_MAXTEXT   65536  /* maximum input text length */
-#define INPUT_MAXFORMAT 100    /* maximum intput format length  */
+/* Block size for writings */
+#define W_BLOCK_SIZE  8192
 
-int input_line(const char *prompt, char in[], int maxsize);
-int input_text_end(
-    const char *prompt, char in[], size_t maxsize, const char *end);
-int input_from_file(char in[], size_t maxsize, const char *ifname);
+int file_test_exists(const char *path);
+int file_test_write_perm(const char *path);
+int file_test_size(const char *path, size_t offset, size_t datasize);
+int file_write(const char *path, size_t offset, void *data, size_t datasize);
 
 #endif
