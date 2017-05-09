@@ -3,7 +3,7 @@
 #+TODO: BUG(b!) | FIXED(f) REJECT(r)
 #+PRIORITIES: A F C
 #+TAGS: current(c) testing(t)
-#+CONSTANTS: last_issue_id=8
+#+CONSTANTS: last_issue_id=9
 
 * Задачи
   :PROPERTIES:
@@ -66,6 +66,12 @@
    каталога в виде имён файлов и их размеров. Нужно иметь возможность
    проверить целостность записанных файлов по контрольным суммам без
    извлечения самих файлов.
+
+** TASK Сделать добавление файла в пустую директорию
+   :PROPERTIES:
+   :issue_id: 9
+   :issue_type: task
+   :END:
 
 
 * Баги
