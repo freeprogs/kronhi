@@ -20,7 +20,7 @@
 #include "binarycmd.h"
 
 int binarycmd_write_dir(
-    char destination[], size_t offset,
+    char destination[], const struct file_offset *offset,
     char dirdesc[], enum write_cipher_type cipher)
 {
     struct bindir *dir;

@@ -24,6 +24,7 @@
 #include "write_options.h"
 #include "bindir.h"
 #include "file_operation.h"
+#include "file_offset.h"
 
 /* maximum length of writable directory header */
 #define BINDIR_MAXHEADER  1 + 2 + 65535 + 4 + 4
@@ -39,7 +40,7 @@ enum binarycmd_code {
 };
 
 int binarycmd_write_dir(
-    char destination[], size_t offset,
+    char destination[], const struct file_offset *offset,
     char dirdesc[], enum write_cipher_type cipher);
 
 #endif
