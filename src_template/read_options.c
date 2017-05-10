@@ -34,7 +34,7 @@ int read_options_init(
 
     strcpy(opts->src, src);
     strcpy(opts->dst, dst);
-    if (sscanf(offset, "%lu", (unsigned long *) &opts->offset) != 1) {
+    if (!fileoffset_fromstring(&opts->offset, offset)) {
         f_bad_offset = 1;
     }
     if (strcmp(cipher, "xor") == 0) {
@@ -55,7 +55,7 @@ void read_options_clear(struct read_options *opts)
 {
     *opts->src = '\0';
     *opts->dst = '\0';
-    opts->offset = 0;
+    fileoffset_clear(&opts->offset);
     opts->cipher = R_CIPHER_NONE;
 }
 
@@ -77,8 +77,7 @@ char *read_options_tostr_destination(struct read_options *opts, char out[])
                               return output string */
 char *read_options_tostr_offset(struct read_options *opts, char out[])
 {
-    sprintf(out, "%lu", (unsigned long) opts->offset);
-    return out;
+    return fileoffset_tostr(&opts->offset, out);
 }
 
 /* read_options_tostr_cipher: convert cipher option to string
