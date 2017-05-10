@@ -25,8 +25,8 @@ int run_command_shell(void)
     enum cmdshell_code retcmd;
     char reply[CMDSHELL_MAXINPUT];
 
-    struct write_options wopts = { "", "", 0, W_CIPHER_NONE };
-    struct read_options ropts = { "", "", 0, R_CIPHER_NONE };
+    struct write_options wopts;
+    struct read_options ropts;
 
     struct directory wdir;
 
