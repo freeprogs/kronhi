@@ -59,26 +59,30 @@ void write_options_clear(struct write_options *opts)
     opts->cipher = W_CIPHER_NONE;
 }
 
-/* write_options_tostr_source: convert source option to string */
+/* write_options_tostr_source: convert source option to string
+                               return output string */
 char *write_options_tostr_source(struct write_options *opts, char out[])
 {
     return strcpy(out, opts->src);
 }
 
-/* write_options_tostr_destination: convert destination option to string */
+/* write_options_tostr_destination: convert destination option to string
+                                    return output string */
 char *write_options_tostr_destination(struct write_options *opts, char out[])
 {
     return strcpy(out, opts->dst);
 }
 
-/* write_options_tostr_offset: convert offset option to string */
+/* write_options_tostr_offset: convert offset option to string
+                               return output string */
 char *write_options_tostr_offset(struct write_options *opts, char out[])
 {
     sprintf(out, "%lu", (unsigned long) opts->offset);
     return out;
 }
 
-/* write_options_tostr_cipher: convert cipher option to string */
+/* write_options_tostr_cipher: convert cipher option to string
+                               return output string */
 char *write_options_tostr_cipher(struct write_options *opts, char out[])
 {
     if (opts->cipher == W_CIPHER_XOR)
@@ -90,19 +94,22 @@ char *write_options_tostr_cipher(struct write_options *opts, char out[])
     return out;
 }
 
-/* write_options_destination_get: get destination option */
+/* write_options_destination_get: get destination option
+                                  return destination option */
 char *write_options_destination_get(struct write_options *opts, char out[])
 {
     return strcpy(out, opts->dst);
 }
 
-/* write_options_offset_get: get offset option */
+/* write_options_offset_get: get offset option
+                             return offset option */
 size_t write_options_offset_get(struct write_options *opts)
 {
     return opts->offset;
 }
 
-/* write_options_cipher_get: get cipher option */
+/* write_options_cipher_get: get cipher option
+                             return cipher option */
 enum write_cipher_type write_options_cipher_get(struct write_options *opts)
 {
     return opts->cipher;
