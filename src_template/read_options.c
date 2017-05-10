@@ -59,26 +59,30 @@ void read_options_clear(struct read_options *opts)
     opts->cipher = R_CIPHER_NONE;
 }
 
-/* read_options_tostr_source: convert source option to string */
+/* read_options_tostr_source: convert source option to string
+                              return output string */
 char *read_options_tostr_source(struct read_options *opts, char out[])
 {
     return strcpy(out, opts->src);
 }
 
-/* read_options_tostr_destination: convert destination option to string */
+/* read_options_tostr_destination: convert destination option to string
+                                   return output string */
 char *read_options_tostr_destination(struct read_options *opts, char out[])
 {
     return strcpy(out, opts->dst);
 }
 
-/* read_options_tostr_offset: convert offset option to string */
+/* read_options_tostr_offset: convert offset option to string
+                              return output string */
 char *read_options_tostr_offset(struct read_options *opts, char out[])
 {
     sprintf(out, "%lu", (unsigned long) opts->offset);
     return out;
 }
 
-/* read_options_tostr_cipher: convert cipher option to string*/
+/* read_options_tostr_cipher: convert cipher option to string
+                              return output string */
 char *read_options_tostr_cipher(struct read_options *opts, char out[])
 {
     if (opts->cipher == R_CIPHER_XOR)
