@@ -132,14 +132,16 @@ int run_command_shell(void)
             enum binarycmd_code retbin;
             char dest[CMDSHELL_MAXINPUT];
             char dirdesc[DIRECTORY_MAXDESCRIPTION];
-            size_t offset;
+            struct file_offset offset;
+            char offsetstr[CMDSHELL_MAXINPUT];
             enum write_cipher_type cipher;
             write_options_destination_get(&wopts, dest);
             offset = write_options_offset_get(&wopts);
+            write_options_tostr_offset(&wopts, offsetstr);
             directory_description_get(&wdir, dirdesc);
             cipher = write_options_cipher_get(&wopts);
 
-            retbin = binarycmd_write_dir(dest, offset, dirdesc, cipher);
+            retbin = binarycmd_write_dir(dest, &offset, dirdesc, cipher);
             if (retbin == BINCMD_ERROR_DIR_MEMORY) {
                 cmdshell_print_error("not enough memory for directory header");
             }
@@ -155,16 +157,16 @@ int run_command_shell(void)
             else if (retbin == BINCMD_ERROR_FILE_SIZE) {
                 cmdshell_print_error(
                     "not enough space for directory: "
-                    "\"%s\" offset %lu",
-                    dest, (unsigned long) offset);
+                    "\"%s\" offset %s",
+                    dest, offsetstr);
             }
             else if (retbin == BINCMD_ERROR_FILE_WRITE) {
                 cmdshell_print_error("can't write directory to file");
             }
             else if (retbin == BINCMD_OK) {
                 cmdshell_print_message(
-                    "Directory has written to \"%s\" with offset %lu",
-                    dest, (unsigned long) offset);
+                    "Directory has written to \"%s\" with offset %s",
+                    dest, offsetstr);
             }
         }
         else if (retcmd == CMD_HELP) {
