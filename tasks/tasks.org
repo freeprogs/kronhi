@@ -3,7 +3,7 @@
 #+TODO: BUG(b!) | FIXED(f) REJECT(r)
 #+PRIORITIES: A F C
 #+TAGS: current(c) testing(t)
-#+CONSTANTS: last_issue_id=9
+#+CONSTANTS: last_issue_id=10
 
 * Задачи
   :PROPERTIES:
@@ -72,6 +72,21 @@
    :issue_id: 9
    :issue_type: task
    :END:
+
+** TASK Оптимизировать посимвольную промотку offset'а
+   :PROPERTIES:
+   :issue_id: 10
+   :issue_type: task
+   :END:
+
+   [2017-05-11 Чт]
+
+   Так как промотка offset'а выполняется посимвольно, на мегабайтных
+   файлах это занимает несколько секунд (что заметно), а на
+   гигабайтных файлах это занимает минуты (что надоедает).
+
+   Надо либо сделать блочную промотку, либо использовать как-то
+   fseek().
 
 
 * Баги
