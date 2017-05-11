@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "file_offset.h"
 
 #define READ_OPTIONS_MAXPATH 1000  /* maximum path string option length */
 
@@ -33,7 +34,7 @@ enum read_cipher_type {
 struct read_options {
     char src[READ_OPTIONS_MAXPATH];
     char dst[READ_OPTIONS_MAXPATH];
-    size_t offset;
+    struct file_offset offset;
     enum read_cipher_type cipher;
 };
 

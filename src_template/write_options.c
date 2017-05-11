@@ -34,7 +34,7 @@ int write_options_init(
 
     strcpy(opts->src, src);
     strcpy(opts->dst, dst);
-    if (sscanf(offset, "%lu", (unsigned long *) &opts->offset) != 1) {
+    if (!fileoffset_fromstring(&opts->offset, offset)) {
         f_bad_offset = 1;
     }
     if (strcmp(cipher, "xor") == 0) {
@@ -55,30 +55,33 @@ void write_options_clear(struct write_options *opts)
 {
     *opts->src = '\0';
     *opts->dst = '\0';
-    opts->offset = 0;
+    fileoffset_clear(&opts->offset);
     opts->cipher = W_CIPHER_NONE;
 }
 
-/* write_options_tostr_source: convert source option to string */
+/* write_options_tostr_source: convert source option to string
+                               return output string */
 char *write_options_tostr_source(struct write_options *opts, char out[])
 {
     return strcpy(out, opts->src);
 }
 
-/* write_options_tostr_destination: convert destination option to string */
+/* write_options_tostr_destination: convert destination option to string
+                                    return output string */
 char *write_options_tostr_destination(struct write_options *opts, char out[])
 {
     return strcpy(out, opts->dst);
 }
 
-/* write_options_tostr_offset: convert offset option to string */
+/* write_options_tostr_offset: convert offset option to string
+                               return output string */
 char *write_options_tostr_offset(struct write_options *opts, char out[])
 {
-    sprintf(out, "%lu", (unsigned long) opts->offset);
-    return out;
+    return fileoffset_tostr(&opts->offset, out);
 }
 
-/* write_options_tostr_cipher: convert cipher option to string */
+/* write_options_tostr_cipher: convert cipher option to string
+                               return output string */
 char *write_options_tostr_cipher(struct write_options *opts, char out[])
 {
     if (opts->cipher == W_CIPHER_XOR)
@@ -90,19 +93,22 @@ char *write_options_tostr_cipher(struct write_options *opts, char out[])
     return out;
 }
 
-/* write_options_destination_get: get destination option */
+/* write_options_destination_get: get destination option
+                                  return destination option */
 char *write_options_destination_get(struct write_options *opts, char out[])
 {
     return strcpy(out, opts->dst);
 }
 
-/* write_options_offset_get: get offset option */
-size_t write_options_offset_get(struct write_options *opts)
+/* write_options_offset_get: get offset option
+                             return offset option */
+struct file_offset write_options_offset_get(struct write_options *opts)
 {
     return opts->offset;
 }
 
-/* write_options_cipher_get: get cipher option */
+/* write_options_cipher_get: get cipher option
+                             return cipher option */
 enum write_cipher_type write_options_cipher_get(struct write_options *opts)
 {
     return opts->cipher;

@@ -17,30 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BINARYCMD_H
-#define BINARYCMD_H
+#ifndef BIGNUMBER_H
+#define BIGNUMBER_H
 
 #include <stdio.h>
-#include "write_options.h"
-#include "bindir.h"
-#include "file_operation.h"
-#include "file_offset.h"
+#include <string.h>
 
-/* maximum length of writable directory header */
-#define BINDIR_MAXHEADER  1 + 2 + 65535 + 4 + 4
+/* maximum length of the big number as a string */
+#define BIG_MAXSTRING  15
 
-enum binarycmd_code {
-    BINCMD_ERROR_DIR_MEMORY,
-    BINCMD_ERROR_DIR_HEADER,
-    BINCMD_ERROR_FILE_NOFILE,
-    BINCMD_ERROR_FILE_PERM_WRITE,
-    BINCMD_ERROR_FILE_SIZE,
-    BINCMD_ERROR_FILE_WRITE,
-    BINCMD_OK
+struct bignumber {
+    double number;
 };
 
-int binarycmd_write_dir(
-    char destination[], const struct file_offset *offset,
-    char dirdesc[], enum write_cipher_type cipher);
+int bignumber_set_value_string(struct bignumber *number, const char *str);
+int bignumber_set_value_int(struct bignumber *number, int value);
+char *bignumber_tostr(const struct bignumber *number, char out[]);
+int bignumber_lt_big(const struct bignumber *number_left,
+                     const struct bignumber *number_right);
+int bignumber_add_int(struct bignumber *number, int value);
 
 #endif

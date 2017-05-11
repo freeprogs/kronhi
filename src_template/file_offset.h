@@ -17,30 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BINARYCMD_H
-#define BINARYCMD_H
+#ifndef FILE_OFFSET_H
+#define FILE_OFFSET_H
 
 #include <stdio.h>
-#include "write_options.h"
-#include "bindir.h"
-#include "file_operation.h"
-#include "file_offset.h"
+#include "bignumber.h"
 
-/* maximum length of writable directory header */
-#define BINDIR_MAXHEADER  1 + 2 + 65535 + 4 + 4
-
-enum binarycmd_code {
-    BINCMD_ERROR_DIR_MEMORY,
-    BINCMD_ERROR_DIR_HEADER,
-    BINCMD_ERROR_FILE_NOFILE,
-    BINCMD_ERROR_FILE_PERM_WRITE,
-    BINCMD_ERROR_FILE_SIZE,
-    BINCMD_ERROR_FILE_WRITE,
-    BINCMD_OK
+struct file_offset {
+    struct bignumber number;
 };
 
-int binarycmd_write_dir(
-    char destination[], const struct file_offset *offset,
-    char dirdesc[], enum write_cipher_type cipher);
+int fileoffset_fromstring(struct file_offset *offset, const char *str);
+void fileoffset_clear(struct file_offset *offset);
+char *fileoffset_tostr(const struct file_offset *offset, char out[]);
+int fileoffset_lt(const struct file_offset *offset_left,
+                  const struct file_offset *offset_right);
+void fileoffset_inc1(struct file_offset *offset);
+
 
 #endif

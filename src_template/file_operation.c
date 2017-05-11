@@ -52,13 +52,18 @@ int file_test_write_perm(const char *path)
    tests whether file has space after offset for given size
    return 1 if has enough space
    return 0 if has no enough space */
-int file_test_size(const char *path, size_t offset, size_t datasize)
+int file_test_size(
+    const char *path, const struct file_offset *offset, size_t datasize)
 {
     FILE *fp;
+    struct file_offset off;
+    struct file_offset *offset_cur = &off;
 
     if ((fp = fopen(path, "r")) == NULL)
         return 0;
-    for ( ; offset > 0; offset--) {
+    for (fileoffset_clear(offset_cur);
+         fileoffset_lt(offset_cur, offset);
+         fileoffset_inc1(offset_cur)) {
         if (getc(fp) == EOF) {
             fclose(fp);
             return 0;
@@ -78,14 +83,22 @@ int file_test_size(const char *path, size_t offset, size_t datasize)
                return 1 if has written right
                return 0 if some error has happen
                (open file, too big offset, stream error) */
-int file_write(const char *path, size_t offset, void *data, size_t datasize)
+int file_write(
+    const char *path, const struct file_offset *offset,
+    void *data, size_t datasize)
 {
     FILE *fp;
     int f_waserror;
+    struct file_offset off;
+    struct file_offset *offset_cur = &off;
+
+    fileoffset_clear(offset_cur);
 
     if ((fp = fopen(path, "r+b")) == NULL)
         return 0;
-    for ( ; offset > 0; offset--) {
+    for (fileoffset_clear(offset_cur);
+         fileoffset_lt(offset_cur, offset);
+         fileoffset_inc1(offset_cur)) {
         if (getc(fp) == EOF) {
             fclose(fp);
             return 0;

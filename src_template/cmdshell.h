@@ -27,6 +27,7 @@
 #include "input.h"
 #include "write_options.h"
 #include "read_options.h"
+#include "bignumber.h"
 
 /* maximum command shell input line length */
 #define CMDSHELL_MAXINPUT      1000
