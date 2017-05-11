@@ -32,6 +32,7 @@
  * descp         --  the directory description itself
  * num_of_files  --  the number of files in the directory
  * file_offset   --  the offset of the first file in the directory
+ *                   this offset is relative to its place in memory
 */
 struct bindir {
     unsigned char type_sign;
