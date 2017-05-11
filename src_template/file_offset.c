@@ -24,21 +24,23 @@
                           return 0 if string is incorrect */
 int fileoffset_fromstring(struct file_offset *offset, const char *str)
 {
-    return sscanf(str, "%lu", (unsigned long *) &offset->offset);
+    if (bignumber_set_value_string(&offset->number, str))
+        return 1;
+    else
+        return 0;
 }
 
 /* fileoffset_clear: clear offset (set to zero) */
 void fileoffset_clear(struct file_offset *offset)
 {
-    offset->offset = 0UL;
+    bignumber_set_value_int(&offset->number, 0);
 }
 
 /* fileoffset_tostr: convert offset to string
                      return output string */
 char *fileoffset_tostr(const struct file_offset *offset, char out[])
 {
-    sprintf(out, "%lu", (unsigned long) offset->offset);
-    return out;
+    return bignumber_tostr(&offset->number, out);
 }
 
 /* fileoffset_lt:
@@ -48,12 +50,11 @@ char *fileoffset_tostr(const struct file_offset *offset, char out[])
 int fileoffset_lt(const struct file_offset *offset_left,
                   const struct file_offset *offset_right)
 {
-    return offset_left->offset < offset_right->offset;
+    return bignumber_lt_big(&offset_left->number, &offset_right->number);
 }
 
 /* fileoffset_inc1: increment offset to 1 */
 void fileoffset_inc1(struct file_offset *offset)
 {
-    if (offset->offset < 4294967295UL)
-        offset->offset++;
+    bignumber_add_int(&offset->number, 1);
 }

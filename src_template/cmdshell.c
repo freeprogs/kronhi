@@ -20,6 +20,7 @@
 #include "cmdshell.h"
 
 int str_isspace(const char *s);
+int str_isdigit(const char *s);
 void info_printer(const char *lines[], int n);
 
 /* cmdshell_start: run starting operations */
@@ -164,8 +165,17 @@ int cmdshell_init_write(
         printf("Ok unchanged \"%s\"\n", offset);
     }
     else {
-        size_t tmp;
-        if (sscanf(input, "%lu", (long unsigned *) &tmp) == 1) {
+        double tmp;
+        if (strlen(input) > BIG_MAXSTRING) {
+            f_bad_offset = 1;
+            printf("Fail \"%s\", should be between 1 and %d digits\n",
+                   input, BIG_MAXSTRING);
+        }
+        else if (!str_isdigit(input)) {
+            f_bad_offset = 1;
+            printf("Fail \"%s\", should be an unsigned number\n", input);
+        }
+        else if (sscanf(input, "%lf", &tmp) == 1) {
             strcpy(offset, input);
             printf("Ok \"%s\"\n", input);
         }
@@ -237,8 +247,17 @@ int cmdshell_init_read(
         printf("Ok unchanged \"%s\"\n", offset);
     }
     else {
-        size_t tmp;
-        if (sscanf(input, "%lu", (long unsigned *) &tmp) == 1) {
+        double tmp;
+        if (strlen(input) > BIG_MAXSTRING) {
+            f_bad_offset = 1;
+            printf("Fail \"%s\", should be between 1 and %d digits\n",
+                   input, BIG_MAXSTRING);
+        }
+        else if (!str_isdigit(input)) {
+            f_bad_offset = 1;
+            printf("Fail \"%s\", should be an unsigned number\n", input);
+        }
+        else if (sscanf(input, "%lf", &tmp) == 1) {
             strcpy(offset, input);
             printf("Ok \"%s\"\n", input);
         }
@@ -386,6 +405,16 @@ void cmdshell_end(void)
 int str_isspace(const char *s)
 {
     while (isspace(*s))
+        s++;
+    return *s == '\0';
+}
+
+/* str_isdigit: check string for digit content
+                1 - all chars are digits
+                0 - non-digit char found */
+int str_isdigit(const char *s)
+{
+    while (isdigit(*s))
         s++;
     return *s == '\0';
 }

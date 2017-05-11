@@ -17,22 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef FILE_OFFSET_H
-#define FILE_OFFSET_H
+#ifndef BIGNUMBER_H
+#define BIGNUMBER_H
 
 #include <stdio.h>
-#include "bignumber.h"
+#include <string.h>
 
-struct file_offset {
-    struct bignumber number;
+/* maximum length of the big number as a string */
+#define BIG_MAXSTRING  15
+
+struct bignumber {
+    double number;
 };
 
-int fileoffset_fromstring(struct file_offset *offset, const char *str);
-void fileoffset_clear(struct file_offset *offset);
-char *fileoffset_tostr(const struct file_offset *offset, char out[]);
-int fileoffset_lt(const struct file_offset *offset_left,
-                  const struct file_offset *offset_right);
-void fileoffset_inc1(struct file_offset *offset);
-
+int bignumber_set_value_string(struct bignumber *number, const char *str);
+int bignumber_set_value_int(struct bignumber *number, int value);
+char *bignumber_tostr(const struct bignumber *number, char out[]);
+int bignumber_lt_big(const struct bignumber *number_left,
+                     const struct bignumber *number_right);
+int bignumber_add_int(struct bignumber *number, int value);
 
 #endif
