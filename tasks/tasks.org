@@ -121,7 +121,8 @@
   :ARCHIVE:  tasks_archive.org::* Архив окружения
   :END:
 
-** TASK Добавить в Makefile отладочную команду
+** DONE Добавить в Makefile отладочную команду
+   CLOSED: [2017-05-12 Пт 12:53]
    :PROPERTIES:
    :issue_id: 3
    :issue_type: task
