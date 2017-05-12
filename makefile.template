@@ -39,6 +39,7 @@ CC = gcc
 CFLAGS = -ansi -pedantic -Wall
 
 M4 = m4 -P
+M4DIR = m4
 
 SRC_TEMPLATE_DIR = src_template
 SRC_BUILD_DIR = src_build
@@ -49,7 +50,7 @@ BUILD_DIR = $(build_dir)
 docs_dir = docs
 DOCS_DIR = $(docs_dir)
 
-VERSION_M4 = version.m4
+VERSION_M4 = $(M4DIR)/version.m4
 
 
 SRC_MAIN_C = main.c
