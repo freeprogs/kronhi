@@ -17,8 +17,69 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+progname=`basename $0`
+
 m4dir="m4"
 
-m4 -P "$m4dir"/version.m4 "$m4dir"/makefile.m4 makefile.template > Makefile
+# Create makefile without debug information
+# create_makefile()
+create_makefile()
+{
+    m4 -P "$m4dir"/version.m4 \
+          "$m4dir"/makefile.m4 \
+          makefile.template > Makefile
+}
 
-echo "Makefile created, run \`make'."
+# Create makefile with debug information for gdb
+# create_makefile_debug()
+create_makefile_debug()
+{
+    m4 -P "$m4dir"/version.m4 \
+          "$m4dir"/makefile-debug.m4 \
+          makefile.template > Makefile
+}
+
+# Print short help about this script
+# usage()
+usage()
+{
+    echo "Try \`./$progname --help' for more information." >&2
+}
+
+# Print full help about this script
+# print_help()
+print_help()
+{
+    {
+        echo "usage: ./$progname [ arg ]"
+        echo ""
+        echo "  noarg   --  Create Makefile, using m4 templates from m4 directory."
+        echo "  debug   --  Create Makefile, using m4 templates from m4 directory."
+        echo "              Add debug information appropriate for running in gdb."
+        echo ""
+    } >&2
+}
+
+# Run main script operations
+# main([cmdarg])
+main()
+{
+    if [ $# -ne 0 -a "$1" = "--help" ]; then
+        print_help
+        return 1
+    fi
+    usage
+    if [ $# -eq 0 ]; then
+        create_makefile
+        echo "Makefile created, run \`make'."
+        return 0
+    fi
+    if [ $# -ne 0 -a "$1" = "debug" ]; then
+        create_makefile_debug
+        echo "Makefile with debug info created, run \`make' and \`gdb'."
+        return 0
+    fi
+}
+
+main "$@" || exit 1
+exit 0

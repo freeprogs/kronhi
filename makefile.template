@@ -36,7 +36,7 @@ TARGET_LICENSE = LICENSE
 # Build section
 
 CC = gcc
-CFLAGS = -ansi -pedantic -Wall
+CFLAGS = -ansi -pedantic -Wall __DEBUG_CFLAG__
 
 M4 = m4 -P
 M4DIR = m4
