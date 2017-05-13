@@ -82,6 +82,21 @@ SRC_BIGNUMBER_C = bignumber.c
 SRC_BIGNUMBER_H = bignumber.h
 
 
+# Tests
+
+TESTS_DIR = tests
+
+TESTS_SRC_TEMPLATE_DIR = $(SRC_TEMPLATE_DIR)/$(TESTS_DIR)
+TESTS_SRC_BUILD_DIR = $(SRC_BUILD_DIR)/$(TESTS_DIR)
+TESTS_BUILD_DIR = $(BUILD_DIR)/$(TESTS_DIR)
+TESTS_LOCAL_BUILD_DIR = build
+
+TESTS_MAKEFILE = Makefile
+TESTS_RUNSHELLSCRIPT = runtests.sh
+
+TEST_SRC_BIGNUMBER_C = test_bignumber.c
+
+
 # Install section
 
 binary_dir = /usr/local/bin
@@ -97,7 +112,7 @@ DOCS_INSTALL_DIR = $(system_docs_dir)/$(PROG)
 all: build
 
 help:
-	@echo "usage: make [ clean | install | uninstall ]"
+	@echo "usage: make [ tests | clean | install | uninstall ]"
 
 build:
 	@[ -d $(SRC_BUILD_DIR) ] $&& rm -rf $(SRC_BUILD_DIR)
@@ -159,6 +174,21 @@ build:
 
 	@echo "$(PROG) has built in the \`$(BUILD_DIR)' directory."
 
+tests:
+	@[ -d $(TESTS_SRC_BUILD_DIR) ] $&& rm -rf $(TESTS_SRC_BUILD_DIR)
+	@mkdir $(TESTS_SRC_BUILD_DIR)
+
+	@$(M4) $(VERSION_M4) $(TESTS_SRC_TEMPLATE_DIR)/$(TESTS_MAKEFILE) > $(TESTS_SRC_BUILD_DIR)/$(TESTS_MAKEFILE)
+	@$(M4) $(VERSION_M4) $(TESTS_SRC_TEMPLATE_DIR)/$(TESTS_RUNSHELLSCRIPT) > $(TESTS_SRC_BUILD_DIR)/$(TESTS_RUNSHELLSCRIPT)
+	@$(M4) $(VERSION_M4) $(TESTS_SRC_TEMPLATE_DIR)/$(TEST_SRC_BIGNUMBER_C) > $(TESTS_SRC_BUILD_DIR)/$(TEST_SRC_BIGNUMBER_C)
+
+	@$(MAKE) -C $(TESTS_SRC_BUILD_DIR)
+	@cp -rp $(TESTS_SRC_BUILD_DIR)/$(TESTS_LOCAL_BUILD_DIR) $(BUILD_DIR)/$(TESTS_DIR)
+	@install -m 755 $(TESTS_SRC_BUILD_DIR)/$(TESTS_RUNSHELLSCRIPT) $(BUILD_DIR)/$(TESTS_DIR)/$(TESTS_RUNSHELLSCRIPT)
+	@echo "Tests have built in the \`$(TESTS_BUILD_DIR)' directory."
+	@echo "Running tests..."
+	@(cd $(BUILD_DIR)/$(TESTS_DIR) && ./$(TESTS_RUNSHELLSCRIPT))
+
 clean:
 	@rm -rf $(SRC_BUILD_DIR)
 	@rm -rf $(BUILD_DIR)
@@ -187,4 +217,4 @@ uninstall:
 
 	@echo "$(PROG) has uninstalled."
 
-.PHONY: all help build clean install uninstall
+.PHONY: all help build tests clean install uninstall
