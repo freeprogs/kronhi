@@ -121,7 +121,8 @@
   :ARCHIVE:  tasks_archive.org::* Архив окружения
   :END:
 
-** TASK Добавить в Makefile тестировочную команду
+** DONE Добавить в Makefile тестировочную команду
+   CLOSED: [2017-05-13 Сб 20:36]
    :PROPERTIES:
    :issue_id: 4
    :issue_type: task
