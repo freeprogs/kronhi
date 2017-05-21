@@ -62,6 +62,8 @@ int run_command_shell(void)
             retdir = cmdshell_init_write_dir(dirdesc, dirdescfile);
             if (retdir == CMD_DIR_INTER) {
                 directory_description_set(&wdir, dirdesc);
+                cmdshell_print_message("Directory description has set");
+
             }
             else if (retdir == CMD_DIR_FILE) {
                 if (input_from_file(dirdesc, sizeof dirdesc, dirdescfile)) {
