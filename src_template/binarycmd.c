@@ -39,12 +39,12 @@ enum binarycmd_code binarycmd_write_dir(
     bindir_free(dir);
 
     if (!file_test_exists(destination))
-        return BINCMD_ERROR_FILE_NOFILE;
+        return BINCMD_ERROR_DIR_NOFILE;
     if (!file_test_write_perm(destination))
-        return BINCMD_ERROR_FILE_PERM_WRITE;
+        return BINCMD_ERROR_DIR_FILE_PERM_WRITE;
     if (!file_test_size(destination, offset, dirheadersize))
-        return BINCMD_ERROR_FILE_SIZE;
+        return BINCMD_ERROR_DIR_FILE_SIZE;
     if (!file_write(destination, offset, dirheader, dirheadersize))
-        return BINCMD_ERROR_FILE_WRITE;
+        return BINCMD_ERROR_DIR_FILE_WRITE;
     return BINCMD_OK;
 }

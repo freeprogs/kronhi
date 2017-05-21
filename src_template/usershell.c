@@ -150,19 +150,19 @@ int run_command_shell(void)
             else if (retbin == BINCMD_ERROR_DIR_HEADER) {
                 cmdshell_print_error("directory header is made corrupted");
             }
-            else if (retbin == BINCMD_ERROR_FILE_NOFILE) {
+            else if (retbin == BINCMD_ERROR_DIR_NOFILE) {
                 cmdshell_print_error("file not found: \"%s\"", dest);
             }
-            else if (retbin == BINCMD_ERROR_FILE_PERM_WRITE) {
+            else if (retbin == BINCMD_ERROR_DIR_FILE_PERM_WRITE) {
                 cmdshell_print_error("can't write to file: \"%s\"", dest);
             }
-            else if (retbin == BINCMD_ERROR_FILE_SIZE) {
+            else if (retbin == BINCMD_ERROR_DIR_FILE_SIZE) {
                 cmdshell_print_error(
                     "not enough space for directory: "
                     "\"%s\" offset %s",
                     dest, offsetstr);
             }
-            else if (retbin == BINCMD_ERROR_FILE_WRITE) {
+            else if (retbin == BINCMD_ERROR_DIR_FILE_WRITE) {
                 cmdshell_print_error("can't write directory to file");
             }
             else if (retbin == BINCMD_OK) {
