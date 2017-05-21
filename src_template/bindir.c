@@ -39,7 +39,7 @@ struct bindir *bindir_create(void)
    set in directory the description field and description size field
    return 1 if description successfully allocated in memory
    return 0 if not enough memory */
-int bindir_desc_set(struct bindir *dir, char *dirdesc)
+int bindir_desc_set(struct bindir *dir, const char *dirdesc)
 {
     size_t len;
     char *p;
