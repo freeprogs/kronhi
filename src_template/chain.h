@@ -48,7 +48,7 @@ void chain_start(
     const char *dst,
     const struct file_offset *start);
 enum chain_code chain_create_dir(
-    struct chain *self,
+    const struct chain *self,
     const char *desc,
     unsigned num_of_files,
     size_t relative_offset);

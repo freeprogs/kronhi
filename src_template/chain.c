@@ -34,7 +34,7 @@ void chain_start(
    return chain success code if no errors happened
    return chain error code is an error happened */
 enum chain_code chain_create_dir(
-    struct chain *self,
+    const struct chain *self,
     const char *desc,
     unsigned num_of_files,
     size_t relative_offset)
