@@ -39,7 +39,7 @@ enum binarycmd_code {
     BINCMD_OK
 };
 
-int binarycmd_write_dir(
+enum binarycmd_code binarycmd_write_dir(
     const char *destination, const struct file_offset *offset,
     const char *dirdesc, enum write_cipher_type cipher);
 
