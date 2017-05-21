@@ -93,6 +93,14 @@ char *write_options_tostr_cipher(struct write_options *opts, char out[])
     return out;
 }
 
+
+/* write_options_source_get: get source option
+                             return source option */
+char *write_options_source_get(struct write_options *opts, char out[])
+{
+    return strcpy(out, opts->src);
+}
+
 /* write_options_destination_get: get destination option
                                   return destination option */
 char *write_options_destination_get(struct write_options *opts, char out[])
