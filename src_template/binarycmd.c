@@ -23,28 +23,24 @@ enum binarycmd_code binarycmd_write_dir(
     const char *destination, const struct file_offset *offset,
     const char *dirdesc, enum write_cipher_type cipher)
 {
-    struct bindir *dir;
-    unsigned char dirheader[BINDIR_MAXHEADER];
-    size_t dirheadersize;
+    struct chain chain;
+    enum chain_code retval;
 
-    dir = bindir_create();
-    if (dir == NULL)
+    chain_start(&chain, destination, offset);
+    retval = chain_create_dir(&chain, dirdesc, 0, 0);
+    chain_end(&chain);
+
+    if (retval == CHAIN_ERROR_DIR_MEMORY)
         return BINCMD_ERROR_DIR_MEMORY;
-    bindir_desc_set(dir, dirdesc);
-    bindir_num_of_files_set(dir, 0);
-    bindir_file_offset_set(dir, 0);
-    dirheadersize = bindir_make_bin_header(dir, dirheader);
-    if (dirheadersize == 0)
+    if (retval == CHAIN_ERROR_DIR_HEADER)
         return BINCMD_ERROR_DIR_HEADER;
-    bindir_free(dir);
-
-    if (!file_test_exists(destination))
+    if (retval == CHAIN_ERROR_DIR_NOFILE)
         return BINCMD_ERROR_DIR_NOFILE;
-    if (!file_test_write_perm(destination))
+    if (retval == CHAIN_ERROR_DIR_FILE_PERM_WRITE)
         return BINCMD_ERROR_DIR_FILE_PERM_WRITE;
-    if (!file_test_size(destination, offset, dirheadersize))
+    if (retval == CHAIN_ERROR_DIR_FILE_SIZE)
         return BINCMD_ERROR_DIR_FILE_SIZE;
-    if (!file_write(destination, offset, dirheader, dirheadersize))
+    if (retval == CHAIN_ERROR_DIR_FILE_WRITE)
         return BINCMD_ERROR_DIR_FILE_WRITE;
     return BINCMD_OK;
 }

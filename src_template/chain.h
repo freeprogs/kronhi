@@ -17,26 +17,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BINARYCMD_H
-#define BINARYCMD_H
+#ifndef CHAIN_H
+#define CHAIN_H
 
 #include <stdio.h>
-#include "write_options.h"
 #include "file_offset.h"
-#include "chain.h"
+#include "bindir.h"
+#include "file_operation.h"
 
-enum binarycmd_code {
-    BINCMD_ERROR_DIR_MEMORY,
-    BINCMD_ERROR_DIR_HEADER,
-    BINCMD_ERROR_DIR_NOFILE,
-    BINCMD_ERROR_DIR_FILE_PERM_WRITE,
-    BINCMD_ERROR_DIR_FILE_SIZE,
-    BINCMD_ERROR_DIR_FILE_WRITE,
-    BINCMD_OK
+/* maximum length of writable directory header */
+#define BINDIR_MAXHEADER  1 + 2 + 65535 + 4 + 4
+
+enum chain_code {
+    CHAIN_ERROR_DIR_MEMORY,
+    CHAIN_ERROR_DIR_HEADER,
+    CHAIN_ERROR_DIR_NOFILE,
+    CHAIN_ERROR_DIR_FILE_PERM_WRITE,
+    CHAIN_ERROR_DIR_FILE_SIZE,
+    CHAIN_ERROR_DIR_FILE_WRITE,
+    CHAIN_OK
 };
 
-enum binarycmd_code binarycmd_write_dir(
-    const char *destination, const struct file_offset *offset,
-    const char *dirdesc, enum write_cipher_type cipher);
+struct chain {
+    const char *dst;
+    const struct file_offset *start;
+};
+
+void chain_start(
+    struct chain *self,
+    const char *dst,
+    const struct file_offset *start);
+enum chain_code chain_create_dir(
+    struct chain *self,
+    const char *desc,
+    unsigned num_of_files,
+    size_t relative_offset);
+void chain_end(struct chain *self);
 
 #endif
