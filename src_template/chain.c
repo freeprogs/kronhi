@@ -35,7 +35,7 @@ void chain_start(
    return chain error code is an error happened */
 enum chain_code chain_create_dir(
     const struct chain *self,
-    const char *desc,
+    const char *dirdesc,
     unsigned num_of_files,
     size_t relative_offset)
 {
@@ -48,7 +48,7 @@ enum chain_code chain_create_dir(
     dir = bindir_create();
     if (dir == NULL)
         return CHAIN_ERROR_DIR_MEMORY;
-    bindir_desc_set(dir, desc);
+    bindir_desc_set(dir, dirdesc);
     bindir_num_of_files_set(dir, 0);
     bindir_file_offset_set(dir, 0);
     dirheadersize = bindir_make_bin_header(dir, dirheader);
