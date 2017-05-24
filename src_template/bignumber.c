@@ -61,7 +61,7 @@ int bignumber_lt_big(const struct bignumber *number_left,
     return number_left->number < number_right->number;
 }
 
-/* bignumber_add_int: add a signed integer to th big number
+/* bignumber_add_int: add a signed integer to the big number
                       return 1 if has added
                       return 0 if has not added */
 int bignumber_add_int(struct bignumber *number, int value)
