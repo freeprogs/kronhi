@@ -66,6 +66,9 @@ int bignumber_lt_big(const struct bignumber *number_left,
                       return 0 if has not added */
 int bignumber_add_int(struct bignumber *number, int value)
 {
+    double prev;
+
+    prev = number->number;
     number->number += value;
-    return number->number == number->number + value;
+    return number->number - value == prev;
 }
