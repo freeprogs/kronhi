@@ -25,6 +25,9 @@
 #include <string.h>
 #include "endian.h"
 
+/* maximum length of writable directory header */
+#define BINDIR_MAXHEADER  1 + 2 + 65535 + 4 + 4
+
 /*
  * struct bindir contents:
  * type_sign     --  the sign of the directory header

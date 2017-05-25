@@ -25,9 +25,6 @@
 #include "bindir.h"
 #include "file_operation.h"
 
-/* maximum length of writable directory header */
-#define BINDIR_MAXHEADER  1 + 2 + 65535 + 4 + 4
-
 enum chain_code {
     CHAIN_ERROR_DIR_MEMORY,
     CHAIN_ERROR_DIR_HEADER,
