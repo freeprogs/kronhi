@@ -19,3 +19,24 @@
 
 #include "file_operation.h"
 
+/* file_test_size:
+   tests whether stream has space for given size
+   return 1 if has enough space
+   return 0 if has no enough space */
+int file_test_size(FILE *fp, size_t size)
+{
+    int retval;
+    fpos_t savepos;
+
+    fgetpos(ofp, &savepos);
+    while (size > LONG_MAX) {
+        fseek(fp, LONG_MAX, SEEK_CUR);
+        size -= LONG_MAX;
+    }
+    if (size > 0) {
+        fseek(fp, size, SEEK_CUR);
+    }
+    retval = feof(fp) == 0;
+    fsetpos(ofp, &savepos);
+    return retval;
+}

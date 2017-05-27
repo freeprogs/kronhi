@@ -24,9 +24,11 @@
 #define _FILE_OFFSET_BITS  64
 
 #include <stdio.h>
+#include <limits.h>
 
 /* Block size for writings */
 #define W_BLOCK_SIZE  8192
 
+int file_test_size(FILE *fp, size_t size);
 
 #endif
