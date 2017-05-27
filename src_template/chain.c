@@ -32,7 +32,7 @@ void chain_start(
 /* chain_create_dir:
    make new directory on destination file with start offset
    return chain success code if no errors happened
-   return chain error code is an error happened */
+   return chain error code if an error happened */
 enum chain_code chain_create_dir(
     const struct chain *self,
     const char *dirdesc,
