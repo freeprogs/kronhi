@@ -34,17 +34,17 @@ enum binarycmd_code binarycmd_write_dir(
     retval = chain_create_dir(&chain, dirdesc, 0, 0);
     chain_end(&chain);
 
-    if (retval == CHAIN_ERROR_DIR_MEMORY)
-        return BINCMD_ERROR_DIR_MEMORY;
-    if (retval == CHAIN_ERROR_DIR_HEADER)
-        return BINCMD_ERROR_DIR_HEADER;
-    if (retval == CHAIN_ERROR_DIR_NOFILE)
-        return BINCMD_ERROR_DIR_NOFILE;
-    if (retval == CHAIN_ERROR_DIR_FILE_PERM_WRITE)
-        return BINCMD_ERROR_DIR_FILE_PERM_WRITE;
-    if (retval == CHAIN_ERROR_DIR_FILE_SIZE)
-        return BINCMD_ERROR_DIR_FILE_SIZE;
-    if (retval == CHAIN_ERROR_DIR_FILE_WRITE)
-        return BINCMD_ERROR_DIR_FILE_WRITE;
+    if (retval == CHAIN_ERROR_DIR_OPENFILE)
+        return BINCMD_ERROR_DIR_OPENFILE;
+    if (retval == CHAIN_ERROR_DIR_SKIPOFFSET)
+        return BINCMD_ERROR_DIR_SKIPOFFSET;
+    if (retval == CHAIN_ERROR_DIR_FILESIZE)
+        return BINCMD_ERROR_DIR_FILESIZE;
+    if (retval == CHAIN_ERROR_DIR_WRITENODE)
+        return BINCMD_ERROR_DIR_WRITENODE;
+    if (retval == CHAIN_ERROR_DIR_WRITEFILE)
+        return BINCMD_ERROR_DIR_WRITEFILE;
+    if (retval == CHAIN_ERROR_DIR_FILESYS)
+        return BINCMD_ERROR_DIR_FILESYS;
     return BINCMD_OK;
 }
