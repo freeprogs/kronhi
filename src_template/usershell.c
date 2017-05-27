@@ -167,7 +167,7 @@ int run_command_shell(void)
             }
             else if (retbin == BINCMD_OK) {
                 cmdshell_print_message(
-                    "Directory has written to \"%s\" with offset %s",
+                    "Directory has written to \"%s\" with offset %s.",
                     dest, offsetstr);
             }
         }
