@@ -39,33 +39,27 @@ enum chain_code chain_create_dir(
     unsigned num_of_files,
     size_t relative_offset)
 {
-    struct bindir *dir;
-    unsigned char dirheader[BINDIR_MAXHEADER];
-    size_t dirheadersize;
-    const char *destination;
-    const struct file_offset *offset;
+    struct bindir dir;
+    FILE *ofp;
 
-    dir = bindir_create();
-    if (dir == NULL)
-        return CHAIN_ERROR_DIR_MEMORY;
-    bindir_desc_set(dir, dirdesc);
-    bindir_num_of_files_set(dir, 0);
-    bindir_file_offset_set(dir, 0);
-    dirheadersize = bindir_make_bin_header(dir, dirheader);
-    if (dirheadersize == 0)
-        return CHAIN_ERROR_DIR_HEADER;
-    bindir_free(dir);
-
-    destination = self->dst;
-    offset = self->start;
-    if (!file_test_exists(destination))
-        return CHAIN_ERROR_DIR_NOFILE;
-    if (!file_test_write_perm(destination))
-        return CHAIN_ERROR_DIR_FILE_PERM_WRITE;
-    if (!file_test_size(destination, offset, dirheadersize))
-        return CHAIN_ERROR_DIR_FILE_SIZE;
-    if (!file_write(destination, offset, dirheader, dirheadersize))
-        return CHAIN_ERROR_DIR_FILE_WRITE;
+    bindir_start(&dir);
+    bindir_desc_set(&dir, dirdesc);
+    bindir_num_of_files_set(&dir, 0);
+    bindir_file_offset_set(&dir, 0);
+    ofp = fopen(self->dst, "r+b");
+    if (ofp == NULL)
+        return CHAIN_ERROR_DIR_OPENFILE;
+    if (!file_skip_to_offset(ofp, self->start))
+        return CHAIN_ERROR_DIR_SKIPOFFSET;
+    if (!file_check_size(ofp, bindir_get_size(&dir)))
+        return CHAIN_ERROR_DIR_FILESIZE;
+    if (!node_write_dir(ofp, &dir))
+        return CHAIN_ERROR_DIR_WRITENODE;
+    if (ferror(ofp))
+        return CHAIN_ERROR_DIR_WRITEFILE;
+    if (fclose(ofp) != 0)
+        return CHAIN_ERROR_DIR_FILESYS;
+    bindir_end(&dir);
     return CHAIN_OK;
 }
 
