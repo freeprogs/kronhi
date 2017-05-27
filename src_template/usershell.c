@@ -144,26 +144,26 @@ int run_command_shell(void)
             cipher = write_options_cipher_get(&wopts);
 
             retbin = binarycmd_write_dir(dest, &offset, dirdesc, cipher);
-            if (retbin == BINCMD_ERROR_DIR_MEMORY) {
-                cmdshell_print_error("not enough memory for directory header");
+            if (retbin == BINCMD_ERROR_DIR_OPENFILE) {
+                cmdshell_print_error("can't open file \"%s\"", dest);
             }
-            else if (retbin == BINCMD_ERROR_DIR_HEADER) {
-                cmdshell_print_error("directory header is made corrupted");
+            else if (retbin == BINCMD_ERROR_DIR_SKIPOFFSET) {
+                cmdshell_print_error("can't skip to start offset");
             }
-            else if (retbin == BINCMD_ERROR_DIR_NOFILE) {
-                cmdshell_print_error("file not found: \"%s\"", dest);
-            }
-            else if (retbin == BINCMD_ERROR_DIR_FILE_PERM_WRITE) {
-                cmdshell_print_error("can't write to file: \"%s\"", dest);
-            }
-            else if (retbin == BINCMD_ERROR_DIR_FILE_SIZE) {
+            else if (retbin == BINCMD_ERROR_DIR_FILESIZE) {
                 cmdshell_print_error(
                     "not enough space for directory: "
                     "\"%s\" offset %s",
                     dest, offsetstr);
             }
-            else if (retbin == BINCMD_ERROR_DIR_FILE_WRITE) {
-                cmdshell_print_error("can't write directory to file");
+            else if (retbin == BINCMD_ERROR_DIR_WRITENODE) {
+                cmdshell_print_error("can't write directory node");
+            }
+            else if (retbin == BINCMD_ERROR_DIR_WRITEFILE) {
+                cmdshell_print_error("can't write to file correctly");
+            }
+            else if (retbin == BINCMD_ERROR_DIR_FILESYS) {
+                cmdshell_print_error("can't close file correctly");
             }
             else if (retbin == BINCMD_OK) {
                 cmdshell_print_message(
