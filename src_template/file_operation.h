@@ -20,7 +20,8 @@
 #ifndef FILE_OPERATION_H
 #define FILE_OPERATION_H
 
-/* Linux definition for opening big files (greater 2Gb) */
+/* Linux definition for opening big files (greater 2Gb)
+   (Must be placed before stdio.h inclusion.) */
 #define _FILE_OFFSET_BITS  64
 
 #include <stdio.h>
