@@ -28,7 +28,7 @@ int file_test_size(FILE *fp, size_t size)
     int retval;
     fpos_t savepos;
 
-    fgetpos(ofp, &savepos);
+    fgetpos(fp, &savepos);
     while (size > LONG_MAX) {
         fseek(fp, LONG_MAX, SEEK_CUR);
         size -= LONG_MAX;
@@ -37,6 +37,6 @@ int file_test_size(FILE *fp, size_t size)
         fseek(fp, size, SEEK_CUR);
     }
     retval = feof(fp) == 0;
-    fsetpos(ofp, &savepos);
+    fsetpos(fp, &savepos);
     return retval;
 }
