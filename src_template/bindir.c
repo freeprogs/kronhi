@@ -128,9 +128,9 @@ void bindir_end(struct bindir *dir)
     binfield_raw_free(dir->desc);
     binfield_num_free(dir->num_of_files);
     binfield_num_free(dir->file_offset);
-    dir->type_sign =
-        dir->descsize =
-        dir->desc =
-        dir->num_of_files =
-        dir->file_offset = NULL;
+    dir->type_sign = NULL;
+    dir->descsize = NULL;
+    dir->desc = NULL;
+    dir->num_of_files = NULL;
+    dir->file_offset = NULL;
 }
