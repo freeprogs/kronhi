@@ -53,7 +53,7 @@ enum chain_code chain_create_dir(
         return CHAIN_ERROR_DIR_OPENFILE;
     if (!file_skip_to_offset(ofp, self->start))
         return CHAIN_ERROR_DIR_SKIPOFFSET;
-    if (!file_check_size(ofp, bindir_get_size(&dir)))
+    if (!file_test_write_size(ofp, bindir_get_size(&dir)))
         return CHAIN_ERROR_DIR_FILESIZE;
     if (!node_write_dir(ofp, &dir))
         return CHAIN_ERROR_DIR_WRITENODE;

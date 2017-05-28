@@ -30,6 +30,6 @@
 /* Block size for writings */
 #define W_BLOCK_SIZE  8192
 
-int file_test_size(FILE *fp, size_t size);
+int file_test_write_size(FILE *fp, size_t size);
 
 #endif

@@ -19,11 +19,11 @@
 
 #include "file_operation.h"
 
-/* file_test_size:
+/* file_test_write_size:
    tests whether stream has space for given size
    return 1 if has enough space
    return 0 if has no enough space */
-int file_test_size(FILE *fp, size_t size)
+int file_test_write_size(FILE *fp, size_t size)
 {
     int retval;
     fpos_t savepos;
