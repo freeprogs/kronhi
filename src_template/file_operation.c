@@ -23,18 +23,19 @@
    tests whether stream has space for given size
    return 1 if has enough space
    return 0 if has no enough space */
-int file_test_write_size(FILE *fp, size_t size)
+int file_test_write_size(FILE *fp, const struct bignumber *size)
 {
     int retval;
     fpos_t savepos;
+    struct bignumber cursize;
 
     fgetpos(fp, &savepos);
-    while (size > LONG_MAX) {
-        fseek(fp, LONG_MAX, SEEK_CUR);
-        size -= LONG_MAX;
-    }
-    if (size > 0) {
-        fseek(fp, size, SEEK_CUR);
+
+    bignumber_set_value_int(&cursize, 0);
+    while (bignumber_lt_big(&cursize, size)) {
+        if (getc(fp) == EOF)
+            break;
+        bignumber_add_int(&cursize, 1);
     }
     retval = feof(fp) == 0;
     fsetpos(fp, &savepos);

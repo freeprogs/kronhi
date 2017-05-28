@@ -25,6 +25,7 @@
 #include "file_offset.h"
 #include "bindir.h"
 #include "file_operation.h"
+#include "bignumber.h"
 
 enum chain_code {
     CHAIN_ERROR_DIR_OPENFILE,

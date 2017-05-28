@@ -41,6 +41,7 @@ enum chain_code chain_create_dir(
 {
     struct bindir dir;
     FILE *ofp;
+    struct bignumber dirsize;
 
     bindir_start(&dir);
     bindir_type_set(&dir, 'd');
@@ -53,7 +54,9 @@ enum chain_code chain_create_dir(
         return CHAIN_ERROR_DIR_OPENFILE;
     if (!file_skip_to_offset(ofp, self->start))
         return CHAIN_ERROR_DIR_SKIPOFFSET;
-    if (!file_test_write_size(ofp, bindir_get_size(&dir)))
+    if (!bignumber_set_value_int(&dirsize, bindir_get_size(&dir)))
+        return CHAIN_ERROR_DIR_FILESIZE;
+    if (!file_test_write_size(ofp, &dirsize))
         return CHAIN_ERROR_DIR_FILESIZE;
     if (!node_write_dir(ofp, &dir))
         return CHAIN_ERROR_DIR_WRITENODE;
