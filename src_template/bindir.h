@@ -20,6 +20,31 @@
 #ifndef BINDIR_H
 #define BINDIR_H
 
+#include "binfield.h"
 
+/*
+ * struct bindir contents:
+ * type_sign     --  the sign of the directory header
+ * descsize      --  the directory description size
+ * desc          --  the directory description itself
+ * num_of_files  --  the number of files in the directory
+ * file_offset   --  the offset of the first file in the directory
+ *                   this offset is relative to its place in memory
+*/
+struct bindir {
+    struct field_raw *type_sign;
+    struct field_num *descsize;
+    struct field_raw *desc;
+    struct field_num *num_of_files;
+    struct field_num *file_offset;
+};
+
+int bindir_start(struct bindir *dir);
+int bindir_type_set(struct bindir *dir, char type);
+int bindir_descsize_set(struct bindir *dir, unsigned short dirdescsize);
+int bindir_desc_set(struct bindir *dir, const char *dirdesc);
+int bindir_num_of_files_set(struct bindir *dir, size_t num_of_files);
+int bindir_file_offset_set(struct bindir *dir, size_t file_offset);
+void bindir_end(struct bindir *dir);
 
 #endif
