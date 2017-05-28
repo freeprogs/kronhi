@@ -43,6 +43,7 @@ enum chain_code chain_create_dir(
     FILE *ofp;
 
     bindir_start(&dir);
+    bindir_type_set(&dir, 'd');
     bindir_desc_set(&dir, dirdesc);
     bindir_num_of_files_set(&dir, 0);
     bindir_file_offset_set(&dir, 0);
