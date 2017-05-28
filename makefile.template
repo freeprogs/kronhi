@@ -84,6 +84,8 @@ SRC_CHAIN_C = chain.c
 SRC_CHAIN_H = chain.h
 SRC_BINFIELD_C = binfield.c
 SRC_BINFIELD_H = binfield.h
+SRC_NODE_C = node.c
+SRC_NODE_H = node.h
 
 
 # Tests
@@ -153,6 +155,8 @@ build:
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_CHAIN_H) > $(SRC_BUILD_DIR)/$(SRC_CHAIN_H)
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_BINFIELD_C) > $(SRC_BUILD_DIR)/$(SRC_BINFIELD_C)
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_BINFIELD_H) > $(SRC_BUILD_DIR)/$(SRC_BINFIELD_H)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_NODE_C) > $(SRC_BUILD_DIR)/$(SRC_NODE_C)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_NODE_H) > $(SRC_BUILD_DIR)/$(SRC_NODE_H)
 
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
 	@mkdir $(BUILD_DIR)
@@ -174,6 +178,7 @@ build:
             $(SRC_BUILD_DIR)/$(SRC_BIGNUMBER_C) \
             $(SRC_BUILD_DIR)/$(SRC_CHAIN_C) \
             $(SRC_BUILD_DIR)/$(SRC_BINFIELD_C) \
+            $(SRC_BUILD_DIR)/$(SRC_NODE_C) \
             -o $(BUILD_DIR)/$(TARGET_BINARY)
 	@chmod u+x $(BUILD_DIR)/$(TARGET_BINARY)
 

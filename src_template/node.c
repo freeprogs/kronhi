@@ -17,41 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CHAIN_H
-#define CHAIN_H
-
-#include <stdio.h>
-#include <string.h>
-#include "file_offset.h"
-#include "bindir.h"
-#include "file_operation.h"
-#include "bignumber.h"
 #include "node.h"
 
-enum chain_code {
-    CHAIN_ERROR_DIR_OPENFILE,
-    CHAIN_ERROR_DIR_SKIPOFFSET,
-    CHAIN_ERROR_DIR_FILESIZE,
-    CHAIN_ERROR_DIR_WRITENODE,
-    CHAIN_ERROR_DIR_WRITEFILE,
-    CHAIN_ERROR_DIR_FILESYS,
-    CHAIN_OK
-};
-
-struct chain {
-    const char *dst;
-    const struct file_offset *start;
-};
-
-void chain_start(
-    struct chain *self,
-    const char *dst,
-    const struct file_offset *start);
-enum chain_code chain_create_dir(
-    const struct chain *self,
-    const char *dirdesc,
-    unsigned num_of_files,
-    size_t relative_offset);
-void chain_end(struct chain *self);
-
-#endif
+/* node_write_dir: write directory node to output stream
+                   return 1 if has written correctly
+                   return 0 if errors happened */
+int node_write_dir(FILE *ofp, struct bindir *dir)
+{
+    binfield_raw_write(dir->type_sign, ofp);
+    binfield_num_write(dir->descsize, ofp);
+    binfield_raw_write(dir->desc, ofp);
+    binfield_num_write(dir->num_of_files, ofp);
+    binfield_num_write(dir->file_offset, ofp);
+    if (ferror(ofp))
+        return 0;
+    return 1;
+}
