@@ -21,6 +21,7 @@
 #define CHAIN_H
 
 #include <stdio.h>
+#include <string.h>
 #include "file_offset.h"
 #include "bindir.h"
 #include "file_operation.h"
