@@ -87,6 +87,26 @@ int binfield_num_set(struct field_num *field, const void *value, size_t length)
     return 1;
 }
 
+/* binfield_raw_write: write raw field to output stream
+                       return 1 if has written correctly
+                       return 0 if an error happened */
+int binfield_raw_write(const struct field_raw *field, FILE *ofp)
+{
+    return fwrite(field->val, field->len, 1, ofp) == 1;
+}
+
+/* binfield_num_write: write number field to output stream
+                       return 1 if has written correctly
+                       return 0 if an error happened */
+int binfield_num_write(const struct field_num *field, FILE *ofp)
+{
+    unsigned char buf[NUMBUFMAX];
+
+    memcpy(buf, field->val, field->len);
+    bytes_to_bigend(buf, field->len);
+    return fwrite(buf, field->len, 1, ofp) == 1;
+}
+
 /* binfield_raw_free: free raw field value and field itself */
 void binfield_raw_free(struct field_raw *field)
 {
