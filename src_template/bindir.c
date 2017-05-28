@@ -110,6 +110,16 @@ int bindir_file_offset_set(struct bindir *dir, size_t file_offset)
                             sizeof file_offset);
 }
 
+/* bindir_get_size: get directory fields total size */
+size_t bindir_get_size(const struct bindir *dir)
+{
+    return dir->type_sign->len +
+        dir->descsize->len +
+        dir->desc->len +
+        dir->num_of_files->len +
+        dir->file_offset->len;
+}
+
 /* bindir_end: delete directory fields and fill it by zeros */
 void bindir_end(struct bindir *dir)
 {
