@@ -26,10 +26,12 @@
 
 #include <stdio.h>
 #include <limits.h>
+#include "file_offset.h"
 
 /* Block size for writings */
 #define W_BLOCK_SIZE  8192
 
 int file_test_write_size(FILE *fp, size_t size);
+int file_skip_to_offset(FILE *fp, const struct file_offset *offset);
 
 #endif

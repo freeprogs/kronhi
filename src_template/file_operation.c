@@ -40,3 +40,22 @@ int file_test_write_size(FILE *fp, size_t size)
     fsetpos(fp, &savepos);
     return retval;
 }
+
+/* file_skip_to_offset: set stream pointer to given offset
+                        return 1 if has set correctly
+                        return 0 if an error happen */
+int file_skip_to_offset(FILE *fp, const struct file_offset *offset)
+{
+    struct file_offset off;
+
+    fseek(fp, 0L, SEEK_SET);
+    fileoffset_clear(&off);
+    while (fileoffset_lt(&off, offset)) {
+        if (getc(fp) == EOF)
+            break;
+        fileoffset_add_number(&off, 1);
+    }
+    if (ferror(fp) || feof(fp))
+        return 0;
+    return 1;
+}
