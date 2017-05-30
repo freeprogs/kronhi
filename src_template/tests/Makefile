@@ -30,17 +30,26 @@ BUILD_DIR = build
 TARGET_BIGNUMBER = test_bignumber
 SRC_BIGNUMBER_TEST = test_bignumber.c
 SRC_BIGNUMBER_SOURCES = ../bignumber.c
+TARGET_FILE_OPERATION = test_file_operation
+SRC_FILE_OPERATION_TEST = test_file_operation.c
+SRC_FILE_OPERATION_SOURCES = ../file_operation.c ../bignumber.c ../file_offset.c
 
 
 # Commands
 
-all: bignumber
+all: prepare_build_directory bignumber file_operation
 
-bignumber:
+prepare_build_directory:
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
 	@mkdir $(BUILD_DIR)
+
+bignumber:
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_BIGNUMBER_SOURCES) $(SRC_BIGNUMBER_TEST) -o $(BUILD_DIR)/$(TARGET_BIGNUMBER)
 	@echo "$(TARGET_BIGNUMBER) has built"
+
+file_operation:
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_FILE_OPERATION_SOURCES) $(SRC_FILE_OPERATION_TEST) -o $(BUILD_DIR)/$(TARGET_FILE_OPERATION)
+	@echo "$(TARGET_FILE_OPERATION) has built"
 
 help:
 	@echo "usage: make [ clean ]" 1>&2
@@ -48,5 +57,6 @@ help:
 clean:
 	@rm -rf $(BUILD_DIR)
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_BIGNUMBER)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_FILE_OPERATION)"
 
-.PHONY: all bignumber help clean
+.PHONY: all prepare_build_directory bignumber file_operation help clean
