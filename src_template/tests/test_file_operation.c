@@ -54,8 +54,9 @@ int main(void)
 
 void test_can_skip_a_byte(void)
 {
-    FILE *fp;
     struct file_offset offset;
+
+    FILE *fp;
 
     fp = tmpfile();
     if (fp == NULL)
@@ -77,8 +78,9 @@ void test_can_skip_a_byte(void)
 
 void test_raise_on_skip_beyond_end_of_file(void)
 {
-    FILE *fp;
     struct file_offset offset;
+
+    FILE *fp;
 
     fp = tmpfile();
     if (fp == NULL)
