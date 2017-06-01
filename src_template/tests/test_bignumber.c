@@ -52,6 +52,7 @@ int main(void)
 void test_can_set_value_from_int(void)
 {
     struct bignumber number;
+
     char out[1000];
 
     bignumber_set_value_int(&number, 1);
