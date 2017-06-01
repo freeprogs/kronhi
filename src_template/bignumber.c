@@ -72,3 +72,15 @@ int bignumber_add_int(struct bignumber *number, int value)
     number->number += value;
     return number->number - value == prev;
 }
+
+/* bignumber_add_ulong: add an unsigned long integer to the big number
+                        return 1 if has added
+                        return 0 if has not added */
+int bignumber_add_ulong(struct bignumber *number, size_t value)
+{
+    double prev;
+
+    prev = number->number;
+    number->number += value;
+    return number->number - value == prev;
+}

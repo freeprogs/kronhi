@@ -1,5 +1,8 @@
 build/
 Makefile
+!src_template/tests/Makefile
 src_build/
 notes
+TAGS
 examples/
+file.dat

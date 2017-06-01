@@ -19,105 +19,44 @@
 
 #include "file_operation.h"
 
-/* file_test_exists: test whether file exists
-                     return 1 if exists
-                     return 0 if doesn't exist */
-int file_test_exists(const char *path)
-{
-    FILE *fp;
-
-    if ((fp = fopen(path, "r")) == NULL)
-        return 0;
-    fclose(fp);
-    return 1;
-}
-
-/* file_test_write_perm: test whether file has write permission
-                         return 1 if has write permission
-                         return 0 if has no write permission */
-int file_test_write_perm(const char *path)
-{
-    FILE *fp;
-
-    if ((fp = fopen(path, "r")) == NULL)
-        return 0;
-    fclose(fp);
-    if ((fp = fopen(path, "r+")) == NULL)
-        return 0;
-    fclose(fp);
-    return 1;
-}
-
-/* file_test_size:
-   tests whether file has space after offset for given size
+/* file_test_write_size:
+   tests whether stream has space for given size
    return 1 if has enough space
    return 0 if has no enough space */
-int file_test_size(
-    const char *path, const struct file_offset *offset, size_t datasize)
+int file_test_write_size(FILE *fp, const struct bignumber *size)
 {
-    FILE *fp;
-    struct file_offset off;
-    struct file_offset *offset_cur = &off;
+    int retval;
+    fpos_t savepos;
+    struct bignumber cursize;
 
-    if ((fp = fopen(path, "r")) == NULL)
-        return 0;
-    for (fileoffset_clear(offset_cur);
-         fileoffset_lt(offset_cur, offset);
-         fileoffset_inc1(offset_cur)) {
-        if (getc(fp) == EOF) {
-            fclose(fp);
-            return 0;
-        }
+    fgetpos(fp, &savepos);
+
+    bignumber_set_value_int(&cursize, 0);
+    while (bignumber_lt_big(&cursize, size)) {
+        if (getc(fp) == EOF)
+            break;
+        bignumber_add_int(&cursize, 1);
     }
-    for ( ; datasize > 0; datasize--) {
-        if (getc(fp) == EOF) {
-            fclose(fp);
-            return 0;
-        }
-    }
-    fclose(fp);
-    return 1;
+    retval = feof(fp) == 0;
+    fsetpos(fp, &savepos);
+    return retval;
 }
 
-/* file_write: write to file after offset data of given size
-               return 1 if has written right
-               return 0 if some error has happen
-               (open file, too big offset, stream error) */
-int file_write(
-    const char *path, const struct file_offset *offset,
-    void *data, size_t datasize)
+/* file_skip_to_offset: set stream pointer to given offset
+                        return 1 if has set correctly
+                        return 0 if an error happen */
+int file_skip_to_offset(FILE *fp, const struct file_offset *offset)
 {
-    FILE *fp;
-    int f_waserror;
     struct file_offset off;
-    struct file_offset *offset_cur = &off;
 
-    fileoffset_clear(offset_cur);
-
-    if ((fp = fopen(path, "r+b")) == NULL)
+    fseek(fp, 0L, SEEK_SET);
+    fileoffset_clear(&off);
+    while (fileoffset_lt(&off, offset)) {
+        if (getc(fp) == EOF)
+            break;
+        fileoffset_add_number(&off, 1);
+    }
+    if (ferror(fp) || feof(fp))
         return 0;
-    for (fileoffset_clear(offset_cur);
-         fileoffset_lt(offset_cur, offset);
-         fileoffset_inc1(offset_cur)) {
-        if (getc(fp) == EOF) {
-            fclose(fp);
-            return 0;
-        }
-    }
-    while (datasize > 0) {
-        size_t blocksize;
-        if (datasize > W_BLOCK_SIZE)
-            blocksize = W_BLOCK_SIZE;
-        else
-            blocksize = datasize;
-        if (fwrite(data, blocksize, 1, fp) == 0) {
-            fclose(fp);
-            return 0;
-        }
-        data = (unsigned char *) data + blocksize;
-        datasize -= blocksize;
-    }
-    f_waserror = ferror(fp) != 0;
-    fclose(fp);
-    return !f_waserror;
+    return 1;
 }

@@ -19,9 +19,10 @@
 
 #include <stdio.h>
 #include <CUnit/Basic.h>
-#include "../bignumber.h"
+#include "../file_operation.h"
 
-void test_can_set_value_from_int(void);
+void test_can_skip_a_byte(void);
+void test_raise_on_skip_beyond_end_of_file(void);
 
 int main(void)
 {
@@ -36,8 +37,10 @@ int main(void)
         return CU_get_error();
     }
 
-    if (CU_add_test(suite, "can set value from int",
-                    test_can_set_value_from_int) == NULL) {
+    if (CU_add_test(suite, "can skip a byte",
+                    test_can_skip_a_byte) == NULL ||
+        CU_add_test(suite, "raise on skip beyond end of file",
+                    test_raise_on_skip_beyond_end_of_file) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -49,13 +52,45 @@ int main(void)
     return CU_get_error();
 }
 
-void test_can_set_value_from_int(void)
+void test_can_skip_a_byte(void)
 {
-    struct bignumber number;
+    struct file_offset offset;
 
-    char out[1000];
+    FILE *fp;
 
-    bignumber_set_value_int(&number, 1);
-    bignumber_tostr(&number, out);
-    CU_ASSERT_STRING_EQUAL(out, "1");
+    fp = tmpfile();
+    if (fp == NULL)
+        CU_FAIL("can't create temporary file");
+    putc('x', fp);
+
+    rewind(fp);
+    fileoffset_clear(&offset);
+    fileoffset_add_number(&offset, 1);
+    CU_ASSERT_TRUE(file_skip_to_offset(fp, &offset));
+
+    rewind(fp);
+    fileoffset_clear(&offset);
+    fileoffset_add_number(&offset, 2);
+    CU_ASSERT_FALSE(file_skip_to_offset(fp, &offset));
+
+    fclose(fp);
+}
+
+void test_raise_on_skip_beyond_end_of_file(void)
+{
+    struct file_offset offset;
+
+    FILE *fp;
+
+    fp = tmpfile();
+    if (fp == NULL)
+        CU_FAIL("can't create temporary file");
+    putc('x', fp);
+
+    rewind(fp);
+    fileoffset_clear(&offset);
+    fileoffset_add_number(&offset, 2);
+    CU_ASSERT_FALSE(file_skip_to_offset(fp, &offset));
+
+    fclose(fp);
 }

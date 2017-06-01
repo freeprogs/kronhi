@@ -20,21 +20,18 @@
 #ifndef FILE_OPERATION_H
 #define FILE_OPERATION_H
 
-/* Linux definition for opening big files (greater 2Gb) */
+/* Linux definition for opening big files (greater 2Gb)
+   (Must be placed before stdio.h inclusion.) */
 #define _FILE_OFFSET_BITS  64
 
 #include <stdio.h>
+#include "bignumber.h"
 #include "file_offset.h"
 
 /* Block size for writings */
 #define W_BLOCK_SIZE  8192
 
-int file_test_exists(const char *path);
-int file_test_write_perm(const char *path);
-int file_test_size(
-    const char *path, const struct file_offset *offset, size_t datasize);
-int file_write(
-    const char *path, const struct file_offset *offset,
-    void *data, size_t datasize);
+int file_test_write_size(FILE *fp, const struct bignumber *size);
+int file_skip_to_offset(FILE *fp, const struct file_offset *offset);
 
 #endif

@@ -58,3 +58,11 @@ void fileoffset_inc1(struct file_offset *offset)
 {
     bignumber_add_int(&offset->number, 1);
 }
+
+/* fileoffset_add_number: add number to offset
+                          return 1 if added with no errors
+                          return 0 if an error happened */
+int fileoffset_add_number(struct file_offset *offset, size_t number)
+{
+    return bignumber_add_ulong(&offset->number, number);
+}

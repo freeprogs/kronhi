@@ -17,26 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BINARYCMD_H
-#define BINARYCMD_H
+#ifndef NODE_H
+#define NODE_H
 
 #include <stdio.h>
-#include "write_options.h"
-#include "file_offset.h"
-#include "chain.h"
+#include "bindir.h"
 
-enum binarycmd_code {
-    BINCMD_ERROR_DIR_OPENFILE,
-    BINCMD_ERROR_DIR_SKIPOFFSET,
-    BINCMD_ERROR_DIR_FILESIZE,
-    BINCMD_ERROR_DIR_WRITENODE,
-    BINCMD_ERROR_DIR_WRITEFILE,
-    BINCMD_ERROR_DIR_FILESYS,
-    BINCMD_OK
-};
-
-enum binarycmd_code binarycmd_write_dir(
-    const char *destination, const struct file_offset *offset,
-    const char *dirdesc, enum write_cipher_type cipher);
+int node_write_dir(FILE *ofp, struct bindir *dir);
 
 #endif

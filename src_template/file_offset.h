@@ -33,6 +33,6 @@ char *fileoffset_tostr(const struct file_offset *offset, char out[]);
 int fileoffset_lt(const struct file_offset *offset_left,
                   const struct file_offset *offset_right);
 void fileoffset_inc1(struct file_offset *offset);
-
+int fileoffset_add_number(struct file_offset *file_offset, size_t number);
 
 #endif
