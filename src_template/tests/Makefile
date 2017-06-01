@@ -33,11 +33,16 @@ SRC_BIGNUMBER_SOURCES = ../bignumber.c
 TARGET_FILE_OPERATION = test_file_operation
 SRC_FILE_OPERATION_TEST = test_file_operation.c
 SRC_FILE_OPERATION_SOURCES = ../file_operation.c ../bignumber.c ../file_offset.c
+TARGET_CHAIN = test_chain
+SRC_CHAIN_TEST = test_chain.c
+SRC_CHAIN_SOURCES = ../chain.c ../bignumber.c ../file_offset.c \
+                    ../bindir.c ../file_operation.c \
+                    ../node.c ../binfield.c ../endian.c
 
 
 # Commands
 
-all: prepare_build_directory bignumber file_operation
+all: prepare_build_directory bignumber file_operation chain
 
 prepare_build_directory:
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
@@ -51,6 +56,10 @@ file_operation:
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_FILE_OPERATION_SOURCES) $(SRC_FILE_OPERATION_TEST) -o $(BUILD_DIR)/$(TARGET_FILE_OPERATION)
 	@echo "$(TARGET_FILE_OPERATION) has built"
 
+chain:
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_CHAIN_SOURCES) $(SRC_CHAIN_TEST) -o $(BUILD_DIR)/$(TARGET_CHAIN)
+	@echo "$(TARGET_CHAIN) has built"
+
 help:
 	@echo "usage: make [ clean ]" 1>&2
 
@@ -58,5 +67,6 @@ clean:
 	@rm -rf $(BUILD_DIR)
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_BIGNUMBER)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_FILE_OPERATION)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_CHAIN)"
 
-.PHONY: all prepare_build_directory bignumber file_operation help clean
+.PHONY: all prepare_build_directory bignumber file_operation chain help clean
