@@ -79,6 +79,9 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
         else if (strcmp(input, "status write dir") == 0) {
             return CMD_STATUS_WRITE_DIR;
         }
+        else if (strcmp(input, "status write file") == 0) {
+            return CMD_STATUS_WRITE_FILE;
+        }
         else if (strcmp(input, "status read") == 0) {
             return CMD_STATUS_READ;
         }
@@ -122,6 +125,7 @@ void cmdshell_print_help(void)
         "                      (source, destination, offset, cipher)\n"
         "status write      --  show set write options\n",
         "status write dir  --  show write directory contents\n",
+        "status write file --  show write file contents\n",
         "status read       --  show set read options\n",
         "write dir         --  write directory data to destination\n",
         "\n",
@@ -325,6 +329,23 @@ void cmdshell_print_status_write_dir(const char *desc)
         "\n"
         ,
         (*desc != '\0' ? desc : "empty\n"));
+}
+
+
+/* cmdshell_print_status_write_file:
+   print status of write file to standard output */
+void cmdshell_print_status_write_file(const char *filename, const char *filedesc)
+{
+    printf(
+        "\n"
+        "Write file filename:\n"
+        "%s\n"
+        "Write file description:\n"
+        "%s"
+        "\n"
+        ,
+        (*filename != '\0' ? filename : "empty\n"),
+        (*filedesc != '\0' ? filedesc : "empty\n"));
 }
 
 /* cmdshell_print_status_read:

@@ -134,6 +134,13 @@ int run_command_shell(void)
             directory_description_get(&wdir, desc);
             cmdshell_print_status_write_dir(desc);
         }
+        else if (retcmd == CMD_STATUS_WRITE_FILE) {
+            char filename[FILE_MAXFILENAME];
+            char filedesc[FILE_MAXDESCRIPTION];
+            file_filename_get(&wfile, filename);
+            file_description_get(&wfile, filedesc);
+            cmdshell_print_status_write_file(filename, filedesc);
+        }
         else if (retcmd == CMD_STATUS_READ) {
             char src[CMDSHELL_MAXINPUT];
             char dst[CMDSHELL_MAXINPUT];
