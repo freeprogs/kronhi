@@ -48,6 +48,7 @@ enum cmdshell_code {
     CMD_STATUS_WRITE_FILE,
     CMD_STATUS_READ,
     CMD_WRITE_DIR,
+    CMD_WRITE_FILE,
     CMD_HELP,
     CMD_QUIT,
     CMD_UNKNOWN

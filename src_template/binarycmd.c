@@ -48,3 +48,35 @@ enum binarycmd_code binarycmd_write_dir(
         return BINCMD_ERROR_DIR_FILESYS;
     return BINCMD_OK;
 }
+
+/* binarycmd_write_file:
+   write file to directory in the destination file with offset
+   return success code if written without errors
+   return error code if was not written or was written with errors */
+enum binarycmd_code binarycmd_write_file(
+    const char *source,
+    const char *destination,
+    const struct file_offset *offset,
+    const char *filename,
+    const char *filedesc,
+    enum write_cipher_type cipher)
+{
+    char offsetstr[1000];
+    fileoffset_tostr(offset, offsetstr);
+    printf("Write file:\n"
+           "source: %s\n"
+           "destination: %s\n"
+           "offset: %s\n"
+           "filename:\n"
+           "%s\n"
+           "description:\n"
+           "%s\n"
+           "cipher: %s\n",
+           source,
+           destination,
+           offsetstr,
+           filename,
+           filedesc,
+           (cipher == W_CIPHER_XOR ? "xor" : "none"));
+    return BINCMD_OK;
+}

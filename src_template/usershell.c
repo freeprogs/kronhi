@@ -193,6 +193,31 @@ int run_command_shell(void)
                     dest, offsetstr);
             }
         }
+        else if (retcmd == CMD_WRITE_FILE) {
+            enum binarycmd_code retbin;
+            char src[CMDSHELL_MAXINPUT];
+            char dst[CMDSHELL_MAXINPUT];
+            char filename[FILE_MAXFILENAME];
+            char filedesc[FILE_MAXDESCRIPTION];
+            struct file_offset offset;
+            char offsetstr[CMDSHELL_MAXINPUT];
+            enum write_cipher_type cipher;
+            write_options_source_get(&wopts, src);
+            write_options_destination_get(&wopts, dst);
+            offset = write_options_offset_get(&wopts);
+            write_options_tostr_offset(&wopts, offsetstr);
+            file_filename_get(&wfile, filename);
+            file_description_get(&wfile, filedesc);
+            cipher = write_options_cipher_get(&wopts);
+
+            retbin = binarycmd_write_file(
+                src, dst, &offset, filename, filedesc, cipher);
+            if (retbin == BINCMD_OK) {
+                cmdshell_print_message(
+                    "File has written to \"%s\" with offset %s",
+                    dst, offsetstr);
+            }
+        }
         else if (retcmd == CMD_HELP) {
             cmdshell_print_help();
         }
