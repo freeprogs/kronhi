@@ -35,6 +35,7 @@ enum chain_code {
     CHAIN_ERROR_DIR_WRITENODE,
     CHAIN_ERROR_DIR_WRITEFILE,
     CHAIN_ERROR_DIR_FILESYS,
+    CHAIN_ERROR_FILE_DIRENTRY,
     CHAIN_OK
 };
 
@@ -52,6 +53,11 @@ enum chain_code chain_create_dir(
     const char *dirdesc,
     unsigned num_of_files,
     size_t relative_offset);
+enum chain_code chain_append_file(
+    const struct chain *self,
+    const char *source,
+    const char *filename,
+    const char *filedesc);
 void chain_end(struct chain *self);
 
 #endif

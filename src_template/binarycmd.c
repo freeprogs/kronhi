@@ -61,22 +61,14 @@ enum binarycmd_code binarycmd_write_file(
     const char *filedesc,
     enum write_cipher_type cipher)
 {
-    char offsetstr[1000];
-    fileoffset_tostr(offset, offsetstr);
-    printf("Write file:\n"
-           "source: %s\n"
-           "destination: %s\n"
-           "offset: %s\n"
-           "filename:\n"
-           "%s\n"
-           "description:\n"
-           "%s\n"
-           "cipher: %s\n",
-           source,
-           destination,
-           offsetstr,
-           filename,
-           filedesc,
-           (cipher == W_CIPHER_XOR ? "xor" : "none"));
+    struct chain chain;
+    enum chain_code chret;
+
+    chain_start(&chain, destination, offset);
+    chret = chain_append_file(&chain, source, filename, filedesc);
+    chain_end(&chain);
+
+    if (chret == CHAIN_ERROR_FILE_DIRENTRY)
+        return BINCMD_ERROR_FILE_DIRENTRY;
     return BINCMD_OK;
 }

@@ -212,7 +212,12 @@ int run_command_shell(void)
 
             retbin = binarycmd_write_file(
                 src, dst, &offset, filename, filedesc, cipher);
-            if (retbin == BINCMD_OK) {
+            if (retbin == BINCMD_ERROR_FILE_DIRENTRY) {
+                cmdshell_print_error(
+                    "directory not found on \"%s\" with offset %s",
+                    dst, offsetstr);
+            }
+            else if (retbin == BINCMD_OK) {
                 cmdshell_print_message(
                     "File has written to \"%s\" with offset %s",
                     dst, offsetstr);

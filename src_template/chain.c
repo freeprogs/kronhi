@@ -68,6 +68,20 @@ enum chain_code chain_create_dir(
     return CHAIN_OK;
 }
 
+/* chain_append_file:
+   append file to the chain on destination file with start offset
+   return chain success code if no errors happened
+   return chain error code is an error happened */
+enum chain_code chain_append_file(
+    const struct chain *self,
+    const char *source,
+    const char *filename,
+    const char *filedesc)
+{
+    printf("chain_append_file()\n");
+    return CHAIN_OK;
+}
+
 /* chain_end: stop chain and clear internal values */
 void chain_end(struct chain *self)
 {
