@@ -28,23 +28,23 @@ enum binarycmd_code binarycmd_write_dir(
     const char *dirdesc, enum write_cipher_type cipher)
 {
     struct chain chain;
-    enum chain_code retval;
+    enum chain_code chret;
 
     chain_start(&chain, destination, offset);
-    retval = chain_create_dir(&chain, dirdesc, 0, 0);
+    chret = chain_create_dir(&chain, dirdesc, 0, 0);
     chain_end(&chain);
 
-    if (retval == CHAIN_ERROR_DIR_OPENFILE)
+    if (chret == CHAIN_ERROR_DIR_OPENFILE)
         return BINCMD_ERROR_DIR_OPENFILE;
-    if (retval == CHAIN_ERROR_DIR_SKIPOFFSET)
+    if (chret == CHAIN_ERROR_DIR_SKIPOFFSET)
         return BINCMD_ERROR_DIR_SKIPOFFSET;
-    if (retval == CHAIN_ERROR_DIR_FILESIZE)
+    if (chret == CHAIN_ERROR_DIR_FILESIZE)
         return BINCMD_ERROR_DIR_FILESIZE;
-    if (retval == CHAIN_ERROR_DIR_WRITENODE)
+    if (chret == CHAIN_ERROR_DIR_WRITENODE)
         return BINCMD_ERROR_DIR_WRITENODE;
-    if (retval == CHAIN_ERROR_DIR_WRITEFILE)
+    if (chret == CHAIN_ERROR_DIR_WRITEFILE)
         return BINCMD_ERROR_DIR_WRITEFILE;
-    if (retval == CHAIN_ERROR_DIR_FILESYS)
+    if (chret == CHAIN_ERROR_DIR_FILESYS)
         return BINCMD_ERROR_DIR_FILESYS;
     return BINCMD_OK;
 }
