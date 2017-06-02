@@ -67,6 +67,9 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
         else if (strcmp(input, "init write dir") == 0) {
             return CMD_INIT_WRITE_DIR;
         }
+        else if (strcmp(input, "init write file") == 0) {
+            return CMD_INIT_WRITE_FILE;
+        }
         else if (strcmp(input, "init read") == 0) {
             return CMD_INIT_READ;
         }
@@ -113,6 +116,8 @@ void cmdshell_print_help(void)
         "                      (source, destination, offset, cipher)\n"
         "init write dir    --  initialize write directory data\n",
         "                      (description)\n",
+        "init write file   --  initialize write file data\n",
+        "                      (archive filename, description)\n",
         "init read         --  initialize options for reading\n",
         "                      (source, destination, offset, cipher)\n"
         "status write      --  show set write options\n",
@@ -390,6 +395,45 @@ cmdshell_init_write_dir(char descinter[], char descfile[])
         retval = CMD_DIR_UNKNOWN;
         printf("Fail unknown command \"%s\"\n", input);
     }
+    return retval;
+}
+
+/* cmdshell_init_write_file:
+   input settings for write file
+   return 1 when right settings were input
+   return 0 when wrong settings were input */
+int cmdshell_init_write_file(char filename[], char filedesc[])
+{
+    int retval, retin;
+    char input[CMDSHELL_MAXINPUT];
+    char text[CMDSHELL_MAXTEXTINPUT];
+    int f_filename_is_set;
+
+    f_filename_is_set = 0;
+
+    *input = '\0';
+    retin = input_line("Input filename: ", input, sizeof input);
+    if (!retin || str_isspace(input)) {
+        printf("Fail empty\n");
+    }
+    else {
+        strcpy(filename, input);
+        f_filename_is_set = 1;
+        printf("Ok \"%s\"\n", input);
+    }
+    *text = '\0';
+    retin = input_text_end(
+        "Input description (end with single . on line):\n",
+        text, sizeof text, ".");
+    if (!retin) {
+        *filedesc = '\0';
+        printf("Ok text empty\n");
+    }
+    else {
+        strcpy(filedesc, text);
+        printf("Ok text\n%s\n", text);
+    }
+    retval = f_filename_is_set != 0;
     return retval;
 }
 

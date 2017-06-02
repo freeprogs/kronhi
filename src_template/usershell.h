@@ -25,6 +25,7 @@
 #include "directory.h"
 #include "input.h"
 #include "binarycmd.h"
+#include "file.h"
 
 int run_command_shell(void);
 

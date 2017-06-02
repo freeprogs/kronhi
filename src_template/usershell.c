@@ -29,6 +29,7 @@ int run_command_shell(void)
     struct read_options ropts;
 
     struct directory wdir;
+    struct file wfile;
 
     cmdshell_start();
     cmdshell_print_message("Input `help' for help or `quit' for exit.\n");
@@ -83,6 +84,20 @@ int run_command_shell(void)
             }
             else if (retdir == CMD_DIR_UNKNOWN) {
                 cmdshell_print_error("can't input write directory contents");
+            }
+        }
+        else if (retcmd == CMD_INIT_WRITE_FILE) {
+            char filename[CMDSHELL_MAXINPUT] = "";
+            char filedesc[CMDSHELL_MAXTEXTINPUT] = "";
+
+            if (cmdshell_init_write_file(filename, filedesc)) {
+                file_filename_set(&wfile, filename);
+                file_description_set(&wfile, filedesc);
+                cmdshell_print_message("File name and description have set");
+            }
+            else {
+                cmdshell_print_error(
+                    "File can't have empty archive filename");
             }
         }
         else if (retcmd == CMD_INIT_READ) {

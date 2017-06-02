@@ -41,6 +41,7 @@
 enum cmdshell_code {
     CMD_INIT_WRITE,
     CMD_INIT_WRITE_DIR,
+    CMD_INIT_WRITE_FILE,
     CMD_INIT_READ,
     CMD_STATUS_WRITE,
     CMD_STATUS_WRITE_DIR,
@@ -77,6 +78,7 @@ void cmdshell_print_status_read(
     const char *roffset, const char *rcipher);
 enum cmdshell_dir_code
 cmdshell_init_write_dir(char descinter[], char descfile[]);
+int cmdshell_init_write_file(char filename[], char filedesc[]);
 void cmdshell_end(void);
 
 #endif
