@@ -24,6 +24,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include <limits.h>
 #include "input.h"
 #include "write_options.h"
 #include "read_options.h"
@@ -81,7 +82,8 @@ void cmdshell_print_status_read(
     const char *roffset, const char *rcipher);
 enum cmdshell_dir_code
 cmdshell_init_write_dir(char descinter[], char descfile[]);
-int cmdshell_init_write_file(char filename[], char filedesc[]);
+int cmdshell_init_write_file(
+    char filename[], char filedesc[], char filereloff[]);
 void cmdshell_end(void);
 
 #endif

@@ -427,14 +427,15 @@ cmdshell_init_write_dir(char descinter[], char descfile[])
    input settings for write file
    return 1 when right settings were input
    return 0 when wrong settings were input */
-int cmdshell_init_write_file(char filename[], char filedesc[])
+int cmdshell_init_write_file(
+    char filename[], char filedesc[], char filereloff[])
 {
     int retval, retin;
     char input[CMDSHELL_MAXINPUT];
     char text[CMDSHELL_MAXTEXTINPUT];
-    int f_filename_is_set;
+    int f_filename_is_set, f_offset_is_set;
 
-    f_filename_is_set = 0;
+    f_filename_is_set = f_offset_is_set = 0;
 
     *input = '\0';
     retin = input_line("Input filename: ", input, sizeof input);
@@ -446,6 +447,7 @@ int cmdshell_init_write_file(char filename[], char filedesc[])
         f_filename_is_set = 1;
         printf("Ok \"%s\"\n", input);
     }
+
     *text = '\0';
     retin = input_text_end(
         "Input description (end with single . on line):\n",
@@ -458,7 +460,44 @@ int cmdshell_init_write_file(char filename[], char filedesc[])
         strcpy(filedesc, text);
         printf("Ok text\n%s\n", text);
     }
-    retval = f_filename_is_set != 0;
+
+    *input = '\0';
+    retin = input_line(
+        "Input relative offset (number >= 0): ", input, sizeof input);
+    if (!retin || str_isspace(input)) {
+        f_offset_is_set = 1;
+        printf("Ok unchanged \"%s\"\n", filereloff);
+    }
+    else {
+        double tmp;
+        if (strlen(input) > BIG_MAXSTRING) {
+            f_offset_is_set = 0;
+            printf("Fail \"%s\", should be between 1 and %d digits\n",
+                   input, BIG_MAXSTRING);
+        }
+        else if (!str_isdigit(input)) {
+            f_offset_is_set = 0;
+            printf("Fail \"%s\", should be an unsigned number\n", input);
+        }
+        else if (sscanf(input, "%lf", &tmp) == 1) {
+            if (tmp >= 0 && tmp <= ULONG_MAX) {
+                f_offset_is_set = 1;
+                strcpy(filereloff, input);
+                printf("Ok \"%s\"\n", input);
+            }
+            else {
+                f_offset_is_set = 0;
+                printf("Fail \"%s\", should be between %d and %lu\n",
+                       input, 0, ULONG_MAX);
+            }
+        }
+        else {
+            f_offset_is_set = 0;
+            printf("Fail \"%s\", should be a number\n", input);
+        }
+    }
+
+    retval = f_filename_is_set && f_offset_is_set;
     return retval;
 }
 

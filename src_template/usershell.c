@@ -89,15 +89,21 @@ int run_command_shell(void)
         else if (retcmd == CMD_INIT_WRITE_FILE) {
             char filename[CMDSHELL_MAXINPUT] = "";
             char filedesc[CMDSHELL_MAXTEXTINPUT] = "";
+            char filereloffstr[CMDSHELL_MAXINPUT];
+            size_t filereloff;
 
-            if (cmdshell_init_write_file(filename, filedesc)) {
+            sprintf(filereloffstr, "0");
+            if (cmdshell_init_write_file(filename, filedesc, filereloffstr)) {
                 file_filename_set(&wfile, filename);
                 file_description_set(&wfile, filedesc);
-                cmdshell_print_message("File name and description have set");
+                filereloff = strtoul(filereloffstr, NULL, 10);
+                file_relative_offset_set(&wfile, filereloff);
+                cmdshell_print_message(
+                    "File name, description and relative offset have set");
             }
             else {
                 cmdshell_print_error(
-                    "File can't have empty archive filename");
+                    "Can't set file name, description or relative offset");
             }
         }
         else if (retcmd == CMD_INIT_READ) {

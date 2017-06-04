@@ -42,3 +42,15 @@ char *file_description_get(const struct file *file, char out[])
 {
     return strcpy(out, file->description);
 }
+
+/* file_relative_offset_set: set relative offset for file */
+void file_relative_offset_set(struct file *file, size_t offset)
+{
+    file->relative_offset = offset;
+}
+
+/* file_relative_offset_get: get relative offset of file */
+size_t file_relative_offset_get(const struct file *file)
+{
+    return file->relative_offset;
+}
