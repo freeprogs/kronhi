@@ -123,7 +123,7 @@ void cmdshell_print_help(void)
         "init write dir    --  initialize write directory data\n",
         "                      (description)\n",
         "init write file   --  initialize write file data\n",
-        "                      (archive filename, description)\n",
+        "                      (archive filename, description, relative offset)\n",
         "init read         --  initialize options for reading\n",
         "                      (source, destination, offset, cipher)\n"
         "status write      --  show set write options\n",
