@@ -76,7 +76,8 @@ void cmdshell_print_status_write(
     const char *wsrc, const char *wdst,
     const char *woffset, const char *wcipher);
 void cmdshell_print_status_write_dir(const char *desc);
-void cmdshell_print_status_write_file(const char *filename, const char *filedesc);
+void cmdshell_print_status_write_file(
+    const char *filename, const char *filedesc, const char *filereloff);
 void cmdshell_print_status_read(
     const char *rsrc, const char *rdst,
     const char *roffset, const char *rcipher);

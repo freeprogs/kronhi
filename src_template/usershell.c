@@ -143,9 +143,13 @@ int run_command_shell(void)
         else if (retcmd == CMD_STATUS_WRITE_FILE) {
             char filename[FILE_MAXFILENAME];
             char filedesc[FILE_MAXDESCRIPTION];
+            size_t filereloff;
+            char filereloffstr[CMDSHELL_MAXINPUT];
             file_filename_get(&wfile, filename);
             file_description_get(&wfile, filedesc);
-            cmdshell_print_status_write_file(filename, filedesc);
+            filereloff = file_relative_offset_get(&wfile);
+            sprintf(filereloffstr, "%lu", (unsigned long) filereloff);
+            cmdshell_print_status_write_file(filename, filedesc, filereloffstr);
         }
         else if (retcmd == CMD_STATUS_READ) {
             char src[CMDSHELL_MAXINPUT];

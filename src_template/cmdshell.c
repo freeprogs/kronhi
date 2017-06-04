@@ -338,7 +338,8 @@ void cmdshell_print_status_write_dir(const char *desc)
 
 /* cmdshell_print_status_write_file:
    print status of write file to standard output */
-void cmdshell_print_status_write_file(const char *filename, const char *filedesc)
+void cmdshell_print_status_write_file(
+    const char *filename, const char *filedesc, const char *filereloff)
 {
     printf(
         "\n"
@@ -347,9 +348,12 @@ void cmdshell_print_status_write_file(const char *filename, const char *filedesc
         "Write file description:\n"
         "%s"
         "\n"
+        "Write file relative offset:\n"
+        "%s\n"
         ,
         (*filename != '\0' ? filename : "empty\n"),
-        (*filedesc != '\0' ? filedesc : "empty\n"));
+        (*filedesc != '\0' ? filedesc : "empty\n"),
+        (*filereloff != '\0' ? filereloff : "empty\n"));
 }
 
 /* cmdshell_print_status_read:
