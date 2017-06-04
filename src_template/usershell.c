@@ -209,6 +209,7 @@ int run_command_shell(void)
             char dst[CMDSHELL_MAXINPUT];
             char filename[FILE_MAXFILENAME];
             char filedesc[FILE_MAXDESCRIPTION];
+            size_t filereloff;
             struct file_offset offset;
             char offsetstr[CMDSHELL_MAXINPUT];
             enum write_cipher_type cipher;
@@ -218,10 +219,11 @@ int run_command_shell(void)
             write_options_tostr_offset(&wopts, offsetstr);
             file_filename_get(&wfile, filename);
             file_description_get(&wfile, filedesc);
+            filereloff = file_relative_offset_get(&wfile);
             cipher = write_options_cipher_get(&wopts);
 
             retbin = binarycmd_write_file(
-                src, dst, &offset, filename, filedesc, cipher);
+                src, dst, &offset, filename, filedesc, filereloff, cipher);
             if (retbin == BINCMD_ERROR_FILE_DIRENTRY) {
                 cmdshell_print_error(
                     "directory not found on \"%s\" with offset %s",
