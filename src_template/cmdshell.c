@@ -128,7 +128,7 @@ void cmdshell_print_help(void)
         "                      (source, destination, offset, cipher)\n"
         "status write      --  show set write options\n",
         "status write dir  --  show write directory contents\n",
-        "status write file --  show write file contents\n",
+        "status write file --  show write file data\n",
         "status read       --  show set read options\n",
         "write dir         --  write directory data to destination\n",
         "write file        --  write file data and contents to destination\n",
