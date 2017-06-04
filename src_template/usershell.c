@@ -89,15 +89,21 @@ int run_command_shell(void)
         else if (retcmd == CMD_INIT_WRITE_FILE) {
             char filename[CMDSHELL_MAXINPUT] = "";
             char filedesc[CMDSHELL_MAXTEXTINPUT] = "";
+            char filereloffstr[CMDSHELL_MAXINPUT];
+            size_t filereloff;
 
-            if (cmdshell_init_write_file(filename, filedesc)) {
+            sprintf(filereloffstr, "0");
+            if (cmdshell_init_write_file(filename, filedesc, filereloffstr)) {
                 file_filename_set(&wfile, filename);
                 file_description_set(&wfile, filedesc);
-                cmdshell_print_message("File name and description have set");
+                filereloff = strtoul(filereloffstr, NULL, 10);
+                file_relative_offset_set(&wfile, filereloff);
+                cmdshell_print_message(
+                    "File name, description and relative offset have set");
             }
             else {
                 cmdshell_print_error(
-                    "File can't have empty archive filename");
+                    "Can't set file name, description or relative offset");
             }
         }
         else if (retcmd == CMD_INIT_READ) {
@@ -137,9 +143,13 @@ int run_command_shell(void)
         else if (retcmd == CMD_STATUS_WRITE_FILE) {
             char filename[FILE_MAXFILENAME];
             char filedesc[FILE_MAXDESCRIPTION];
+            size_t filereloff;
+            char filereloffstr[CMDSHELL_MAXINPUT];
             file_filename_get(&wfile, filename);
             file_description_get(&wfile, filedesc);
-            cmdshell_print_status_write_file(filename, filedesc);
+            filereloff = file_relative_offset_get(&wfile);
+            sprintf(filereloffstr, "%lu", (unsigned long) filereloff);
+            cmdshell_print_status_write_file(filename, filedesc, filereloffstr);
         }
         else if (retcmd == CMD_STATUS_READ) {
             char src[CMDSHELL_MAXINPUT];
@@ -199,6 +209,7 @@ int run_command_shell(void)
             char dst[CMDSHELL_MAXINPUT];
             char filename[FILE_MAXFILENAME];
             char filedesc[FILE_MAXDESCRIPTION];
+            size_t filereloff;
             struct file_offset offset;
             char offsetstr[CMDSHELL_MAXINPUT];
             enum write_cipher_type cipher;
@@ -208,10 +219,11 @@ int run_command_shell(void)
             write_options_tostr_offset(&wopts, offsetstr);
             file_filename_get(&wfile, filename);
             file_description_get(&wfile, filedesc);
+            filereloff = file_relative_offset_get(&wfile);
             cipher = write_options_cipher_get(&wopts);
 
             retbin = binarycmd_write_file(
-                src, dst, &offset, filename, filedesc, cipher);
+                src, dst, &offset, filename, filedesc, filereloff, cipher);
             if (retbin == BINCMD_ERROR_FILE_DIRENTRY) {
                 cmdshell_print_error(
                     "directory not found on \"%s\" with offset %s",
@@ -219,7 +231,7 @@ int run_command_shell(void)
             }
             else if (retbin == BINCMD_OK) {
                 cmdshell_print_message(
-                    "File has written to \"%s\" with offset %s",
+                    "File has written to \"%s\" with directory offset %s",
                     dst, offsetstr);
             }
         }

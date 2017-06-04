@@ -31,11 +31,14 @@
 struct file {
     char filename[FILE_MAXFILENAME];
     char description[FILE_MAXDESCRIPTION];
+    size_t relative_offset;
 };
 
 void file_filename_set(struct file *file, const char *s);
 char *file_filename_get(const struct file *file, char out[]);
 void file_description_set(struct file *file, const char *s);
 char *file_description_get(const struct file *file, char out[]);
+void file_relative_offset_set(struct file *file, size_t offset);
+size_t file_relative_offset_get(const struct file *wfile);
 
 #endif

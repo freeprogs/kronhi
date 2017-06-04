@@ -57,7 +57,8 @@ enum chain_code chain_append_file(
     const struct chain *self,
     const char *source,
     const char *filename,
-    const char *filedesc);
+    const char *filedesc,
+    size_t filereloff);
 void chain_end(struct chain *self);
 
 #endif
