@@ -219,7 +219,7 @@ int run_command_shell(void)
             }
             else if (retbin == BINCMD_OK) {
                 cmdshell_print_message(
-                    "File has written to \"%s\" with offset %s",
+                    "File has written to \"%s\" with directory offset %s",
                     dst, offsetstr);
             }
         }
