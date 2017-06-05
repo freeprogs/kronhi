@@ -84,3 +84,15 @@ int bignumber_add_ulong(struct bignumber *number, size_t value)
     number->number += value;
     return number->number - value == prev;
 }
+
+/* bignumber_add_big: add a big number to the big number
+                      return 1 if has added
+                      return 0 if has not added */
+int bignumber_add_big(struct bignumber *number, const struct bignumber *value)
+{
+    double prev;
+
+    prev = number->number;
+    number->number += value->number;
+    return number->number - value->number == prev;
+}
