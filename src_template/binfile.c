@@ -75,11 +75,7 @@ int binfile_start(struct binfile *file)
     file->contentsize = rp;
     binfield_raw_set(rp, "\0", 1);
 
-    rp = binfield_raw_create(255);
-    if (!rp)
-        return 0;
-    file->contentpath = rp;
-    binfield_raw_set(rp, "\0", 1);
+    file->contentstream = NULL;
 
     np = binfield_num_create(4);
     if (!np)
@@ -170,14 +166,13 @@ int binfile_contentsize_set(struct binfile *file, const char *contentsize)
                             strlen(contentsize) + 1);
 }
 
-/* binfile_contentpath_set: set in file the content path field
-                            return 1 if field has set
-                            return 0 if an error happened */
-int binfile_contentpath_set(struct binfile *file, const char *contentpath)
+/* binfile_contentstream_set: set in file the content stream
+                              return 1 if field has set
+                              return 0 if an error happened */
+int binfile_contentstream_set(struct binfile *file, FILE *contentstream)
 {
-    return binfield_raw_set(file->contentpath,
-                            contentpath,
-                            strlen(contentpath) + 1);
+    file->contentstream = contentstream;
+    return 1;
 }
 
 /* binfile_file_offset_set: set in file the file offset field
@@ -238,7 +233,6 @@ void binfile_end(struct binfile *file)
     binfield_raw_free(file->datetime);
     binfield_num_free(file->ctrlsum);
     binfield_raw_free(file->contentsize);
-    binfield_raw_free(file->contentpath);
     binfield_num_free(file->file_offset);
     file->type_sign = NULL;
     file->namesize = NULL;
@@ -248,6 +242,6 @@ void binfile_end(struct binfile *file)
     file->datetime = NULL;
     file->ctrlsum = NULL;
     file->contentsize = NULL;
-    file->contentpath = NULL;
+    file->contentstream = NULL;
     file->file_offset = NULL;
 }

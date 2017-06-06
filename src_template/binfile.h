@@ -33,7 +33,7 @@
  * datetime          --  the file creation datetime string
  * ctrlsum           --  the control sum of the file contents
  * contentsize       --  the file contents size string
- * contentpath       --  the file contents file path
+ * contentstream     --  the file contents stream
  * file_offset       --  the offset of the next file in the file list
  *                       this offset is relative to its place in memory
 */
@@ -46,7 +46,7 @@ struct binfile {
     struct field_raw *datetime;
     struct field_num *ctrlsum;
     struct field_raw *contentsize;
-    struct field_raw *contentpath;
+    FILE *contentstream;
     struct field_num *file_offset;
 };
 
@@ -59,7 +59,7 @@ int binfile_desc_set(struct binfile *file, const char *filedesc);
 int binfile_datetime_set(struct binfile *file, const char *datetime);
 int binfile_ctrlsum_set(struct binfile *file, unsigned long ctrlsum);
 int binfile_contentsize_set(struct binfile *file, const char *contentsize);
-int binfile_contentpath_set(struct binfile *file, const char *contentpath);
+int binfile_contentstream_set(struct binfile *file, FILE *contentstream);
 int binfile_file_offset_set(struct binfile *file, size_t file_offset);
 int binfile_get_size(const struct binfile *file, struct bignumber *out);
 void binfile_end(struct binfile *file);
