@@ -36,8 +36,9 @@ SRC_FILE_OPERATION_SOURCES = ../file_operation.c ../bignumber.c ../file_offset.c
 TARGET_CHAIN = test_chain
 SRC_CHAIN_TEST = test_chain.c
 SRC_CHAIN_SOURCES = ../chain.c ../bignumber.c ../file_offset.c \
-                    ../bindir.c ../binfile.c ../file_operation.c \
-                    ../node.c ../binfield.c ../endian.c
+                    ../bindir.c ../binfile.c ../datetime.c \
+                    ../file_operation.c ../node.c ../binfield.c \
+                    ../endian.c
 
 
 # Commands
