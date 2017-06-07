@@ -80,3 +80,12 @@ int file_get_size(FILE *fp, struct bignumber *out)
         *out = tmp;
     return retval;
 }
+
+/* file_get_ctrlsum: get stream control sum
+                     return 1 if has got correctly
+                     return 0 if an error happen */
+int file_get_ctrlsum(FILE *fp, unsigned long *out)
+{
+    *out = 0x12345678UL;
+    return 1;
+}

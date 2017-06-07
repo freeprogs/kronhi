@@ -34,5 +34,6 @@
 int file_test_write_size(FILE *fp, const struct bignumber *size);
 int file_skip_to_offset(FILE *fp, const struct file_offset *offset);
 int file_get_size(FILE *fp, struct bignumber *out);
+int file_get_ctrlsum(FILE *fp, unsigned long *out);
 
 #endif
