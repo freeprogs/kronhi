@@ -193,6 +193,8 @@ int binfile_get_size(const struct binfile *file, struct bignumber *out)
 
     f_error = 0;
 
+    if (!bignumber_set_value_int(&tmp, 0))
+        f_error = 1;
     if (!bignumber_add_ulong(&tmp, file->type_sign->len))
         f_error = 1;
     if(!bignumber_add_ulong(&tmp, file->namesize->len))
@@ -208,6 +210,8 @@ int binfile_get_size(const struct binfile *file, struct bignumber *out)
     if(!bignumber_add_ulong(&tmp, file->ctrlsum->len))
         f_error = 1;
     if(!bignumber_add_ulong(&tmp, file->contentsize->len))
+        f_error = 1;
+    if (!bignumber_set_value_int(&contentsize, 0))
         f_error = 1;
     if(!bignumber_set_value_string(&contentsize, (char *) file->contentsize->val))
         f_error = 1;
