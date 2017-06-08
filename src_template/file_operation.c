@@ -97,9 +97,10 @@ int file_write_file(FILE *fp, FILE *ifp)
 {
     int retval;
     char buffer[W_BLOCK_SIZE];
+    size_t n;
 
-    while (fread(buffer, W_BLOCK_SIZE, 1, ifp) == 1) {
-        if (fwrite(buffer, W_BLOCK_SIZE, 1, fp) != 1)
+    while ((n = fread(buffer, 1, W_BLOCK_SIZE, ifp)) > 0) {
+        if (fwrite(buffer, 1, n, fp) != n)
             break;
     }
     retval = !ferror(ifp) && feof(ifp) && !ferror(fp);
