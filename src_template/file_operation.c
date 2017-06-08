@@ -89,3 +89,19 @@ int file_get_ctrlsum(FILE *fp, unsigned long *out)
     *out = 0x12345678UL;
     return 1;
 }
+
+/* file_write_file: write to stream another stream
+                    return 1 if has written correctly
+                    return 0 if an error happen */
+int file_write_file(FILE *fp, FILE *ifp)
+{
+    int retval;
+    char buffer[W_BLOCK_SIZE];
+
+    while (fread(buffer, W_BLOCK_SIZE, 1, ifp) == 1) {
+        if (fwrite(buffer, W_BLOCK_SIZE, 1, fp) != 1)
+            break;
+    }
+    retval = !ferror(ifp) && feof(ifp) && !ferror(fp);
+    return retval;
+}
