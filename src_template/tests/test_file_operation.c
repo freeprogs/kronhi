@@ -26,6 +26,8 @@ void test_raise_on_skip_beyond_end_of_file(void);
 
 void test_can_get_file_size(void);
 
+void test_can_write_file_to_file(void);
+
 int main(void)
 {
     CU_pSuite suite = NULL;
@@ -44,7 +46,9 @@ int main(void)
      || CU_add_test(suite, "raise on skip beyond end of file",
                     test_raise_on_skip_beyond_end_of_file) == NULL
      || CU_add_test(suite, "cat get file size",
-                    test_can_get_file_size) == NULL) {
+                    test_can_get_file_size) == NULL
+     || CU_add_test(suite, "cat write file to file",
+                    test_can_write_file_to_file) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -116,6 +120,35 @@ void test_can_get_file_size(void)
     file_get_size(fp, &size);
     bignumber_tostr(&size, sizestr);
     CU_ASSERT_STRING_EQUAL(sizestr, "1");
+
+    fclose(fp);
+}
+
+void test_can_write_file_to_file(void)
+{
+    const char *ifname = "file.txt";
+    FILE *fp, *ifp;
+    int c;
+
+    fp = tmpfile();
+    if (fp == NULL)
+        CU_FAIL("can't create temporary file");
+    putc('x', fp);
+    rewind(fp);
+
+    ifp = fopen(ifname, "w+b");
+    if (ifp == NULL)
+        CU_FAIL("can't create file");
+    putc('a', ifp);
+    rewind(ifp);
+
+    file_write_file(fp, ifp);
+    rewind(fp);
+    c = getc(fp);
+    CU_ASSERT_EQUAL(c, 'a');
+
+    fclose(ifp);
+    remove(ifname);
 
     fclose(fp);
 }
