@@ -32,13 +32,13 @@ SRC_BIGNUMBER_TEST = test_bignumber.c
 SRC_BIGNUMBER_SOURCES = ../bignumber.c
 TARGET_FILE_OPERATION = test_file_operation
 SRC_FILE_OPERATION_TEST = test_file_operation.c
-SRC_FILE_OPERATION_SOURCES = ../file_operation.c ../bignumber.c ../file_offset.c
+SRC_FILE_OPERATION_SOURCES = ../file_operation.c ../bignumber.c ../file_offset.c ../crc32.c
 TARGET_CHAIN = test_chain
 SRC_CHAIN_TEST = test_chain.c
 SRC_CHAIN_SOURCES = ../chain.c ../bignumber.c ../file_offset.c \
                     ../bindir.c ../binfile.c ../datetime.c \
-                    ../file_operation.c ../node.c ../binfield.c \
-                    ../endian.c
+                    ../file_operation.c ../crc32.c ../node.c \
+	            ../binfield.c ../endian.c
 
 
 # Commands
