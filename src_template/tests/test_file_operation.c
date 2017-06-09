@@ -24,6 +24,8 @@
 void test_can_skip_a_byte(void);
 void test_raise_on_skip_beyond_end_of_file(void);
 
+void test_can_get_file_size(void);
+
 int main(void)
 {
     CU_pSuite suite = NULL;
@@ -38,9 +40,11 @@ int main(void)
     }
 
     if (CU_add_test(suite, "can skip a byte",
-                    test_can_skip_a_byte) == NULL ||
-        CU_add_test(suite, "raise on skip beyond end of file",
-                    test_raise_on_skip_beyond_end_of_file) == NULL) {
+                    test_can_skip_a_byte) == NULL
+     || CU_add_test(suite, "raise on skip beyond end of file",
+                    test_raise_on_skip_beyond_end_of_file) == NULL
+     || CU_add_test(suite, "cat get file size",
+                    test_can_get_file_size) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -91,6 +95,27 @@ void test_raise_on_skip_beyond_end_of_file(void)
     fileoffset_clear(&offset);
     fileoffset_add_number(&offset, 2);
     CU_ASSERT_FALSE(file_skip_to_offset(fp, &offset));
+
+    fclose(fp);
+}
+
+void test_can_get_file_size(void)
+{
+    struct bignumber size;
+    char sizestr[100];
+
+    FILE *fp;
+
+    fp = tmpfile();
+    if (fp == NULL)
+        CU_FAIL("can't create temporary file");
+    putc('x', fp);
+    rewind(fp);
+
+    bignumber_set_value_int(&size, 0);
+    file_get_size(fp, &size);
+    bignumber_tostr(&size, sizestr);
+    CU_ASSERT_STRING_EQUAL(sizestr, "1");
 
     fclose(fp);
 }
