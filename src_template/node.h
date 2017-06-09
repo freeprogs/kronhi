@@ -22,7 +22,10 @@
 
 #include <stdio.h>
 #include "bindir.h"
+#include "binfile.h"
+#include "file_operation.h"
 
 int node_write_dir(FILE *ofp, struct bindir *dir);
+int node_write_file(FILE *ofp, struct binfile *file);
 
 #endif
