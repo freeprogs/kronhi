@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include "bignumber.h"
 #include "file_offset.h"
+#include "crc32.h"
 
 /* Block size for writings */
 #define W_BLOCK_SIZE  8192

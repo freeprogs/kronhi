@@ -86,8 +86,17 @@ int file_get_size(FILE *fp, struct bignumber *out)
                      return 0 if an error happen */
 int file_get_ctrlsum(FILE *fp, unsigned long *out)
 {
-    *out = 0x12345678UL;
-    return 1;
+    int retval;
+    fpos_t savepos;
+    unsigned long sum;
+
+    fgetpos(fp, &savepos);
+    sum = crc32stream(fp);
+    retval = !ferror(fp);
+    fsetpos(fp, &savepos);
+    if (retval)
+        *out = sum;
+    return retval;
 }
 
 /* file_write_file: write to stream another stream
