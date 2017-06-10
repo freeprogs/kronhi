@@ -52,16 +52,26 @@ enum chain_code chain_create_dir(
     ofp = fopen(self->dst, "r+b");
     if (ofp == NULL)
         return CHAIN_ERROR_DIR_OPENFILE;
-    if (!file_skip_to_offset(ofp, self->start))
+    if (!file_skip_to_offset(ofp, self->start)) {
+        fclose(ofp);
         return CHAIN_ERROR_DIR_SKIPOFFSET;
-    if (!bignumber_set_value_int(&dirsize, bindir_get_size(&dir)))
+    }
+    if (!bignumber_set_value_int(&dirsize, bindir_get_size(&dir))) {
+        fclose(ofp);
         return CHAIN_ERROR_DIR_FILESIZE;
-    if (!file_test_write_size(ofp, &dirsize))
+    }
+    if (!file_test_write_size(ofp, &dirsize)) {
+        fclose(ofp);
         return CHAIN_ERROR_DIR_FILESIZE;
-    if (!node_write_dir(ofp, &dir))
+    }
+    if (!node_write_dir(ofp, &dir)) {
+        fclose(ofp);
         return CHAIN_ERROR_DIR_WRITENODE;
-    if (ferror(ofp))
+    }
+    if (ferror(ofp)) {
+        fclose(ofp);
         return CHAIN_ERROR_DIR_WRITEFILE;
+    }
     if (fclose(ofp) != 0)
         return CHAIN_ERROR_DIR_FILESYS;
     bindir_end(&dir);
