@@ -24,11 +24,23 @@
                    return 0 if errors happened */
 int node_write_dir(FILE *ofp, struct bindir *dir)
 {
-    binfield_raw_write(dir->type_sign, ofp);
-    binfield_num_write(dir->descsize, ofp);
-    binfield_raw_write(dir->desc, ofp);
-    binfield_num_write(dir->num_of_files, ofp);
-    binfield_num_write(dir->file_offset, ofp);
+    int f_error;
+
+    f_error = 0;
+
+    if (!binfield_raw_write(dir->type_sign, ofp))
+        f_error = 1;
+    if(!binfield_num_write(dir->descsize, ofp))
+        f_error = 1;
+    if(!binfield_raw_write(dir->desc, ofp))
+        f_error = 1;
+    if(!binfield_num_write(dir->num_of_files, ofp))
+        f_error = 1;
+    if(!binfield_num_write(dir->file_offset, ofp))
+        f_error = 1;
+
+    if (f_error)
+        return 0;
     if (ferror(ofp))
         return 0;
     return 1;
