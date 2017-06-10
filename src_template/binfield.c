@@ -104,9 +104,12 @@ int binfield_num_write(const struct field_num *field, FILE *ofp)
 {
     unsigned char buf[NUMBUFMAX];
 
-    memcpy(buf, field->val, field->len);
-    bytes_to_bigend(buf, field->len);
-    return fwrite(buf, field->len, 1, ofp) == 1;
+    if (field->len > 0) {
+        memcpy(buf, field->val, field->len);
+        bytes_to_bigend(buf, field->len);
+        return fwrite(buf, field->len, 1, ofp) == 1;
+    }
+    return 1;
 }
 
 /* binfield_raw_free: free raw field value and field itself */
