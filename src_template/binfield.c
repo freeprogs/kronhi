@@ -92,7 +92,9 @@ int binfield_num_set(struct field_num *field, const void *value, size_t length)
                        return 0 if an error happened */
 int binfield_raw_write(const struct field_raw *field, FILE *ofp)
 {
-    return fwrite(field->val, field->len, 1, ofp) == 1;
+    if (field->len > 0)
+        return fwrite(field->val, field->len, 1, ofp) == 1;
+    return 1;
 }
 
 /* binfield_num_write: write number field to output stream
