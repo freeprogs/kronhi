@@ -22,6 +22,13 @@
 
 #include "binfield.h"
 
+/* sizes of bindir fields for memory allocation */
+#define _TYPE_SIGN_FIELD_SIZE     1
+#define _DESCSIZE_FIELD_SIZE      2
+#define _DESC_FIELD_SIZE          65535
+#define _NUM_OF_FILES_FIELD_SIZE  4
+#define _FILE_OFFSET_FIELD_SIZE   4
+
 /*
  * struct bindir contents:
  * type_sign     --  the sign of the directory header

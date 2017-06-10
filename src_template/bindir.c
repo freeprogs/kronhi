@@ -27,31 +27,31 @@ int bindir_start(struct bindir *dir)
     struct field_raw *rp;
     struct field_num *np;
 
-    rp = binfield_raw_create(1);
+    rp = binfield_raw_create(_TYPE_SIGN_FIELD_SIZE);
     if (!rp)
         return 0;
     dir->type_sign = rp;
     binfield_raw_set(rp, "\0", 1);
 
-    np = binfield_num_create(2);
+    np = binfield_num_create(_DESCSIZE_FIELD_SIZE);
     if (!np)
         return 0;
     dir->descsize = np;
     binfield_num_set(np, "\0", 1);
 
-    rp = binfield_raw_create(65535);
+    rp = binfield_raw_create(_DESC_FIELD_SIZE);
     if (!rp)
         return 0;
     dir->desc = rp;
     binfield_raw_set(rp, "\0", 1);
 
-    np = binfield_num_create(4);
+    np = binfield_num_create(_NUM_OF_FILES_FIELD_SIZE);
     if (!np)
         return 0;
     dir->num_of_files = np;
     binfield_num_set(np, "\0", 1);
 
-    np = binfield_num_create(4);
+    np = binfield_num_create(_FILE_OFFSET_FIELD_SIZE);
     if (!np)
         return 0;
     dir->file_offset = np;
