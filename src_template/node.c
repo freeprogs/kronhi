@@ -51,23 +51,32 @@ int node_write_dir(FILE *ofp, struct bindir *dir)
                     return 0 if errors happened */
 int node_write_file(FILE *ofp, struct binfile *file)
 {
-    int f_file_to_file_error;
+    int f_error, f_file_to_file_error;
 
-    f_file_to_file_error = 0;
+    f_error = f_file_to_file_error = 0;
 
-    binfield_raw_write(file->type_sign, ofp);
-    binfield_num_write(file->namesize, ofp);
-    binfield_raw_write(file->name, ofp);
-    binfield_num_write(file->descsize, ofp);
-    binfield_raw_write(file->desc, ofp);
-    binfield_raw_write(file->datetime, ofp);
-    binfield_num_write(file->ctrlsum, ofp);
-    binfield_raw_write(file->contentsize, ofp);
+    if(!binfield_raw_write(file->type_sign, ofp))
+        f_error = 1;
+    if(!binfield_num_write(file->namesize, ofp))
+        f_error = 1;
+    if(!binfield_raw_write(file->name, ofp))
+        f_error = 1;
+    if(!binfield_num_write(file->descsize, ofp))
+        f_error = 1;
+    if(!binfield_raw_write(file->desc, ofp))
+        f_error = 1;
+    if(!binfield_raw_write(file->datetime, ofp))
+        f_error = 1;
+    if(!binfield_num_write(file->ctrlsum, ofp))
+        f_error = 1;
+    if(!binfield_raw_write(file->contentsize, ofp))
+        f_error = 1;
     if (!file_write_file(ofp, file->contentstream))
         f_file_to_file_error = 1;
-    binfield_num_write(file->file_offset, ofp);
+    if (!binfield_num_write(file->file_offset, ofp))
+        f_error = 1;
 
-    if (f_file_to_file_error)
+    if (f_error || f_file_to_file_error)
         return 0;
     if (ferror(ofp))
         return 0;
