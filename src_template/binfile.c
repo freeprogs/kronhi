@@ -27,49 +27,49 @@ int binfile_start(struct binfile *file)
     struct field_raw *rp;
     struct field_num *np;
 
-    rp = binfield_raw_create(1);
+    rp = binfield_raw_create(_TYPE_SIGN_FIELD_SIZE);
     if (!rp)
         return 0;
     file->type_sign = rp;
     binfield_raw_set(rp, "\0", 1);
 
-    np = binfield_num_create(1);
+    np = binfield_num_create(_NAMESIZE_FIELD_SIZE);
     if (!np)
         return 0;
     file->namesize = np;
     binfield_num_set(np, "\0", 1);
 
-    rp = binfield_raw_create(255);
+    rp = binfield_raw_create(_NAME_FIELD_SIZE);
     if (!rp)
         return 0;
     file->name = rp;
     binfield_raw_set(rp, "\0", 1);
 
-    np = binfield_num_create(2);
+    np = binfield_num_create(_DESCSIZE_FIELD_SIZE);
     if (!np)
         return 0;
     file->descsize = np;
     binfield_num_set(np, "\0", 1);
 
-    rp = binfield_raw_create(65535);
+    rp = binfield_raw_create(_DESC_FIELD_SIZE);
     if (!rp)
         return 0;
     file->desc = rp;
     binfield_raw_set(rp, "\0", 1);
 
-    rp = binfield_raw_create(14);
+    rp = binfield_raw_create(_DATETIME_FIELD_SIZE);
     if (!rp)
         return 0;
     file->datetime = rp;
     binfield_raw_set(rp, "\0", 1);
 
-    np = binfield_num_create(4);
+    np = binfield_num_create(_CTRLSUM_FIELD_SIZE);
     if (!np)
         return 0;
     file->ctrlsum = np;
     binfield_num_set(np, "\0", 1);
 
-    rp = binfield_raw_create(15 + 1);
+    rp = binfield_raw_create(_CONTENTSIZE_FIELD_SIZE);
     if (!rp)
         return 0;
     file->contentsize = rp;
@@ -77,7 +77,7 @@ int binfile_start(struct binfile *file)
 
     file->contentstream = NULL;
 
-    np = binfield_num_create(4);
+    np = binfield_num_create(_FILE_OFFSET_FIELD_SIZE);
     if (!np)
         return 0;
     file->file_offset = np;

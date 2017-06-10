@@ -23,6 +23,17 @@
 #include "binfield.h"
 #include "bignumber.h"
 
+/* sizes of binfile fields for memory allocation */
+#define _TYPE_SIGN_FIELD_SIZE    1
+#define _NAMESIZE_FIELD_SIZE     1
+#define _NAME_FIELD_SIZE         255
+#define _DESCSIZE_FIELD_SIZE     2
+#define _DESC_FIELD_SIZE         65535
+#define _DATETIME_FIELD_SIZE     14
+#define _CTRLSUM_FIELD_SIZE      4
+#define _CONTENTSIZE_FIELD_SIZE  16
+#define _FILE_OFFSET_FIELD_SIZE  4
+
 /*
  * struct binfile contents:
  * type_sign         --  the sign of the file header
