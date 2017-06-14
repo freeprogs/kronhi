@@ -118,6 +118,14 @@ int bindir_file_offset_set(struct bindir *dir, size_t file_offset)
                             sizeof file_offset);
 }
 
+/* bindir_file_offset_get: get from directory the relative file offset field
+                           return 1 if field has gotten
+                           return 0 if an error happened */
+int bindir_file_offset_get(const struct bindir *dir, size_t *out)
+{
+    return binfield_num_get(dir->file_offset, out);
+}
+
 /* bindir_get_size: get directory fields total size */
 size_t bindir_get_size(const struct bindir *dir)
 {
