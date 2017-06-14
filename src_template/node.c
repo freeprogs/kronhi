@@ -22,7 +22,7 @@
 /* node_write_dir: write directory node to output stream
                    return 1 if has written correctly
                    return 0 if errors happened */
-int node_write_dir(FILE *ofp, struct bindir *dir)
+int node_write_dir(FILE *ofp, const struct bindir *dir)
 {
     int f_error;
 
