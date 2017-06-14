@@ -96,6 +96,16 @@ int binfield_num_get(const struct field_num *field, void *out)
     return 1;
 }
 
+/* binfield_raw_read: read raw field from input stream
+                      return 1 if has read correctly
+                      return 0 if an error happened */
+int binfield_raw_read(FILE *ifp, struct field_raw *field, size_t size)
+{
+    if (size > field->maxsize)
+        return 0;
+    return fread(field->val, size, 1, ifp) == 1;
+}
+
 /* binfield_raw_write: write raw field to output stream
                        return 1 if has written correctly
                        return 0 if an error happened */
