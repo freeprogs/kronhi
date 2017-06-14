@@ -100,6 +100,14 @@ int bindir_num_of_files_set(struct bindir *dir, size_t num_of_files)
                             sizeof num_of_files);
 }
 
+/* bindir_num_of_files_get: get from directory the number of files field
+                            return 1 if field has gotten
+                            return 0 if an error happened */
+int bindir_num_of_files_get(const struct bindir *dir, size_t *out)
+{
+    return binfield_num_get(dir->num_of_files, out);
+}
+
 /* bindir_file_offset_set: set in directory the relative file offset field
                            return 1 if field has set
                            return 0 if an error happened */
