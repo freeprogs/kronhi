@@ -100,3 +100,21 @@ int node_write_file(FILE *ofp, const struct binfile *file)
         return 0;
     return 1;
 }
+
+/* node_test_isfile: test if there is a file node in input stream
+                     return 1 if there is a file node
+                     return 0 if an error happened */
+int node_test_isfile(FILE *ifp)
+{
+    fpos_t pos;
+    struct field_raw *f;
+    int retval;
+
+    fgetpos(ifp, &pos);
+    f = binfield_raw_create(1);
+    binfield_raw_read(ifp, f, 1);
+    retval = f->val[0] == 'f';
+    binfield_raw_free(f);
+    fsetpos(ifp, &pos);
+    return retval;
+}
