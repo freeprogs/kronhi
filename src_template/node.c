@@ -49,7 +49,7 @@ int node_write_dir(FILE *ofp, const struct bindir *dir)
 /* node_write_file: write file node to output stream
                     return 1 if has written correctly
                     return 0 if errors happened */
-int node_write_file(FILE *ofp, struct binfile *file)
+int node_write_file(FILE *ofp, const struct binfile *file)
 {
     int f_error, f_file_to_file_error;
 
