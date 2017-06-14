@@ -185,6 +185,14 @@ int binfile_file_offset_set(struct binfile *file, size_t file_offset)
                             sizeof file_offset);
 }
 
+/* binfile_file_offset_get: get from file the file offset field
+                            return 1 if field has gotten
+                            return 0 if an error happened */
+int binfile_file_offset_get(const struct binfile *file, size_t *out)
+{
+    return binfield_num_get(file->file_offset, out);
+}
+
 /* binfile_get_size: get file fields total size */
 int binfile_get_size(const struct binfile *file, struct bignumber *out)
 {
