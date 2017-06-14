@@ -44,6 +44,7 @@ struct field_raw *binfield_raw_create(size_t size);
 struct field_num *binfield_num_create(size_t size);
 int binfield_raw_set(struct field_raw *field, const void *value, size_t length);
 int binfield_num_set(struct field_num *field, const void *value, size_t length);
+int binfield_num_get(const struct field_num *field, void *out);
 int binfield_raw_write(const struct field_raw *field, FILE *ofp);
 int binfield_num_write(const struct field_num *field, FILE *ofp);
 void binfield_raw_free(struct field_raw *field);

@@ -87,6 +87,15 @@ int binfield_num_set(struct field_num *field, const void *value, size_t length)
     return 1;
 }
 
+/* binfield_num_get: get number field value
+                     return 1 if has gotten correctly
+                     return 0 if can't get */
+int binfield_num_get(const struct field_num *field, void *out)
+{
+    memcpy(out, field->val, field->len);
+    return 1;
+}
+
 /* binfield_raw_write: write raw field to output stream
                        return 1 if has written correctly
                        return 0 if an error happened */
