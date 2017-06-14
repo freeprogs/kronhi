@@ -46,6 +46,24 @@ int node_write_dir(FILE *ofp, const struct bindir *dir)
     return 1;
 }
 
+/* node_test_isdir: test if there is a directory node in input stream
+                    return 1 if there is a directory node
+                    return 0 if an error happened */
+int node_test_isdir(FILE *ifp)
+{
+    fpos_t pos;
+    struct field_raw *f;
+    int retval;
+
+    fgetpos(ifp, &pos);
+    f = binfield_raw_create(1);
+    binfield_raw_read(ifp, f, 1);
+    retval = f->val[0] == 'd';
+    binfield_raw_free(f);
+    fsetpos(ifp, &pos);
+    return retval;
+}
+
 /* node_write_file: write file node to output stream
                     return 1 if has written correctly
                     return 0 if errors happened */

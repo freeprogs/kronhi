@@ -26,6 +26,7 @@
 #include "file_operation.h"
 
 int node_write_dir(FILE *ofp, const struct bindir *dir);
+int node_test_isdir(FILE *ifp);
 int node_write_file(FILE *ofp, const struct binfile *file);
 
 #endif
