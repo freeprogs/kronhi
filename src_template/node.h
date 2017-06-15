@@ -24,9 +24,11 @@
 #include "bindir.h"
 #include "binfile.h"
 #include "file_operation.h"
+#include "binfield.h"
 
 int node_write_dir(FILE *ofp, const struct bindir *dir);
 int node_test_isdir(FILE *ifp);
+int node_read_dir_header(FILE *ifp, struct bindir *dir);
 int node_write_file(FILE *ofp, const struct binfile *file);
 int node_test_isfile(FILE *ifp);
 

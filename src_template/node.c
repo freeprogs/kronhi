@@ -64,6 +64,36 @@ int node_test_isdir(FILE *ifp)
     return retval;
 }
 
+/* node_read_dir_header: read directory node header from input stream
+                         return 1 if has read correctly
+                         return 0 if errors happened */
+int node_read_dir_header(FILE *ifp, struct bindir *dir)
+{
+    unsigned short descsize;
+    int f_error;
+
+    f_error = 0;
+
+    if (!binfield_raw_read(ifp, dir->type_sign, 1))
+        f_error = 1;
+    if (!binfield_num_read(ifp, dir->descsize, 2))
+        f_error = 1;
+    if (!bindir_descsize_get(dir, &descsize))
+        f_error = 1;
+    if (!binfield_raw_read(ifp, dir->desc, descsize))
+        f_error = 1;
+    if (!binfield_num_read(ifp, dir->num_of_files, 4))
+        f_error = 1;
+    if (!binfield_num_read(ifp, dir->file_offset, 4))
+        f_error = 1;
+
+    if (f_error)
+        return 0;
+    if (ferror(ifp))
+        return 0;
+    return 1;
+}
+
 /* node_write_file: write file node to output stream
                     return 1 if has written correctly
                     return 0 if errors happened */
