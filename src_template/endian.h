@@ -23,6 +23,7 @@
 #include <stdio.h>
 
 void *bytes_to_bigend(void *bytes, size_t size);
+void *bytes_from_bigend(void *bytes, size_t size);
 void *bytes_to_litend(void *bytes, size_t size);
 
 int is_little_endian(void);
