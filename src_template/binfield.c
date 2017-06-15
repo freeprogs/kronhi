@@ -116,6 +116,21 @@ int binfield_raw_write(const struct field_raw *field, FILE *ofp)
     return 1;
 }
 
+/* binfield_num_read: read number field from input stream
+                      return 1 if has read correctly
+                      return 0 if an error happened */
+int binfield_num_read(FILE *ifp, struct field_num *field, size_t size)
+{
+    unsigned char buf[NUMBUFMAX];
+
+    if (fread(buf, size, 1, ifp) != 1)
+        return 0;
+    bytes_from_bigend(buf, size);
+    memcpy(field->val, buf, size);
+    field->len = size;
+    return 1;
+}
+
 /* binfield_num_write: write number field to output stream
                        return 1 if has written correctly
                        return 0 if an error happened */
