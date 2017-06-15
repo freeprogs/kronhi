@@ -134,6 +134,14 @@ int binfile_descsize_set(struct binfile *file, unsigned short filedescsize)
                             sizeof filedescsize);
 }
 
+/* binfile_descsize_get: get from file the description size field
+                         return 1 if field has gotten
+                         return 0 if an error happened */
+int binfile_descsize_get(struct binfile *file, unsigned short *out)
+{
+    return binfield_num_get(file->descsize, out);
+}
+
 /* binfile_desc_set: set in file the description field
                      return 1 if field has set
                      return 0 if an error happened */

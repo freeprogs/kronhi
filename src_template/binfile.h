@@ -67,6 +67,7 @@ int binfile_namesize_set(struct binfile *file, unsigned short filenamesize);
 int binfile_namesize_get(struct binfile *file, unsigned char *out);
 int binfile_name_set(struct binfile *file, const char *filename);
 int binfile_descsize_set(struct binfile *file, unsigned short filedescsize);
+int binfile_descsize_get(struct binfile *file, unsigned short *out);
 int binfile_desc_set(struct binfile *file, const char *filedesc);
 int binfile_datetime_set(struct binfile *file, const char *datetime);
 int binfile_ctrlsum_set(struct binfile *file, unsigned long ctrlsum);
