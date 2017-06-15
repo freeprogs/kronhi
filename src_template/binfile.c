@@ -106,6 +106,14 @@ int binfile_namesize_set(struct binfile *file, unsigned short filenamesize)
                             sizeof filenamesize);
 }
 
+/* binfile_namesize_get: get from file the name size field
+                         return 1 if field has gotten
+                         return 0 if an error happened */
+int binfile_namesize_get(struct binfile *file, unsigned char *out)
+{
+    return binfield_num_get(file->namesize, out);
+}
+
 /* binfile_name_set: set in file the name field
                      return 1 if field has set
                      return 0 if an error happened */
