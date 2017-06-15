@@ -80,6 +80,14 @@ int bindir_descsize_set(struct bindir *dir, unsigned short dirdescsize)
                             sizeof dirdescsize);
 }
 
+/* bindir_descsize_get: get from directory the description size field
+                            return 1 if field has gotten
+                            return 0 if an error happened */
+int bindir_descsize_get(const struct bindir *dir, unsigned short *out)
+{
+    return binfield_num_get(dir->descsize, out);
+}
+
 /* bindir_desc_set: set in directory the description field
                     return 1 if field has set
                     return 0 if an error happened */
