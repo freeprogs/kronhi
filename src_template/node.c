@@ -148,3 +148,66 @@ int node_test_isfile(FILE *ifp)
     fsetpos(ifp, &pos);
     return retval;
 }
+
+/* node_read_file_header: read file node header from input stream
+                          return 1 if has read correctly
+                          return 0 if errors happened */
+int node_read_file_header(FILE *ifp, struct binfile *file)
+{
+    unsigned char namesize;
+    unsigned short descsize;
+    char buffer[100], *p = buffer;
+    struct bignumber contentsize, i;
+    int c;
+    int f_error;
+
+    f_error = 0;
+
+    if (!binfield_raw_read(ifp, file->type_sign, 1))
+        f_error = 1;
+    if (!binfield_num_read(ifp, file->namesize, 1))
+        f_error = 1;
+    if (!binfile_namesize_get(file, &namesize))
+        f_error = 1;
+    if (!binfield_raw_read(ifp, file->name, namesize))
+        f_error = 1;
+    if (!binfield_num_read(ifp, file->descsize, 2))
+        f_error = 1;
+    if (!binfile_descsize_get(file, &descsize))
+        f_error = 1;
+    if (!binfield_raw_read(ifp, file->desc, descsize))
+        f_error = 1;
+    if (!binfield_raw_read(ifp, file->datetime, 14))
+        f_error = 1;
+    if (!binfield_num_read(ifp, file->ctrlsum, 4))
+        f_error = 1;
+
+    for (p = buffer; (c = getc(ifp)) != EOF; p++) {
+        *p = c;
+        if (c == '\0')
+            break;
+    }
+    if (c == EOF)
+        return 0;
+
+    if (!binfile_contentsize_set(file, buffer))
+        f_error = 1;
+
+    bignumber_set_value_string(&contentsize, buffer);
+    bignumber_set_value_int(&i, 0);
+    while (bignumber_lt_big(&i, &contentsize)) {
+        c = getc(ifp);
+        bignumber_add_int(&i, 1);
+    }
+    if (c == EOF)
+        return 0;
+
+    if (!binfield_num_read(ifp, file->file_offset, 4))
+        f_error = 1;
+
+    if (f_error)
+        return 0;
+    if (ferror(ifp))
+        return 0;
+    return 1;
+}
