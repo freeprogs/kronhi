@@ -73,21 +73,21 @@ int node_write_file(FILE *ofp, const struct binfile *file)
 
     f_error = f_file_to_file_error = 0;
 
-    if(!binfield_raw_write(file->type_sign, ofp))
+    if (!binfield_raw_write(file->type_sign, ofp))
         f_error = 1;
-    if(!binfield_num_write(file->namesize, ofp))
+    if (!binfield_num_write(file->namesize, ofp))
         f_error = 1;
-    if(!binfield_raw_write(file->name, ofp))
+    if (!binfield_raw_write(file->name, ofp))
         f_error = 1;
-    if(!binfield_num_write(file->descsize, ofp))
+    if (!binfield_num_write(file->descsize, ofp))
         f_error = 1;
-    if(!binfield_raw_write(file->desc, ofp))
+    if (!binfield_raw_write(file->desc, ofp))
         f_error = 1;
-    if(!binfield_raw_write(file->datetime, ofp))
+    if (!binfield_raw_write(file->datetime, ofp))
         f_error = 1;
-    if(!binfield_num_write(file->ctrlsum, ofp))
+    if (!binfield_num_write(file->ctrlsum, ofp))
         f_error = 1;
-    if(!binfield_raw_write(file->contentsize, ofp))
+    if (!binfield_raw_write(file->contentsize, ofp))
         f_error = 1;
     if (!file_write_file(ofp, file->contentstream))
         f_file_to_file_error = 1;
