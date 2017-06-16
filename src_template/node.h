@@ -26,9 +26,21 @@
 #include "file_operation.h"
 #include "binfield.h"
 
+enum dir_field_flags {
+    DIRFLD_TYPESIGN = 0x1,
+    DIRFLD_DESCSIZE = 0x2,
+    DIRFLD_DESC = 0x4,
+    DIRFLD_NUMOFFILES = 0x8,
+    DIRFLD_FILEOFFSET = 0x10
+};
+
 int node_write_dir(FILE *ofp, const struct bindir *dir);
 int node_test_isdir(FILE *ifp);
 int node_read_dir_header(FILE *ifp, struct bindir *dir);
+int node_write_dir_header_field(
+    FILE *ofp,
+    const struct bindir *dir,
+    enum dir_field_flags fieldflags);
 int node_write_file(FILE *ofp, const struct binfile *file);
 int node_test_isfile(FILE *ifp);
 int node_read_file_header(FILE *ifp, struct binfile *file);

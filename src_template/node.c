@@ -94,6 +94,72 @@ int node_read_dir_header(FILE *ifp, struct bindir *dir)
     return 1;
 }
 
+/* node_write_dir_header_field:
+   write directory node header field(s) to output stream
+   field flags may be conjugated by bitwise OR
+   return 1 if fields have written and skipped correctly
+   return 0 if errors happened */
+int node_write_dir_header_field(
+    FILE *ofp,
+    const struct bindir *dir,
+    enum dir_field_flags fieldflags)
+{
+    int f_error;
+
+    f_error = 0;
+
+    if (fieldflags & DIRFLD_TYPESIGN) {
+        if (!binfield_raw_write(dir->type_sign, ofp))
+            f_error = 1;
+    }
+    else {
+        if (!binfield_raw_skip(dir->type_sign, ofp))
+            f_error = 1;
+    }
+
+    if (fieldflags & DIRFLD_DESCSIZE) {
+        if (!binfield_num_write(dir->descsize, ofp))
+            f_error = 1;
+    }
+    else {
+        if (!binfield_num_skip(dir->descsize, ofp))
+            f_error = 1;
+    }
+
+    if (fieldflags & DIRFLD_DESC) {
+        if (!binfield_raw_write(dir->desc, ofp))
+            f_error = 1;
+    }
+    else {
+        if (!binfield_raw_skip(dir->desc, ofp))
+            f_error = 1;
+    }
+
+    if (fieldflags & DIRFLD_NUMOFFILES) {
+        if (!binfield_num_write(dir->num_of_files, ofp))
+            f_error = 1;
+    }
+    else {
+        if (!binfield_num_skip(dir->num_of_files, ofp))
+            f_error = 1;
+    }
+
+    if (fieldflags & DIRFLD_FILEOFFSET) {
+        if (!binfield_num_write(dir->file_offset, ofp))
+            f_error = 1;
+    }
+    else {
+        if (!binfield_num_skip(dir->file_offset, ofp))
+            f_error = 1;
+    }
+
+    if (f_error)
+        return 0;
+    if (ferror(ofp))
+        return 0;
+    return 1;
+}
+
 /* node_write_file: write file node to output stream
                     return 1 if has written correctly
                     return 0 if errors happened */
