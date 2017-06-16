@@ -30,13 +30,13 @@ int node_write_dir(FILE *ofp, const struct bindir *dir)
 
     if (!binfield_raw_write(dir->type_sign, ofp))
         f_error = 1;
-    if(!binfield_num_write(dir->descsize, ofp))
+    if (!binfield_num_write(dir->descsize, ofp))
         f_error = 1;
-    if(!binfield_raw_write(dir->desc, ofp))
+    if (!binfield_raw_write(dir->desc, ofp))
         f_error = 1;
-    if(!binfield_num_write(dir->num_of_files, ofp))
+    if (!binfield_num_write(dir->num_of_files, ofp))
         f_error = 1;
-    if(!binfield_num_write(dir->file_offset, ofp))
+    if (!binfield_num_write(dir->file_offset, ofp))
         f_error = 1;
 
     if (f_error)
