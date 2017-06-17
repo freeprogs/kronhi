@@ -74,6 +74,15 @@ int binfield_raw_set(struct field_raw *field, const void *value, size_t length)
     return 1;
 }
 
+/* binfield_raw_get: get raw field value
+                     return 1 if has gotten correctly
+                     return 0 if can't get */
+int binfield_raw_get(const struct field_raw *field, void *out)
+{
+    memcpy(out, field->val, field->len);
+    return 1;
+}
+
 /* binfield_num_set:
    set number field value and length to given value and length
    return 1 if has set correctly

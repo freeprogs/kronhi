@@ -43,6 +43,7 @@ struct field_num {
 struct field_raw *binfield_raw_create(size_t size);
 struct field_num *binfield_num_create(size_t size);
 int binfield_raw_set(struct field_raw *field, const void *value, size_t length);
+int binfield_raw_get(const struct field_raw *field, void *out);
 int binfield_num_set(struct field_num *field, const void *value, size_t length);
 int binfield_num_get(const struct field_num *field, void *out);
 int binfield_raw_read(FILE *ifp, struct field_raw *field, size_t size);
