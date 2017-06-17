@@ -76,15 +76,15 @@ int node_read_dir_header(FILE *ifp, struct bindir *dir)
 
     if (!binfield_raw_read(dir->type_sign, ifp, 1))
         f_error = 1;
-    if (!binfield_num_read(ifp, dir->descsize, 2))
+    if (!binfield_num_read(dir->descsize, ifp, 2))
         f_error = 1;
     if (!bindir_descsize_get(dir, &descsize))
         f_error = 1;
     if (!binfield_raw_read(dir->desc, ifp, descsize))
         f_error = 1;
-    if (!binfield_num_read(ifp, dir->num_of_files, 4))
+    if (!binfield_num_read(dir->num_of_files, ifp, 4))
         f_error = 1;
-    if (!binfield_num_read(ifp, dir->file_offset, 4))
+    if (!binfield_num_read(dir->file_offset, ifp, 4))
         f_error = 1;
 
     if (f_error)
@@ -231,13 +231,13 @@ int node_read_file_header(FILE *ifp, struct binfile *file)
 
     if (!binfield_raw_read(file->type_sign, ifp, 1))
         f_error = 1;
-    if (!binfield_num_read(ifp, file->namesize, 1))
+    if (!binfield_num_read(file->namesize, ifp, 1))
         f_error = 1;
     if (!binfile_namesize_get(file, &namesize))
         f_error = 1;
     if (!binfield_raw_read(file->name, ifp, namesize))
         f_error = 1;
-    if (!binfield_num_read(ifp, file->descsize, 2))
+    if (!binfield_num_read(file->descsize, ifp, 2))
         f_error = 1;
     if (!binfile_descsize_get(file, &descsize))
         f_error = 1;
@@ -245,7 +245,7 @@ int node_read_file_header(FILE *ifp, struct binfile *file)
         f_error = 1;
     if (!binfield_raw_read(file->datetime, ifp, 14))
         f_error = 1;
-    if (!binfield_num_read(ifp, file->ctrlsum, 4))
+    if (!binfield_num_read(file->ctrlsum, ifp, 4))
         f_error = 1;
 
     for (p = buffer; (c = getc(ifp)) != EOF; p++) {
@@ -268,7 +268,7 @@ int node_read_file_header(FILE *ifp, struct binfile *file)
     if (c == EOF)
         return 0;
 
-    if (!binfield_num_read(ifp, file->file_offset, 4))
+    if (!binfield_num_read(file->file_offset, ifp, 4))
         f_error = 1;
 
     if (f_error)

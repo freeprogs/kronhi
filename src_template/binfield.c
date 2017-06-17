@@ -146,7 +146,7 @@ int binfield_raw_skip(const struct field_raw *field, FILE *iofp)
 /* binfield_num_read: read number field from input stream
                       return 1 if has read correctly
                       return 0 if an error happened */
-int binfield_num_read(FILE *ifp, struct field_num *field, size_t size)
+int binfield_num_read(struct field_num *field, FILE *ifp, size_t size)
 {
     unsigned char buf[NUMBUFMAX];
 
