@@ -38,7 +38,7 @@ SRC_CHAIN_TEST = test_chain.c
 SRC_CHAIN_SOURCES = ../chain.c ../bignumber.c ../file_offset.c \
                     ../bindir.c ../binfile.c ../datetime.c \
                     ../file_operation.c ../crc32.c ../node.c \
-	            ../binfield.c ../endian.c
+	            ../binfield.c ../endian.c ../jumper.c
 TARGET_BINFILE = test_binfile
 SRC_BINFILE_TEST = test_binfile.c
 SRC_BINFILE_SOURCES = ../binfile.c ../binfield.c ../bignumber.c ../endian.c
