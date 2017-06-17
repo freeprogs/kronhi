@@ -96,7 +96,7 @@ int node_read_dir_header(FILE *ifp, struct bindir *dir)
 
 /* node_write_dir_header_field:
    write directory node header field(s) to output stream
-   field flags may be conjugated by bitwise OR
+   field flags may be conjugated by bitwise OR;
    return 1 if fields have written and skipped correctly
    return 0 if errors happened */
 int node_write_dir_header_field(
