@@ -128,14 +128,14 @@ int binfield_raw_write(const struct field_raw *field, FILE *ofp)
 /* binfield_raw_skip: skip raw field in stream
                       return 1 if has skipped correctly
                       return 0 if an error happened */
-int binfield_raw_skip(const struct field_raw *field, FILE *fp)
+int binfield_raw_skip(const struct field_raw *field, FILE *iofp)
 {
     int retval;
     size_t i;
 
     for (i = 0; i < field->len; i++)
-        getc(fp);
-    retval = ferror(fp) == 0;
+        getc(iofp);
+    retval = ferror(iofp) == 0;
     return retval;
 }
 
@@ -172,14 +172,14 @@ int binfield_num_write(const struct field_num *field, FILE *ofp)
 /* binfield_num_skip: skip number field in stream
                       return 1 if has skipped correctly
                       return 0 if an error happened */
-int binfield_num_skip(const struct field_num *field, FILE *fp)
+int binfield_num_skip(const struct field_num *field, FILE *iofp)
 {
     int retval;
     size_t i;
 
     for (i = 0; i < field->len; i++)
-        getc(fp);
-    retval = ferror(fp) == 0;
+        getc(iofp);
+    retval = ferror(iofp) == 0;
     return retval;
 }
 
