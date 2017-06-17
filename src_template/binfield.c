@@ -125,6 +125,20 @@ int binfield_raw_write(const struct field_raw *field, FILE *ofp)
     return 1;
 }
 
+/* binfield_raw_skip: skip raw field in stream
+                      return 1 if has skipped correctly
+                      return 0 if an error happened */
+int binfield_raw_skip(const struct field_raw *field, FILE *fp)
+{
+    int retval;
+    size_t i;
+
+    for (i = 0; i < field->len; i++)
+        getc(fp);
+    retval = ferror(fp) == 0;
+    return retval;
+}
+
 /* binfield_num_read: read number field from input stream
                       return 1 if has read correctly
                       return 0 if an error happened */
