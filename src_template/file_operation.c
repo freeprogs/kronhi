@@ -23,22 +23,22 @@
    tests whether stream has space for given size
    return 1 if has enough space
    return 0 if has no enough space */
-int file_test_write_size(FILE *fp, const struct bignumber *size)
+int file_test_write_size(FILE *iofp, const struct bignumber *size)
 {
     int retval;
     fpos_t savepos;
     struct bignumber cursize;
 
-    fgetpos(fp, &savepos);
+    fgetpos(iofp, &savepos);
 
     bignumber_set_value_int(&cursize, 0);
     while (bignumber_lt_big(&cursize, size)) {
-        if (getc(fp) == EOF)
+        if (getc(iofp) == EOF)
             break;
         bignumber_add_int(&cursize, 1);
     }
-    retval = feof(fp) == 0;
-    fsetpos(fp, &savepos);
+    retval = feof(iofp) == 0;
+    fsetpos(iofp, &savepos);
     return retval;
 }
 
