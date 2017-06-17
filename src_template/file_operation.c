@@ -64,18 +64,18 @@ int file_skip_to_offset(FILE *iofp, const struct file_offset *offset)
 /* file_get_size: get stream size in bytes
                   return 1 if has got correctly
                   return 0 if an error happen */
-int file_get_size(FILE *fp, struct bignumber *out)
+int file_get_size(FILE *iofp, struct bignumber *out)
 {
     int retval;
     fpos_t savepos;
     struct bignumber tmp;
 
-    fgetpos(fp, &savepos);
+    fgetpos(iofp, &savepos);
     bignumber_set_value_int(&tmp, 0);
-    while (getc(fp) != EOF)
+    while (getc(iofp) != EOF)
         bignumber_add_int(&tmp, 1);
-    retval = feof(fp) && !ferror(fp);
-    fsetpos(fp, &savepos);
+    retval = feof(iofp) && !ferror(iofp);
+    fsetpos(iofp, &savepos);
     if (retval)
         *out = tmp;
     return retval;
