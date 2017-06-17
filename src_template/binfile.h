@@ -63,7 +63,7 @@ struct binfile {
 
 int binfile_start(struct binfile *file);
 int binfile_type_set(struct binfile *file, char type);
-int binfile_namesize_set(struct binfile *file, unsigned short filenamesize);
+int binfile_namesize_set(struct binfile *file, unsigned char filenamesize);
 int binfile_namesize_get(struct binfile *file, unsigned char *out);
 int binfile_name_set(struct binfile *file, const char *filename);
 int binfile_descsize_set(struct binfile *file, unsigned short filedescsize);

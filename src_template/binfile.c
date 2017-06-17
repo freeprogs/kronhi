@@ -99,7 +99,7 @@ int binfile_type_set(struct binfile *file, char type)
 /* binfile_namesize_set: set in file the name size field
                          return 1 if field has set
                          return 0 if an error happened */
-int binfile_namesize_set(struct binfile *file, unsigned short filenamesize)
+int binfile_namesize_set(struct binfile *file, unsigned char filenamesize)
 {
     return binfield_num_set(file->namesize,
                             &filenamesize,
