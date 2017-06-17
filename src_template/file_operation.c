@@ -115,3 +115,21 @@ int file_write_file(FILE *fp, FILE *ifp)
     retval = !ferror(ifp) && feof(ifp) && !ferror(fp);
     return retval;
 }
+
+/* file_skip_bytes: skip given number of bytes in stream
+                    return 1 if has skipped correctly
+                    return 0 if an error happen */
+int file_skip_bytes(FILE *fp, const struct bignumber *count)
+{
+    int retval;
+    struct bignumber i;
+
+    bignumber_set_value_int(&i, 0);
+    while (bignumber_lt_big(&i, count)) {
+        if (getc(fp) == EOF)
+            break;
+        bignumber_add_int(&i, 1);
+    }
+    retval = ferror(fp) == 0;
+    return retval;
+}
