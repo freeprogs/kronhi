@@ -33,7 +33,7 @@
 #define W_BLOCK_SIZE  8192
 
 int file_test_write_size(FILE *iofp, const struct bignumber *size);
-int file_skip_to_offset(FILE *fp, const struct file_offset *offset);
+int file_skip_to_offset(FILE *iofp, const struct file_offset *offset);
 int file_get_size(FILE *fp, struct bignumber *out);
 int file_get_ctrlsum(FILE *fp, unsigned long *out);
 int file_write_file(FILE *fp, FILE *ifp);
