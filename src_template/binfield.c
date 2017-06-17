@@ -169,6 +169,20 @@ int binfield_num_write(const struct field_num *field, FILE *ofp)
     return 1;
 }
 
+/* binfield_num_skip: skip number field in stream
+                      return 1 if has skipped correctly
+                      return 0 if an error happened */
+int binfield_num_skip(const struct field_num *field, FILE *fp)
+{
+    int retval;
+    size_t i;
+
+    for (i = 0; i < field->len; i++)
+        getc(fp);
+    retval = ferror(fp) == 0;
+    return retval;
+}
+
 /* binfield_raw_free: free raw field value and field itself */
 void binfield_raw_free(struct field_raw *field)
 {

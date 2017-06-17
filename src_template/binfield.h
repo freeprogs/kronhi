@@ -51,6 +51,7 @@ int binfield_raw_write(const struct field_raw *field, FILE *ofp);
 int binfield_raw_skip(const struct field_raw *field, FILE *fp);
 int binfield_num_read(FILE *ifp, struct field_num *field, size_t size);
 int binfield_num_write(const struct field_num *field, FILE *ofp);
+int binfield_num_skip(const struct field_num *field, FILE *fp);
 void binfield_raw_free(struct field_raw *field);
 void binfield_num_free(struct field_num *field);
 
