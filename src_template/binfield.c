@@ -108,7 +108,7 @@ int binfield_num_get(const struct field_num *field, void *out)
 /* binfield_raw_read: read raw field from input stream
                       return 1 if has read correctly
                       return 0 if an error happened */
-int binfield_raw_read(FILE *ifp, struct field_raw *field, size_t size)
+int binfield_raw_read(struct field_raw *field, FILE *ifp, size_t size)
 {
     int retval;
 

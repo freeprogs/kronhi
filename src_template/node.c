@@ -57,7 +57,7 @@ int node_test_isdir(FILE *ifp)
 
     fgetpos(ifp, &pos);
     f = binfield_raw_create(1);
-    binfield_raw_read(ifp, f, 1);
+    binfield_raw_read(f, ifp, 1);
     retval = f->val[0] == 'd';
     binfield_raw_free(f);
     fsetpos(ifp, &pos);
@@ -74,13 +74,13 @@ int node_read_dir_header(FILE *ifp, struct bindir *dir)
 
     f_error = 0;
 
-    if (!binfield_raw_read(ifp, dir->type_sign, 1))
+    if (!binfield_raw_read(dir->type_sign, ifp, 1))
         f_error = 1;
     if (!binfield_num_read(ifp, dir->descsize, 2))
         f_error = 1;
     if (!bindir_descsize_get(dir, &descsize))
         f_error = 1;
-    if (!binfield_raw_read(ifp, dir->desc, descsize))
+    if (!binfield_raw_read(dir->desc, ifp, descsize))
         f_error = 1;
     if (!binfield_num_read(ifp, dir->num_of_files, 4))
         f_error = 1;
@@ -208,7 +208,7 @@ int node_test_isfile(FILE *ifp)
 
     fgetpos(ifp, &pos);
     f = binfield_raw_create(1);
-    binfield_raw_read(ifp, f, 1);
+    binfield_raw_read(f, ifp, 1);
     retval = f->val[0] == 'f';
     binfield_raw_free(f);
     fsetpos(ifp, &pos);
@@ -229,21 +229,21 @@ int node_read_file_header(FILE *ifp, struct binfile *file)
 
     f_error = 0;
 
-    if (!binfield_raw_read(ifp, file->type_sign, 1))
+    if (!binfield_raw_read(file->type_sign, ifp, 1))
         f_error = 1;
     if (!binfield_num_read(ifp, file->namesize, 1))
         f_error = 1;
     if (!binfile_namesize_get(file, &namesize))
         f_error = 1;
-    if (!binfield_raw_read(ifp, file->name, namesize))
+    if (!binfield_raw_read(file->name, ifp, namesize))
         f_error = 1;
     if (!binfield_num_read(ifp, file->descsize, 2))
         f_error = 1;
     if (!binfile_descsize_get(file, &descsize))
         f_error = 1;
-    if (!binfield_raw_read(ifp, file->desc, descsize))
+    if (!binfield_raw_read(file->desc, ifp, descsize))
         f_error = 1;
-    if (!binfield_raw_read(ifp, file->datetime, 14))
+    if (!binfield_raw_read(file->datetime, ifp, 14))
         f_error = 1;
     if (!binfield_num_read(ifp, file->ctrlsum, 4))
         f_error = 1;
