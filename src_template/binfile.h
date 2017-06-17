@@ -72,6 +72,7 @@ int binfile_desc_set(struct binfile *file, const char *filedesc);
 int binfile_datetime_set(struct binfile *file, const char *datetime);
 int binfile_ctrlsum_set(struct binfile *file, unsigned long ctrlsum);
 int binfile_contentsize_set(struct binfile *file, const char *contentsize);
+int binfile_contentsize_get(const struct binfile *file, char *out);
 int binfile_contentstream_set(struct binfile *file, FILE *contentstream);
 int binfile_file_offset_set(struct binfile *file, size_t file_offset);
 int binfile_file_offset_get(const struct binfile *file, size_t *out);

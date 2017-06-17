@@ -182,6 +182,14 @@ int binfile_contentsize_set(struct binfile *file, const char *contentsize)
                             strlen(contentsize) + 1);
 }
 
+/* binfile_contentsize_get: get from file the content size field
+                            return 1 if field has gotten
+                            return 0 if an error happened */
+int binfile_contentsize_get(const struct binfile *file, char *out)
+{
+    return binfield_raw_get(file->contentsize, out);
+}
+
 /* binfile_contentstream_set: set in file the content stream
                               return 1 if field has set
                               return 0 if an error happened */
