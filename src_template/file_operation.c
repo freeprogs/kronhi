@@ -84,16 +84,16 @@ int file_get_size(FILE *iofp, struct bignumber *out)
 /* file_get_ctrlsum: get stream control sum
                      return 1 if has got correctly
                      return 0 if an error happen */
-int file_get_ctrlsum(FILE *fp, unsigned long *out)
+int file_get_ctrlsum(FILE *ifp, unsigned long *out)
 {
     int retval;
     fpos_t savepos;
     unsigned long sum;
 
-    fgetpos(fp, &savepos);
-    sum = crc32stream(fp);
-    retval = !ferror(fp);
-    fsetpos(fp, &savepos);
+    fgetpos(ifp, &savepos);
+    sum = crc32stream(ifp);
+    retval = !ferror(ifp);
+    fsetpos(ifp, &savepos);
     if (retval)
         *out = sum;
     return retval;
