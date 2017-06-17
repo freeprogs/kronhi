@@ -36,7 +36,7 @@ int file_test_write_size(FILE *iofp, const struct bignumber *size);
 int file_skip_to_offset(FILE *iofp, const struct file_offset *offset);
 int file_get_size(FILE *iofp, struct bignumber *out);
 int file_get_ctrlsum(FILE *ifp, unsigned long *out);
-int file_write_file(FILE *fp, FILE *ifp);
+int file_write_file(FILE *ofp, FILE *ifp);
 int file_skip_bytes(FILE *fp, const struct bignumber *count);
 
 #endif

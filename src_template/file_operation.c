@@ -102,17 +102,17 @@ int file_get_ctrlsum(FILE *ifp, unsigned long *out)
 /* file_write_file: write to stream another stream
                     return 1 if has written correctly
                     return 0 if an error happen */
-int file_write_file(FILE *fp, FILE *ifp)
+int file_write_file(FILE *ofp, FILE *ifp)
 {
     int retval;
     char buffer[W_BLOCK_SIZE];
     size_t n;
 
     while ((n = fread(buffer, 1, W_BLOCK_SIZE, ifp)) > 0) {
-        if (fwrite(buffer, 1, n, fp) != n)
+        if (fwrite(buffer, 1, n, ofp) != n)
             break;
     }
-    retval = !ferror(ifp) && feof(ifp) && !ferror(fp);
+    retval = !ferror(ifp) && feof(ifp) && !ferror(ofp);
     return retval;
 }
 
