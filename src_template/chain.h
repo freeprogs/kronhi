@@ -24,9 +24,12 @@
 #include <string.h>
 #include "file_offset.h"
 #include "bindir.h"
+#include "binfile.h"
+#include "datetime.h"
 #include "file_operation.h"
 #include "bignumber.h"
 #include "node.h"
+#include "jumper.h"
 
 enum chain_code {
     CHAIN_ERROR_DIR_OPENFILE,
