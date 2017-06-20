@@ -20,6 +20,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 progname=`basename $0`
+progdir=`dirname $0`
 
 # Run tests silently
 # run_tests()
@@ -97,6 +98,7 @@ print_help()
 # main([cmdarg])
 main()
 {
+    cd "$progdir"
     if [ $# -ne 0 -a "$1" = "--help" ]; then
         print_help
         return 1

@@ -229,6 +229,73 @@ int run_command_shell(void)
                     "directory not found on \"%s\" with offset %s",
                     dst, offsetstr);
             }
+            else if (retbin == BINCMD_ERROR_FILE_OPENFILE) {
+                cmdshell_print_error(
+                    "can't open destination file \"%s\"", dst);
+            }
+            else if (retbin == BINCMD_ERROR_FILE_SKIPOFFSET) {
+                cmdshell_print_error(
+                    "can't skip to offset %s on destination file",
+                    offsetstr);
+            }
+            else if (retbin == BINCMD_ERROR_FILE_NODIR) {
+                cmdshell_print_error(
+                    "can't find directory at offset %s on destination file",
+                    offsetstr);
+            }
+            else if (retbin == BINCMD_ERROR_FILE_FILESIZE) {
+                cmdshell_print_error(
+                    "can't determine size of "
+                    "source file meta data and its contents");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_READDIRHEADER) {
+                cmdshell_print_error(
+                    "can't read directory header "
+                    "at offset %s on destination file",
+                    offsetstr);
+            }
+            else if (retbin == BINCMD_ERROR_FILE_DIRGETNOF) {
+                cmdshell_print_error("can't get number of files in directory");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_WRITENODE) {
+                cmdshell_print_error(
+                    "can't write source file meta data to destination file");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_DIRGETOFFSET) {
+                cmdshell_print_error(
+                    "can't get offset of the first file in directory");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_NOFILE) {
+                cmdshell_print_error("can't find file at offset in directory");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_READFILEHEADER) {
+                cmdshell_print_error(
+                    "can't read file header at offset in directory");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_FILEGETOFFSET) {
+                cmdshell_print_error(
+                    "can't get offset of the next file in file");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_WRITEFILE) {
+                cmdshell_print_error(
+                    "can't write source file contents to destination file");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_FILESYS) {
+                cmdshell_print_error(
+                    "can't close destination file correctly");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_OPENSOURCE) {
+                cmdshell_print_error(
+                    "can't open source file for reading");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_READSOURCE) {
+                cmdshell_print_error(
+                    "can't read source file correctly");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_SOURCESYS) {
+                cmdshell_print_error(
+                    "can't close source file correctly");
+            }
             else if (retbin == BINCMD_OK) {
                 cmdshell_print_message(
                     "File has written to \"%s\" with directory offset %s",

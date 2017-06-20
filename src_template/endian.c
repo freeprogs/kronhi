@@ -28,6 +28,15 @@ void *bytes_to_bigend(void *bytes, size_t size)
     return bytes;
 }
 
+/* bytes_from_bigend: convert bytes from big-endian to native order
+                      return converted bytes */
+void *bytes_from_bigend(void *bytes, size_t size)
+{
+    if (is_little_endian())
+        bytes_reverse(bytes, size);
+    return bytes;
+}
+
 /* bytes_to_litend: convert bytes to little-endian order
                     return converted bytes */
 void *bytes_to_litend(void *bytes, size_t size)

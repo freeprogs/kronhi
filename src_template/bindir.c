@@ -27,31 +27,31 @@ int bindir_start(struct bindir *dir)
     struct field_raw *rp;
     struct field_num *np;
 
-    rp = binfield_raw_create(1);
+    rp = binfield_raw_create(_TYPE_SIGN_FIELD_SIZE);
     if (!rp)
         return 0;
     dir->type_sign = rp;
     binfield_raw_set(rp, "\0", 1);
 
-    np = binfield_num_create(2);
+    np = binfield_num_create(_DESCSIZE_FIELD_SIZE);
     if (!np)
         return 0;
     dir->descsize = np;
     binfield_num_set(np, "\0", 1);
 
-    rp = binfield_raw_create(65535);
+    rp = binfield_raw_create(_DESC_FIELD_SIZE);
     if (!rp)
         return 0;
     dir->desc = rp;
     binfield_raw_set(rp, "\0", 1);
 
-    np = binfield_num_create(4);
+    np = binfield_num_create(_NUM_OF_FILES_FIELD_SIZE);
     if (!np)
         return 0;
     dir->num_of_files = np;
     binfield_num_set(np, "\0", 1);
 
-    np = binfield_num_create(4);
+    np = binfield_num_create(_FILE_OFFSET_FIELD_SIZE);
     if (!np)
         return 0;
     dir->file_offset = np;
@@ -80,6 +80,14 @@ int bindir_descsize_set(struct bindir *dir, unsigned short dirdescsize)
                             sizeof dirdescsize);
 }
 
+/* bindir_descsize_get: get from directory the description size field
+                            return 1 if field has gotten
+                            return 0 if an error happened */
+int bindir_descsize_get(const struct bindir *dir, unsigned short *out)
+{
+    return binfield_num_get(dir->descsize, out);
+}
+
 /* bindir_desc_set: set in directory the description field
                     return 1 if field has set
                     return 0 if an error happened */
@@ -100,6 +108,14 @@ int bindir_num_of_files_set(struct bindir *dir, size_t num_of_files)
                             sizeof num_of_files);
 }
 
+/* bindir_num_of_files_get: get from directory the number of files field
+                            return 1 if field has gotten
+                            return 0 if an error happened */
+int bindir_num_of_files_get(const struct bindir *dir, size_t *out)
+{
+    return binfield_num_get(dir->num_of_files, out);
+}
+
 /* bindir_file_offset_set: set in directory the relative file offset field
                            return 1 if field has set
                            return 0 if an error happened */
@@ -108,6 +124,14 @@ int bindir_file_offset_set(struct bindir *dir, size_t file_offset)
     return binfield_num_set(dir->file_offset,
                             &file_offset,
                             sizeof file_offset);
+}
+
+/* bindir_file_offset_get: get from directory the relative file offset field
+                           return 1 if field has gotten
+                           return 0 if an error happened */
+int bindir_file_offset_get(const struct bindir *dir, size_t *out)
+{
+    return binfield_num_get(dir->file_offset, out);
 }
 
 /* bindir_get_size: get directory fields total size */

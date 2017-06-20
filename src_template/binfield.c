@@ -74,6 +74,15 @@ int binfield_raw_set(struct field_raw *field, const void *value, size_t length)
     return 1;
 }
 
+/* binfield_raw_get: get raw field value
+                     return 1 if has gotten correctly
+                     return 0 if can't get */
+int binfield_raw_get(const struct field_raw *field, void *out)
+{
+    memcpy(out, field->val, field->len);
+    return 1;
+}
+
 /* binfield_num_set:
    set number field value and length to given value and length
    return 1 if has set correctly
@@ -87,12 +96,66 @@ int binfield_num_set(struct field_num *field, const void *value, size_t length)
     return 1;
 }
 
+/* binfield_num_get: get number field value
+                     return 1 if has gotten correctly
+                     return 0 if can't get */
+int binfield_num_get(const struct field_num *field, void *out)
+{
+    memcpy(out, field->val, field->len);
+    return 1;
+}
+
+/* binfield_raw_read: read raw field from input stream
+                      return 1 if has read correctly
+                      return 0 if an error happened */
+int binfield_raw_read(struct field_raw *field, FILE *ifp, size_t size)
+{
+    int retval;
+
+    if (size > field->maxsize)
+        return 0;
+    retval = fread(field->val, 1, size, ifp) == size;
+    field->len = size;
+    return retval;
+}
+
 /* binfield_raw_write: write raw field to output stream
                        return 1 if has written correctly
                        return 0 if an error happened */
 int binfield_raw_write(const struct field_raw *field, FILE *ofp)
 {
-    return fwrite(field->val, field->len, 1, ofp) == 1;
+    if (field->len > 0)
+        return fwrite(field->val, field->len, 1, ofp) == 1;
+    return 1;
+}
+
+/* binfield_raw_skip: skip raw field in stream
+                      return 1 if has skipped correctly
+                      return 0 if an error happened */
+int binfield_raw_skip(const struct field_raw *field, FILE *iofp)
+{
+    int retval;
+    size_t i;
+
+    for (i = 0; i < field->len; i++)
+        getc(iofp);
+    retval = ferror(iofp) == 0;
+    return retval;
+}
+
+/* binfield_num_read: read number field from input stream
+                      return 1 if has read correctly
+                      return 0 if an error happened */
+int binfield_num_read(struct field_num *field, FILE *ifp, size_t size)
+{
+    unsigned char buf[NUMBUFMAX];
+
+    if (fread(buf, size, 1, ifp) != 1)
+        return 0;
+    bytes_from_bigend(buf, size);
+    memcpy(field->val, buf, size);
+    field->len = size;
+    return 1;
 }
 
 /* binfield_num_write: write number field to output stream
@@ -102,9 +165,26 @@ int binfield_num_write(const struct field_num *field, FILE *ofp)
 {
     unsigned char buf[NUMBUFMAX];
 
-    memcpy(buf, field->val, field->len);
-    bytes_to_bigend(buf, field->len);
-    return fwrite(buf, field->len, 1, ofp) == 1;
+    if (field->len > 0) {
+        memcpy(buf, field->val, field->len);
+        bytes_to_bigend(buf, field->len);
+        return fwrite(buf, field->len, 1, ofp) == 1;
+    }
+    return 1;
+}
+
+/* binfield_num_skip: skip number field in stream
+                      return 1 if has skipped correctly
+                      return 0 if an error happened */
+int binfield_num_skip(const struct field_num *field, FILE *iofp)
+{
+    int retval;
+    size_t i;
+
+    for (i = 0; i < field->len; i++)
+        getc(iofp);
+    retval = ferror(iofp) == 0;
+    return retval;
 }
 
 /* binfield_raw_free: free raw field value and field itself */

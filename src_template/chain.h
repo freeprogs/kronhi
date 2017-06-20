@@ -24,9 +24,12 @@
 #include <string.h>
 #include "file_offset.h"
 #include "bindir.h"
+#include "binfile.h"
+#include "datetime.h"
 #include "file_operation.h"
 #include "bignumber.h"
 #include "node.h"
+#include "jumper.h"
 
 enum chain_code {
     CHAIN_ERROR_DIR_OPENFILE,
@@ -36,6 +39,22 @@ enum chain_code {
     CHAIN_ERROR_DIR_WRITEFILE,
     CHAIN_ERROR_DIR_FILESYS,
     CHAIN_ERROR_FILE_DIRENTRY,
+    CHAIN_ERROR_FILE_OPENFILE,
+    CHAIN_ERROR_FILE_SKIPOFFSET,
+    CHAIN_ERROR_FILE_NODIR,
+    CHAIN_ERROR_FILE_FILESIZE,
+    CHAIN_ERROR_FILE_READDIRHEADER,
+    CHAIN_ERROR_FILE_DIRGETNOF,
+    CHAIN_ERROR_FILE_WRITENODE,
+    CHAIN_ERROR_FILE_DIRGETOFFSET,
+    CHAIN_ERROR_FILE_NOFILE,
+    CHAIN_ERROR_FILE_READFILEHEADER,
+    CHAIN_ERROR_FILE_FILEGETOFFSET,
+    CHAIN_ERROR_FILE_WRITEFILE,
+    CHAIN_ERROR_FILE_FILESYS,
+    CHAIN_ERROR_FILE_OPENSOURCE,
+    CHAIN_ERROR_FILE_READSOURCE,
+    CHAIN_ERROR_FILE_SOURCESYS,
     CHAIN_OK
 };
 

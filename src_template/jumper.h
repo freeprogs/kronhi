@@ -17,17 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ENDIAN_H
-#define ENDIAN_H
+#ifndef JUMPER_H
+#define JUMPER_H
 
 #include <stdio.h>
 
-void *bytes_to_bigend(void *bytes, size_t size);
-void *bytes_from_bigend(void *bytes, size_t size);
-void *bytes_to_litend(void *bytes, size_t size);
-
-int is_little_endian(void);
-int is_big_endian(void);
-void *bytes_reverse(void *bytes, size_t size);
+int jumper_dir_jump_file_offset(FILE *iofp, size_t offset);
+int jumper_file_jump_file_offset(FILE *iofp, size_t offset);
 
 #endif

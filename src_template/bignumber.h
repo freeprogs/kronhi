@@ -37,5 +37,6 @@ int bignumber_lt_big(const struct bignumber *number_left,
                      const struct bignumber *number_right);
 int bignumber_add_int(struct bignumber *number, int value);
 int bignumber_add_ulong(struct bignumber *number, size_t value);
+int bignumber_add_big(struct bignumber *number, const struct bignumber *value);
 
 #endif
