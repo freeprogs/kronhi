@@ -45,11 +45,14 @@ SRC_BINFILE_SOURCES = ../binfile.c ../binfield.c ../bignumber.c ../endian.c
 TARGET_CRC32 = test_crc32
 SRC_CRC32_TEST = test_crc32.c
 SRC_CRC32_SOURCES = ../crc32.c
+TARGET_DATETIME = test_datetime
+SRC_DATETIME_TEST = test_datetime.c
+SRC_DATETIME_SOURCES = ../datetime.c
 
 
 # Commands
 
-all: prepare_build_directory bignumber file_operation chain binfile crc32
+all: prepare_build_directory bignumber file_operation chain binfile crc32 datetime
 
 prepare_build_directory:
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
@@ -75,6 +78,10 @@ crc32:
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_CRC32_SOURCES) $(SRC_CRC32_TEST) -o $(BUILD_DIR)/$(TARGET_CRC32)
 	@echo "$(TARGET_CRC32) has built"
 
+datetime:
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_DATETIME_SOURCES) $(SRC_DATETIME_TEST) -o $(BUILD_DIR)/$(TARGET_DATETIME)
+	@echo "$(TARGET_DATETIME) has built"
+
 help:
 	@echo "usage: make [ clean ]" 1>&2
 
@@ -85,5 +92,6 @@ clean:
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_CHAIN)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_BINFILE)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_CRC32)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_DATETIME)"
 
-.PHONY: all prepare_build_directory bignumber file_operation chain binfile crc32 help clean
+.PHONY: all prepare_build_directory bignumber file_operation chain binfile crc32 datetime help clean
