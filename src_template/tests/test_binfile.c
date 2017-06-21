@@ -24,6 +24,7 @@
 void test_can_get_size(void);
 void test_can_set_and_get_namesize_field(void);
 void test_can_set_and_get_descsize_field(void);
+void test_can_set_and_get_contentsize_field(void);
 
 int main(void)
 {
@@ -43,7 +44,9 @@ int main(void)
      || CU_add_test(suite, "can set and get namesize field",
                     test_can_set_and_get_namesize_field) == NULL
      || CU_add_test(suite, "can set and get descsize field",
-                    test_can_set_and_get_descsize_field) == NULL) {
+                    test_can_set_and_get_descsize_field) == NULL
+     || CU_add_test(suite, "can set and get contentsize field",
+                    test_can_set_and_get_contentsize_field) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -108,6 +111,21 @@ void test_can_set_and_get_descsize_field(void)
     binfile_descsize_set(&file, 1);
     binfile_descsize_get(&file, &out);
     CU_ASSERT_EQUAL(out, 1);
+
+    binfile_end(&file);
+}
+
+void test_can_set_and_get_contentsize_field(void)
+{
+    struct binfile file;
+    char out[100];
+
+    binfile_start(&file);
+
+    binfile_contentsize_set(&file, "1");
+    *out = '\0';
+    binfile_contentsize_get(&file, out);
+    CU_ASSERT_STRING_EQUAL(out, "1");
 
     binfile_end(&file);
 }
