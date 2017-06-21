@@ -96,6 +96,7 @@ void test_can_set_and_get_namesize_field(void)
     binfile_start(&file);
 
     binfile_namesize_set(&file, 1);
+    out = 0;
     binfile_namesize_get(&file, &out);
     CU_ASSERT_EQUAL(out, 1);
 
