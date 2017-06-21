@@ -24,6 +24,7 @@
 void test_can_set_value_from_int(void);
 void test_can_set_value_from_string(void);
 void test_can_get_value_to_string(void);
+void test_can_compare_two_big_numbers_for_lt(void);
 
 int main(void)
 {
@@ -43,7 +44,9 @@ int main(void)
      || CU_add_test(suite, "can set value from string",
                     test_can_set_value_from_string) == NULL
      || CU_add_test(suite, "can get value to string",
-                    test_can_get_value_to_string) == NULL) {
+                    test_can_get_value_to_string) == NULL
+     || CU_add_test(suite, "can compare two big numbers for less than",
+                    test_can_compare_two_big_numbers_for_lt) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -90,4 +93,21 @@ void test_can_get_value_to_string(void)
     bignumber_set_value_int(&number, 2);
     bignumber_tostr(&number, out);
     CU_ASSERT_STRING_EQUAL(out, "2");
+}
+
+void test_can_compare_two_big_numbers_for_lt(void)
+{
+    struct bignumber number1, number2;
+
+    bignumber_set_value_int(&number1, 1);
+    bignumber_set_value_int(&number2, 2);
+    CU_ASSERT_TRUE(bignumber_lt_big(&number1, &number2));
+
+    bignumber_set_value_int(&number1, 1);
+    bignumber_set_value_int(&number2, 1);
+    CU_ASSERT_FALSE(bignumber_lt_big(&number1, &number2));
+
+    bignumber_set_value_int(&number1, 2);
+    bignumber_set_value_int(&number2, 1);
+    CU_ASSERT_FALSE(bignumber_lt_big(&number1, &number2));
 }
