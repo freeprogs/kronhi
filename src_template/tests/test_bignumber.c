@@ -28,6 +28,7 @@ void test_can_compare_two_big_numbers_for_lt(void);
 void test_can_add_integer_number(void);
 void test_can_add_unsigned_long_number(void);
 void test_can_add_big_number_to_big_number(void);
+void test_can_set_value_100Tb_from_string(void);
 
 int main(void)
 {
@@ -55,7 +56,9 @@ int main(void)
      || CU_add_test(suite, "can add unsigned long number",
                     test_can_add_unsigned_long_number) == NULL
      || CU_add_test(suite, "can add big number to big number",
-                    test_can_add_big_number_to_big_number) == NULL) {
+                    test_can_add_big_number_to_big_number) == NULL
+     || CU_add_test(suite, "can set value 100Tb from string",
+                    test_can_set_value_100Tb_from_string) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -168,4 +171,18 @@ void test_can_add_big_number_to_big_number(void)
     bignumber_add_big(&number1, &number2);
     bignumber_tostr(&number1, out);
     CU_ASSERT_STRING_EQUAL(out, "2");
+}
+
+void test_can_set_value_100Tb_from_string(void)
+{
+    struct bignumber number;
+    const char *string_100Tb = "109951162777600";
+
+    char out[100];
+    int retval;
+
+    retval = bignumber_set_value_string(&number, string_100Tb);
+    bignumber_tostr(&number, out);
+    CU_ASSERT_STRING_EQUAL(out, string_100Tb);
+    CU_ASSERT_TRUE(retval);
 }
