@@ -111,6 +111,7 @@ void test_can_set_and_get_descsize_field(void)
     binfile_start(&file);
 
     binfile_descsize_set(&file, 1);
+    out = 0;
     binfile_descsize_get(&file, &out);
     CU_ASSERT_EQUAL(out, 1);
 
