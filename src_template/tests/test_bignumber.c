@@ -50,7 +50,7 @@ int main(void)
                     test_can_get_value_to_string) == NULL
      || CU_add_test(suite, "can compare two big numbers for less than",
                     test_can_compare_two_big_numbers_for_lt) == NULL
-     || CU_add_test(suite, "test can add integer number",
+     || CU_add_test(suite, "can add integer number",
                     test_can_add_integer_number) == NULL
      || CU_add_test(suite, "test can add unsigned long number",
                     test_can_add_unsigned_long_number) == NULL
