@@ -26,6 +26,7 @@ void test_can_set_value_from_string(void);
 void test_can_get_value_to_string(void);
 void test_can_compare_two_big_numbers_for_lt(void);
 void test_can_add_integer_number(void);
+void test_can_add_unsigned_long_number(void);
 
 int main(void)
 {
@@ -49,7 +50,9 @@ int main(void)
      || CU_add_test(suite, "can compare two big numbers for less than",
                     test_can_compare_two_big_numbers_for_lt) == NULL
      || CU_add_test(suite, "test can add integer number",
-                    test_can_add_integer_number) == NULL) {
+                    test_can_add_integer_number) == NULL
+     || CU_add_test(suite, "test can add unsigned long number",
+                    test_can_add_unsigned_long_number) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -127,6 +130,22 @@ void test_can_add_integer_number(void)
     CU_ASSERT_STRING_EQUAL(out, "1");
 
     bignumber_add_int(&number, 1);
+    bignumber_tostr(&number, out);
+    CU_ASSERT_STRING_EQUAL(out, "2");
+}
+
+void test_can_add_unsigned_long_number(void)
+{
+    struct bignumber number;
+
+    char out[100];
+
+    bignumber_set_value_int(&number, 0);
+    bignumber_add_ulong(&number, 1);
+    bignumber_tostr(&number, out);
+    CU_ASSERT_STRING_EQUAL(out, "1");
+
+    bignumber_add_ulong(&number, 1);
     bignumber_tostr(&number, out);
     CU_ASSERT_STRING_EQUAL(out, "2");
 }
