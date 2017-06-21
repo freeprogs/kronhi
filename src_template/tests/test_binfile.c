@@ -53,7 +53,7 @@ void test_can_get_size(void)
 {
     struct binfile file;
     struct bignumber size;
-    char out[1000];
+    char out[100];
 
     binfile_start(&file);
 
