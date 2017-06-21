@@ -80,6 +80,7 @@ void test_can_get_size(void)
 
     bignumber_set_value_int(&size, 0);
     binfile_get_size(&file, &size);
+    *out = '\0';
     bignumber_tostr(&size, out);
 
     CU_ASSERT_STRING_EQUAL(out, "31");
