@@ -23,6 +23,7 @@
 
 void test_can_set_value_from_int(void);
 void test_can_set_value_from_string(void);
+void test_can_get_value_to_string(void);
 
 int main(void)
 {
@@ -40,7 +41,9 @@ int main(void)
     if (CU_add_test(suite, "can set value from int",
                     test_can_set_value_from_int) == NULL
      || CU_add_test(suite, "can set value from string",
-                    test_can_set_value_from_string) == NULL) {
+                    test_can_set_value_from_string) == NULL
+     || CU_add_test(suite, "can get value to string",
+                    test_can_get_value_to_string) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -72,4 +75,19 @@ void test_can_set_value_from_string(void)
     bignumber_set_value_string(&number, "1");
     bignumber_tostr(&number, out);
     CU_ASSERT_STRING_EQUAL(out, "1");
+}
+
+void test_can_get_value_to_string(void)
+{
+    struct bignumber number;
+
+    char out[100];
+
+    bignumber_set_value_int(&number, 1);
+    bignumber_tostr(&number, out);
+    CU_ASSERT_STRING_EQUAL(out, "1");
+
+    bignumber_set_value_int(&number, 2);
+    bignumber_tostr(&number, out);
+    CU_ASSERT_STRING_EQUAL(out, "2");
 }
