@@ -210,6 +210,7 @@ void test_can_write_file(void)
     CU_ASSERT_EQUAL(memcmp(buffer, filebytes, filesize), 0);
 
     binfile_end(&file);
+    fclose(ifp);
     fclose(iofp);
 }
 
