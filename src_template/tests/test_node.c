@@ -23,6 +23,7 @@
 
 void test_can_test_for_dir_type(void);
 void test_can_test_for_file_type(void);
+void test_can_write_dir(void);
 
 int main(void)
 {
@@ -39,6 +40,8 @@ int main(void)
 
     if (CU_add_test(suite, "can test for dir type",
                     test_can_test_for_dir_type) == NULL
+     || CU_add_test(suite, "can write dir",
+                    test_can_write_dir) == NULL
      || CU_add_test(suite, "can test for file type",
                     test_can_test_for_file_type) == NULL) {
         CU_cleanup_registry();
@@ -89,5 +92,52 @@ void test_can_test_for_file_type(void)
     rewind(iofp);
     CU_ASSERT_FALSE(node_test_isfile(iofp));
 
+    fclose(iofp);
+}
+
+void test_can_write_dir(void)
+{
+    FILE *iofp;
+
+    int i;
+    unsigned char dirbytes[100];
+    size_t dirsize;
+    struct bindir dir;
+    unsigned char buffer[100];
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    bindir_start(&dir);
+
+    dirsize = 12;
+    memcpy(dirbytes,
+           "\x64"
+           "\x00\x01"
+           "\x61"
+           "\x00\x00\x00\x01"
+           "\x00\x00\x00\x02",
+           dirsize);
+
+    bindir_type_set(&dir, 'd');
+    bindir_descsize_set(&dir, 1);
+    bindir_desc_set(&dir, "a");
+    bindir_num_of_files_set(&dir, 1);
+    bindir_file_offset_set(&dir, 2);
+
+    node_write_dir(iofp, &dir);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(memcmp(buffer, dirbytes, dirsize), 0);
+
+    bindir_end(&dir);
     fclose(iofp);
 }
