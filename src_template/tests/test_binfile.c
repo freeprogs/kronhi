@@ -48,7 +48,7 @@ int main(void)
                     test_can_set_and_get_descsize_field) == NULL
      || CU_add_test(suite, "can set and get contentsize field",
                     test_can_set_and_get_contentsize_field) == NULL
-     || CU_add_test(suite, "can set and get file offset field",
+     || CU_add_test(suite, "can set and get file_offset field",
                     test_can_set_and_get_file_offset_field) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
