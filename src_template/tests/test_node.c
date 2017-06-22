@@ -25,6 +25,7 @@ void test_can_test_for_dir_type(void);
 void test_can_test_for_file_type(void);
 void test_can_write_dir(void);
 void test_can_write_file(void);
+void test_can_write_dir_header_by_field(void);
 
 int main(void)
 {
@@ -43,6 +44,8 @@ int main(void)
                     test_can_test_for_dir_type) == NULL
      || CU_add_test(suite, "can write dir",
                     test_can_write_dir) == NULL
+     || CU_add_test(suite, "can write dir header by field",
+                    test_can_write_dir_header_by_field) == NULL
      || CU_add_test(suite, "can test for file type",
                     test_can_test_for_file_type) == NULL
      || CU_add_test(suite, "can write file",
@@ -207,5 +210,194 @@ void test_can_write_file(void)
     CU_ASSERT_EQUAL(memcmp(buffer, filebytes, filesize), 0);
 
     binfile_end(&file);
+    fclose(iofp);
+}
+
+void test_can_write_dir_header_by_field(void)
+{
+    FILE *iofp;
+
+    int i;
+    unsigned char dirbytes[100];
+    size_t dirsize;
+    struct bindir dir;
+    unsigned char buffer[100];
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    bindir_start(&dir);
+
+    bindir_type_set(&dir, 'd');
+    bindir_descsize_set(&dir, 1);
+    bindir_desc_set(&dir, "a");
+    bindir_num_of_files_set(&dir, 1);
+    bindir_file_offset_set(&dir, 2);
+
+
+    dirsize = 12;
+    memcpy(dirbytes,
+           "\x64"
+           "\x00\x00"
+           "\x00"
+           "\x00\x00\x00\x00"
+           "\x00\x00\x00\x00",
+           dirsize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    node_write_dir_header_field(iofp, &dir, DIRFLD_TYPESIGN);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write DIRFLD_TYPESIGN correctly" ,
+         memcmp(buffer, dirbytes, dirsize)), 0);
+
+
+    dirsize = 12;
+    memcpy(dirbytes,
+           "\x00"
+           "\x00\x01"
+           "\x00"
+           "\x00\x00\x00\x00"
+           "\x00\x00\x00\x00",
+           dirsize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    node_write_dir_header_field(iofp, &dir, DIRFLD_DESCSIZE);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write DIRFLD_DESCSIZE correctly" ,
+         memcmp(buffer, dirbytes, dirsize)), 0);
+
+
+    dirsize = 12;
+    memcpy(dirbytes,
+           "\x00"
+           "\x00\x00"
+           "\x61"
+           "\x00\x00\x00\x00"
+           "\x00\x00\x00\x00",
+           dirsize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    node_write_dir_header_field(iofp, &dir, DIRFLD_DESC);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write DIRFLD_DESC correctly" ,
+         memcmp(buffer, dirbytes, dirsize)), 0);
+
+
+    dirsize = 12;
+    memcpy(dirbytes,
+           "\x00"
+           "\x00\x00"
+           "\x00"
+           "\x00\x00\x00\x01"
+           "\x00\x00\x00\x00",
+           dirsize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    node_write_dir_header_field(iofp, &dir, DIRFLD_NUMOFFILES);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write DIRFLD_NUMOFFILES correctly" ,
+         memcmp(buffer, dirbytes, dirsize)), 0);
+
+
+    dirsize = 12;
+    memcpy(dirbytes,
+           "\x00"
+           "\x00\x00"
+           "\x00"
+           "\x00\x00\x00\x00"
+           "\x00\x00\x00\x02",
+           dirsize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    node_write_dir_header_field(iofp, &dir, DIRFLD_FILEOFFSET);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write DIRFLD_FILEOFFSET correctly" ,
+         memcmp(buffer, dirbytes, dirsize)), 0);
+
+
+    dirsize = 12;
+    memcpy(dirbytes,
+           "\x64"
+           "\x00\x01"
+           "\x61"
+           "\x00\x00\x00\x01"
+           "\x00\x00\x00\x02",
+           dirsize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    node_write_dir_header_field(
+        iofp,
+        &dir,
+        DIRFLD_TYPESIGN
+      | DIRFLD_DESCSIZE
+      | DIRFLD_DESC
+      | DIRFLD_NUMOFFILES
+      | DIRFLD_FILEOFFSET
+    );
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write DIRFLD_* correctly" ,
+         memcmp(buffer, dirbytes, dirsize)), 0);
+
+
+    bindir_end(&dir);
     fclose(iofp);
 }
