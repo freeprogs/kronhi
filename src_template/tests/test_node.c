@@ -26,6 +26,7 @@ void test_can_test_for_file_type(void);
 void test_can_write_dir(void);
 void test_can_write_file(void);
 void test_can_write_dir_header_by_field(void);
+void test_can_write_file_header_by_field(void);
 
 int main(void)
 {
@@ -49,7 +50,9 @@ int main(void)
      || CU_add_test(suite, "can test for file type",
                     test_can_test_for_file_type) == NULL
      || CU_add_test(suite, "can write file",
-                    test_can_write_file) == NULL) {
+                    test_can_write_file) == NULL
+     || CU_add_test(suite, "can write file header by field",
+                    test_can_write_file_header_by_field) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -400,5 +403,416 @@ void test_can_write_dir_header_by_field(void)
 
 
     bindir_end(&dir);
+    fclose(iofp);
+}
+
+void test_can_write_file_header_by_field(void)
+{
+    FILE *iofp;
+    FILE *ifp;
+
+    int i;
+    unsigned char filebytes[100];
+    size_t filesize;
+    struct binfile file;
+    unsigned char buffer[100];
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    ifp = tmpfile();
+    if (ifp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    fprintf(ifp, "abc");
+    rewind(ifp);
+
+    binfile_start(&file);
+
+    binfile_type_set(&file, 'f');
+    binfile_namesize_set(&file, 1);
+    binfile_name_set(&file, "a");
+    binfile_descsize_set(&file, 1);
+    binfile_desc_set(&file, "b");
+    binfile_datetime_set(&file, "20170102030405");
+    binfile_ctrlsum_set(&file, 0x01020304);
+    binfile_contentsize_set(&file, "3");
+    binfile_contentstream_set(&file, ifp);
+    binfile_file_offset_set(&file, 1);
+
+
+    filesize = 33;
+    memcpy(filebytes,
+           "\x66"
+           "\x00"
+           "\x00"
+           "\x00\x00"
+           "\x00"
+           "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+           "\x00\x00\x00\x00"
+           "\x00\x00"
+           "\x00\x00\x00"
+           "\x00\x00\x00\x00",
+           filesize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    rewind(ifp);
+
+    node_write_file_header_field(iofp, &file, FILFLD_TYPESIGN);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write FILFLD_TYPESIGN correctly" ,
+         memcmp(buffer, filebytes, filesize)), 0);
+
+
+    filesize = 33;
+    memcpy(filebytes,
+           "\x00"
+           "\x01"
+           "\x00"
+           "\x00\x00"
+           "\x00"
+           "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+           "\x00\x00\x00\x00"
+           "\x00\x00"
+           "\x00\x00\x00"
+           "\x00\x00\x00\x00",
+           filesize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    rewind(ifp);
+
+    node_write_file_header_field(iofp, &file, FILFLD_NAMESIZE);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write FILFLD_NAMESIZE correctly" ,
+         memcmp(buffer, filebytes, filesize)), 0);
+
+
+    filesize = 33;
+    memcpy(filebytes,
+           "\x00"
+           "\x00"
+           "\x61"
+           "\x00\x00"
+           "\x00"
+           "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+           "\x00\x00\x00\x00"
+           "\x00\x00"
+           "\x00\x00\x00"
+           "\x00\x00\x00\x00",
+           filesize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    rewind(ifp);
+
+    node_write_file_header_field(iofp, &file, FILFLD_NAME);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write FILFLD_NAME correctly" ,
+         memcmp(buffer, filebytes, filesize)), 0);
+
+
+    filesize = 33;
+    memcpy(filebytes,
+           "\x00"
+           "\x00"
+           "\x00"
+           "\x00\x01"
+           "\x00"
+           "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+           "\x00\x00\x00\x00"
+           "\x00\x00"
+           "\x00\x00\x00"
+           "\x00\x00\x00\x00",
+           filesize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    rewind(ifp);
+
+    node_write_file_header_field(iofp, &file, FILFLD_DESCSIZE);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write FILFLD_DESCSIZE correctly" ,
+         memcmp(buffer, filebytes, filesize)), 0);
+
+
+    filesize = 33;
+    memcpy(filebytes,
+           "\x00"
+           "\x00"
+           "\x00"
+           "\x00\x00"
+           "\x62"
+           "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+           "\x00\x00\x00\x00"
+           "\x00\x00"
+           "\x00\x00\x00"
+           "\x00\x00\x00\x00",
+           filesize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    rewind(ifp);
+
+    node_write_file_header_field(iofp, &file, FILFLD_DESC);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write FILFLD_DESC correctly" ,
+         memcmp(buffer, filebytes, filesize)), 0);
+
+
+    filesize = 33;
+    memcpy(filebytes,
+           "\x00"
+           "\x00"
+           "\x00"
+           "\x00\x00"
+           "\x00"
+           "\x32\x30\x31\x37\x30\x31\x30\x32\x30\x33\x30\x34\x30\x35"
+           "\x00\x00\x00\x00"
+           "\x00\x00"
+           "\x00\x00\x00"
+           "\x00\x00\x00\x00",
+           filesize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    rewind(ifp);
+
+    node_write_file_header_field(iofp, &file, FILFLD_DATETIME);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write FILFLD_DATETIME correctly" ,
+         memcmp(buffer, filebytes, filesize)), 0);
+
+
+    filesize = 33;
+    memcpy(filebytes,
+           "\x00"
+           "\x00"
+           "\x00"
+           "\x00\x00"
+           "\x00"
+           "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+           "\x01\x02\x03\x04"
+           "\x00\x00"
+           "\x00\x00\x00"
+           "\x00\x00\x00\x00",
+           filesize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    rewind(ifp);
+
+    node_write_file_header_field(iofp, &file, FILFLD_CTRLSUM);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write FILFLD_CTRLSUM correctly" ,
+         memcmp(buffer, filebytes, filesize)), 0);
+
+
+    filesize = 33;
+    memcpy(filebytes,
+           "\x00"
+           "\x00"
+           "\x00"
+           "\x00\x00"
+           "\x00"
+           "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+           "\x00\x00\x00\x00"
+           "\x33\x00"
+           "\x00\x00\x00"
+           "\x00\x00\x00\x00",
+           filesize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    rewind(ifp);
+
+    node_write_file_header_field(iofp, &file, FILFLD_CONTENTSIZE);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write FILFLD_CONTENTSIZE correctly" ,
+         memcmp(buffer, filebytes, filesize)), 0);
+
+
+    filesize = 33;
+    memcpy(filebytes,
+           "\x00"
+           "\x00"
+           "\x00"
+           "\x00\x00"
+           "\x00"
+           "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+           "\x00\x00\x00\x00"
+           "\x00\x00"
+           "\x61\x62\x63"
+           "\x00\x00\x00\x00",
+           filesize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    rewind(ifp);
+
+    node_write_file_header_field(iofp, &file, FILFLD_CONTENTSTREAM);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write FILFLD_CONTENTSTREAM correctly" ,
+         memcmp(buffer, filebytes, filesize)), 0);
+
+
+    filesize = 33;
+    memcpy(filebytes,
+           "\x00"
+           "\x00"
+           "\x00"
+           "\x00\x00"
+           "\x00"
+           "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+           "\x00\x00\x00\x00"
+           "\x00\x00"
+           "\x00\x00\x00"
+           "\x00\x00\x00\x01",
+           filesize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    rewind(ifp);
+
+    node_write_file_header_field(iofp, &file, FILFLD_FILEOFFSET);
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write FILFLD_FILEOFFSET correctly" ,
+         memcmp(buffer, filebytes, filesize)), 0);
+
+
+    filesize = 33;
+    memcpy(filebytes,
+           "\x66"
+           "\x01"
+           "\x61"
+           "\x00\x01"
+           "\x62"
+           "\x32\x30\x31\x37\x30\x31\x30\x32\x30\x33\x30\x34\x30\x35"
+           "\x01\x02\x03\x04"
+           "\x33\x00"
+           "\x61\x62\x63"
+           "\x00\x00\x00\x01",
+           filesize);
+
+    rewind(iofp);
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    rewind(ifp);
+
+    node_write_file_header_field(
+        iofp,
+        &file,
+        FILFLD_TYPESIGN
+      | FILFLD_TYPESIGN
+      | FILFLD_NAMESIZE
+      | FILFLD_NAME
+      | FILFLD_DESCSIZE
+      | FILFLD_DESC
+      | FILFLD_DATETIME
+      | FILFLD_CTRLSUM
+      | FILFLD_CONTENTSIZE
+      | FILFLD_CONTENTSTREAM
+      | FILFLD_FILEOFFSET
+    );
+    rewind(iofp);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(
+        ((void) "can't write FILFLD_* correctly" ,
+         memcmp(buffer, filebytes, filesize)), 0);
+
+
+    binfile_end(&file);
+    fclose(ifp);
     fclose(iofp);
 }
