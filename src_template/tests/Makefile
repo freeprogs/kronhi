@@ -51,11 +51,16 @@ SRC_DATETIME_SOURCES = ../datetime.c
 TARGET_BINDIR = test_bindir
 SRC_BINDIR_TEST = test_bindir.c
 SRC_BINDIR_SOURCES = ../bindir.c ../binfield.c ../endian.c
+TARGET_NODE = test_node
+SRC_NODE_TEST = test_node.c
+SRC_NODE_SOURCES = ../node.c ../bindir.c ../binfield.c ../endian.c \
+                   ../bignumber.c ../binfile.c ../file_operation.c \
+                   ../file_offset.c ../crc32.c
 
 
 # Commands
 
-all: prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir
+all: prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir node
 
 prepare_build_directory:
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
@@ -89,6 +94,10 @@ bindir:
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_BINDIR_SOURCES) $(SRC_BINDIR_TEST) -o $(BUILD_DIR)/$(TARGET_BINDIR)
 	@echo "$(TARGET_BINDIR) has built"
 
+node:
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_NODE_SOURCES) $(SRC_NODE_TEST) -o $(BUILD_DIR)/$(TARGET_NODE)
+	@echo "$(TARGET_NODE) has built"
+
 help:
 	@echo "usage: make [ clean ]" 1>&2
 
@@ -101,5 +110,6 @@ clean:
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_CRC32)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_DATETIME)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_BINDIR)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_NODE)"
 
-.PHONY: all prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir help clean
+.PHONY: all prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir node help clean
