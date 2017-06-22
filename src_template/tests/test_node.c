@@ -22,6 +22,7 @@
 #include "../node.h"
 
 void test_can_test_for_dir_type(void);
+void test_can_test_for_file_type(void);
 
 int main(void)
 {
@@ -37,7 +38,9 @@ int main(void)
     }
 
     if (CU_add_test(suite, "can test for dir type",
-                    test_can_test_for_dir_type) == NULL) {
+                    test_can_test_for_dir_type) == NULL
+     || CU_add_test(suite, "can test for file type",
+                    test_can_test_for_file_type) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -65,6 +68,26 @@ void test_can_test_for_dir_type(void)
     putc('x', iofp);
     rewind(iofp);
     CU_ASSERT_FALSE(node_test_isdir(iofp));
+
+    fclose(iofp);
+}
+
+void test_can_test_for_file_type(void)
+{
+    FILE *iofp;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    putc('f', iofp);
+    rewind(iofp);
+    CU_ASSERT_TRUE(node_test_isfile(iofp));
+
+    rewind(iofp);
+    putc('x', iofp);
+    rewind(iofp);
+    CU_ASSERT_FALSE(node_test_isfile(iofp));
 
     fclose(iofp);
 }
