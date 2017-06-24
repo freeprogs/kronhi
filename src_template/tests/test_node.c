@@ -28,6 +28,7 @@ void test_can_write_file(void);
 void test_can_write_dir_header_by_field(void);
 void test_can_write_file_header_by_field(void);
 void can_read_dir_header(void);
+void can_read_file_header(void);
 
 int main(void)
 {
@@ -55,7 +56,9 @@ int main(void)
      || CU_add_test(suite, "can write file",
                     test_can_write_file) == NULL
      || CU_add_test(suite, "can write file header by field",
-                    test_can_write_file_header_by_field) == NULL) {
+                    test_can_write_file_header_by_field) == NULL
+     || CU_add_test(suite, "can read file header",
+                    can_read_file_header) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -875,5 +878,86 @@ void can_read_dir_header(void)
     CU_ASSERT_EQUAL(dir_file_offset, 2);
 
     bindir_end(&dir);
+    fclose(iofp);
+}
+
+void can_read_file_header(void)
+{
+    FILE *iofp;
+
+    int i;
+    unsigned char bytes[100];
+    size_t size;
+    struct binfile file;
+    char file_type_sign;
+    unsigned char file_namesize;
+    char file_name[100];
+    unsigned short file_descsize;
+    char file_desc[100];
+    char file_datetime[100];
+    const unsigned file_datetime_size = 14;
+    unsigned long file_ctrlsum;
+    char file_contentsize[100];
+    size_t file_file_offset;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    size = 33;
+    memcpy(bytes,
+           "\x66"
+           "\x01"
+           "\x61"
+           "\x00\x01"
+           "\x62"
+           "\x32\x30\x31\x37\x30\x31\x30\x32\x30\x33\x30\x34\x30\x35"
+           "\x01\x02\x03\x04"
+           "\x33\x00"
+           "\x61\x62\x63"
+           "\x00\x00\x00\x01",
+           size);
+
+    if (fwrite(bytes, 1, size, iofp) != size)
+        CU_FAIL("can't prepare data in temporary file");
+    rewind(iofp);
+
+    binfile_start(&file);
+
+    node_read_file_header(iofp, &file);
+
+    binfile_type_get(&file, &file_type_sign);
+    CU_ASSERT_EQUAL(file_type_sign, 'f');
+
+    binfile_namesize_get(&file, &file_namesize);
+    CU_ASSERT_EQUAL(file_namesize, 1);
+
+    binfile_name_get(&file, file_name);
+    CU_ASSERT_NSTRING_EQUAL(file_name, "a", file_namesize);
+
+    binfile_descsize_get(&file, &file_descsize);
+    CU_ASSERT_EQUAL(file_descsize, 1);
+
+    binfile_desc_get(&file, file_desc);
+    CU_ASSERT_NSTRING_EQUAL(file_desc, "b", file_descsize);
+
+    binfile_datetime_get(&file, file_datetime);
+    CU_ASSERT_NSTRING_EQUAL(
+        file_datetime, "20170102030405", file_datetime_size);
+
+    binfile_ctrlsum_get(&file, &file_ctrlsum);
+    CU_ASSERT_EQUAL(file_ctrlsum, 0x01020304);
+
+    binfile_contentsize_get(&file, file_contentsize);
+    CU_ASSERT_STRING_EQUAL(file_contentsize, "3");
+
+    binfile_file_offset_get(&file, &file_file_offset);
+    CU_ASSERT_EQUAL(file_file_offset, 1);
+
+    binfile_end(&file);
     fclose(iofp);
 }
