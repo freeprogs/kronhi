@@ -63,14 +63,19 @@ struct binfile {
 
 int binfile_start(struct binfile *file);
 int binfile_type_set(struct binfile *file, char type);
+int binfile_type_get(const struct binfile *file, char *out);
 int binfile_namesize_set(struct binfile *file, unsigned char filenamesize);
 int binfile_namesize_get(struct binfile *file, unsigned char *out);
 int binfile_name_set(struct binfile *file, const char *filename);
+int binfile_name_get(const struct binfile *file, char *out);
 int binfile_descsize_set(struct binfile *file, unsigned short filedescsize);
 int binfile_descsize_get(struct binfile *file, unsigned short *out);
 int binfile_desc_set(struct binfile *file, const char *filedesc);
+int binfile_desc_get(const struct binfile *file, char *out);
 int binfile_datetime_set(struct binfile *file, const char *datetime);
+int binfile_datetime_get(const struct binfile *file, char *out);
 int binfile_ctrlsum_set(struct binfile *file, unsigned long ctrlsum);
+int binfile_ctrlsum_get(const struct binfile *file, unsigned long *out);
 int binfile_contentsize_set(struct binfile *file, const char *contentsize);
 int binfile_contentsize_get(const struct binfile *file, char *out);
 int binfile_contentstream_set(struct binfile *file, FILE *contentstream);
