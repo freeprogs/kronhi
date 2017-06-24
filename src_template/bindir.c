@@ -106,6 +106,14 @@ int bindir_desc_set(struct bindir *dir, const char *dirdesc)
                             strlen(dirdesc));
 }
 
+/* bindir_desc_get: get from directory the description field
+                    return 1 if field has gotten
+                    return 0 if an error happened */
+int bindir_desc_get(const struct bindir *dir, char *out)
+{
+    return binfield_raw_get(dir->desc, out);
+}
+
 /* bindir_num_of_files_set: set in directory the number of files field
                             return 1 if field has set
                             return 0 if an error happened */
