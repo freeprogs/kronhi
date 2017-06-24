@@ -132,6 +132,14 @@ int binfile_name_set(struct binfile *file, const char *filename)
                             strlen(filename));
 }
 
+/* binfile_name_get: get from file the name field
+                     return 1 if field has gotten
+                     return 0 if an error happened */
+int binfile_name_get(const struct binfile *file, char *out)
+{
+    return binfield_raw_get(file->name, out);
+}
+
 /* binfile_descsize_set: set in file the description size field
                          return 1 if field has set
                          return 0 if an error happened */

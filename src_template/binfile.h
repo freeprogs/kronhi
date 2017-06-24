@@ -67,6 +67,7 @@ int binfile_type_get(const struct binfile *file, char *out);
 int binfile_namesize_set(struct binfile *file, unsigned char filenamesize);
 int binfile_namesize_get(struct binfile *file, unsigned char *out);
 int binfile_name_set(struct binfile *file, const char *filename);
+int binfile_name_get(const struct binfile *file, char *out);
 int binfile_descsize_set(struct binfile *file, unsigned short filedescsize);
 int binfile_descsize_get(struct binfile *file, unsigned short *out);
 int binfile_desc_set(struct binfile *file, const char *filedesc);
