@@ -204,6 +204,14 @@ int binfile_ctrlsum_set(struct binfile *file, unsigned long ctrlsum)
                             sizeof ctrlsum);
 }
 
+/* binfile_ctrlsum_get: get from file the control sum field
+                        return 1 if field has gotten
+                        return 0 if an error happened */
+int binfile_ctrlsum_get(const struct binfile *file, unsigned long *out)
+{
+    return binfield_num_get(file->ctrlsum, out);
+}
+
 /* binfile_contentsize_set: set in file the content size field
                             return 1 if field has set
                             return 0 if an error happened */
