@@ -168,6 +168,14 @@ int binfile_desc_set(struct binfile *file, const char *filedesc)
                             strlen(filedesc));
 }
 
+/* binfile_desc_get: get from file the description field
+                     return 1 if field has gotten
+                     return 0 if an error happened */
+int binfile_desc_get(const struct binfile *file, char *out)
+{
+    return binfield_raw_get(file->desc, out);
+}
+
 /* binfile_datetime_set: set in file the datetime field
                          return 1 if field has set
                          return 0 if an error happened */
