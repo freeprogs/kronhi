@@ -96,6 +96,14 @@ int binfile_type_set(struct binfile *file, char type)
                             sizeof type);
 }
 
+/* binfile_type_get: get from file the type sign field
+                     return 1 if field has gotten
+                     return 0 if an error happened */
+int binfile_type_get(const struct binfile *file, char *out)
+{
+    return binfield_raw_get(file->type_sign, out);
+}
+
 /* binfile_namesize_set: set in file the name size field
                          return 1 if field has set
                          return 0 if an error happened */
