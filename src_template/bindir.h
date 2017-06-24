@@ -48,6 +48,7 @@ struct bindir {
 
 int bindir_start(struct bindir *dir);
 int bindir_type_set(struct bindir *dir, char type);
+int bindir_type_get(const struct bindir *dir, char *out);
 int bindir_descsize_set(struct bindir *dir, unsigned short dirdescsize);
 int bindir_descsize_get(const struct bindir *dir, unsigned short *out);
 int bindir_desc_set(struct bindir *dir, const char *dirdesc);

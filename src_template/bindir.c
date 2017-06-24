@@ -70,6 +70,14 @@ int bindir_type_set(struct bindir *dir, char type)
                             sizeof type);
 }
 
+/* bindir_type_get: get from directory the type sign field
+                    return 1 if field has gotten
+                    return 0 if an error happened */
+int bindir_type_get(const struct bindir *dir, char *out)
+{
+    return binfield_raw_get(dir->type_sign, out);
+}
+
 /* bindir_descsize_set: set in directory the description size field
                         return 1 if field has set
                         return 0 if an error happened */
