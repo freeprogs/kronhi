@@ -186,6 +186,14 @@ int binfile_datetime_set(struct binfile *file, const char *datetime)
                             strlen(datetime));
 }
 
+/* binfile_datetime_get: get from file the datetime field
+                         return 1 if field has gotten
+                         return 0 if an error happened */
+int binfile_datetime_get(const struct binfile *file, char *out)
+{
+    return binfield_raw_get(file->datetime, out);
+}
+
 /* binfile_ctrlsum_set: set in file the control sum field
                         return 1 if field has set
                         return 0 if an error happened */
