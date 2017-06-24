@@ -866,7 +866,7 @@ void can_read_dir_header(void)
     CU_ASSERT_EQUAL(dir_descsize, 1);
 
     bindir_desc_get(&dir, dir_desc);
-    CU_ASSERT_STRING_EQUAL(dir_desc, "a");
+    CU_ASSERT_NSTRING_EQUAL(dir_desc, "a", dir_descsize);
 
     bindir_num_of_files_get(&dir, &dir_num_of_files);
     CU_ASSERT_EQUAL(dir_num_of_files, 1);
