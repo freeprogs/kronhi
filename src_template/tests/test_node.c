@@ -27,6 +27,7 @@ void test_can_write_dir(void);
 void test_can_write_file(void);
 void test_can_write_dir_header_by_field(void);
 void test_can_write_file_header_by_field(void);
+void can_read_dir_header(void);
 
 int main(void)
 {
@@ -47,6 +48,8 @@ int main(void)
                     test_can_write_dir) == NULL
      || CU_add_test(suite, "can write dir header by field",
                     test_can_write_dir_header_by_field) == NULL
+     || CU_add_test(suite, "can read dir header",
+                    can_read_dir_header) == NULL
      || CU_add_test(suite, "can test for file type",
                     test_can_test_for_file_type) == NULL
      || CU_add_test(suite, "can write file",
@@ -814,5 +817,63 @@ void test_can_write_file_header_by_field(void)
 
     binfile_end(&file);
     fclose(ifp);
+    fclose(iofp);
+}
+
+void can_read_dir_header(void)
+{
+    FILE *iofp;
+
+    int i;
+    unsigned char bytes[100];
+    size_t size;
+    struct bindir dir;
+    char dir_type_sign;
+    unsigned short dir_descsize;
+    char dir_desc[100];
+    size_t dir_num_of_files;
+    size_t dir_file_offset;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    size = 12;
+    memcpy(bytes,
+           "\x64"
+           "\x00\x01"
+           "\x61"
+           "\x00\x00\x00\x01"
+           "\x00\x00\x00\x02",
+           size);
+
+    if (fwrite(bytes, 1, size, iofp) != size)
+        CU_FAIL("can't prepare data in temporary file");
+    rewind(iofp);
+
+    bindir_start(&dir);
+
+    node_read_dir_header(iofp, &dir);
+
+    bindir_type_get(&dir, &dir_type_sign);
+    CU_ASSERT_EQUAL(dir_type_sign, 'd');
+
+    bindir_descsize_get(&dir, &dir_descsize);
+    CU_ASSERT_EQUAL(dir_descsize, 1);
+
+    bindir_desc_get(&dir, dir_desc);
+    CU_ASSERT_STRING_EQUAL(dir_desc, "a");
+
+    bindir_num_of_files_get(&dir, &dir_num_of_files);
+    CU_ASSERT_EQUAL(dir_num_of_files, 1);
+
+    bindir_file_offset_get(&dir, &dir_file_offset);
+    CU_ASSERT_EQUAL(dir_file_offset, 2);
+
+    bindir_end(&dir);
     fclose(iofp);
 }
