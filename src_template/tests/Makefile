@@ -56,11 +56,14 @@ SRC_NODE_TEST = test_node.c
 SRC_NODE_SOURCES = ../node.c ../bindir.c ../binfield.c ../endian.c \
                    ../bignumber.c ../binfile.c ../file_operation.c \
                    ../file_offset.c ../crc32.c
+TARGET_JUMPER = test_jumper
+SRC_JUMPER_TEST = test_jumper.c
+SRC_JUMPER_SOURCES = ../jumper.c
 
 
 # Commands
 
-all: prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir node
+all: prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper
 
 prepare_build_directory:
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
@@ -98,6 +101,10 @@ node:
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_NODE_SOURCES) $(SRC_NODE_TEST) -o $(BUILD_DIR)/$(TARGET_NODE)
 	@echo "$(TARGET_NODE) has built"
 
+jumper:
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_JUMPER_SOURCES) $(SRC_JUMPER_TEST) -o $(BUILD_DIR)/$(TARGET_JUMPER)
+	@echo "$(TARGET_JUMPER) has built"
+
 help:
 	@echo "usage: make [ clean ]" 1>&2
 
@@ -111,5 +118,6 @@ clean:
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_DATETIME)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_BINDIR)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_NODE)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_JUMPER)"
 
-.PHONY: all prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir node help clean
+.PHONY: all prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper help clean
