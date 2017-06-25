@@ -71,7 +71,7 @@ enum chain_code chain_create_dir(
 /* chain_append_file:
    append file to the chain on destination file with start offset
    return chain success code if no errors happened
-   return chain error code is an error happened */
+   return chain error code if an error happened */
 enum chain_code chain_append_file(
     const struct chain *self,
     const char *source,
