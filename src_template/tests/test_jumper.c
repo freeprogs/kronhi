@@ -22,6 +22,7 @@
 #include "../jumper.h"
 
 void test_can_jump_in_dir_to_file_offset(void);
+void test_can_jump_in_file_to_file_offset(void);
 
 int main(void)
 {
@@ -37,7 +38,9 @@ int main(void)
     }
 
     if (CU_add_test(suite, "test can jump in dir to file offset",
-                    test_can_jump_in_dir_to_file_offset) == NULL) {
+                    test_can_jump_in_dir_to_file_offset) == NULL
+     || CU_add_test(suite, "test can jump in file to file offset",
+                    test_can_jump_in_file_to_file_offset) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -67,6 +70,31 @@ void test_can_jump_in_dir_to_file_offset(void)
 
     offset = 10;
     retval = jumper_dir_jump_file_offset(iofp, offset);
+
+    CU_ASSERT_TRUE(retval);
+    CU_ASSERT_EQUAL(ftell(iofp), offset);
+
+    fclose(iofp);
+}
+
+void test_can_jump_in_file_to_file_offset(void)
+{
+    FILE *iofp;
+    size_t offset;
+
+    int i;
+    int retval;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    offset = 10;
+    retval = jumper_file_jump_file_offset(iofp, offset);
 
     CU_ASSERT_TRUE(retval);
     CU_ASSERT_EQUAL(ftell(iofp), offset);
