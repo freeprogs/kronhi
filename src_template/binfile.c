@@ -96,6 +96,14 @@ int binfile_type_set(struct binfile *file, char type)
                             sizeof type);
 }
 
+/* binfile_type_get: get from file the type sign field
+                     return 1 if field has gotten
+                     return 0 if an error happened */
+int binfile_type_get(const struct binfile *file, char *out)
+{
+    return binfield_raw_get(file->type_sign, out);
+}
+
 /* binfile_namesize_set: set in file the name size field
                          return 1 if field has set
                          return 0 if an error happened */
@@ -122,6 +130,14 @@ int binfile_name_set(struct binfile *file, const char *filename)
     return binfield_raw_set(file->name,
                             filename,
                             strlen(filename));
+}
+
+/* binfile_name_get: get from file the name field
+                     return 1 if field has gotten
+                     return 0 if an error happened */
+int binfile_name_get(const struct binfile *file, char *out)
+{
+    return binfield_raw_get(file->name, out);
 }
 
 /* binfile_descsize_set: set in file the description size field
@@ -152,6 +168,14 @@ int binfile_desc_set(struct binfile *file, const char *filedesc)
                             strlen(filedesc));
 }
 
+/* binfile_desc_get: get from file the description field
+                     return 1 if field has gotten
+                     return 0 if an error happened */
+int binfile_desc_get(const struct binfile *file, char *out)
+{
+    return binfield_raw_get(file->desc, out);
+}
+
 /* binfile_datetime_set: set in file the datetime field
                          return 1 if field has set
                          return 0 if an error happened */
@@ -162,6 +186,14 @@ int binfile_datetime_set(struct binfile *file, const char *datetime)
                             strlen(datetime));
 }
 
+/* binfile_datetime_get: get from file the datetime field
+                         return 1 if field has gotten
+                         return 0 if an error happened */
+int binfile_datetime_get(const struct binfile *file, char *out)
+{
+    return binfield_raw_get(file->datetime, out);
+}
+
 /* binfile_ctrlsum_set: set in file the control sum field
                         return 1 if field has set
                         return 0 if an error happened */
@@ -170,6 +202,14 @@ int binfile_ctrlsum_set(struct binfile *file, unsigned long ctrlsum)
     return binfield_num_set(file->ctrlsum,
                             &ctrlsum,
                             sizeof ctrlsum);
+}
+
+/* binfile_ctrlsum_get: get from file the control sum field
+                        return 1 if field has gotten
+                        return 0 if an error happened */
+int binfile_ctrlsum_get(const struct binfile *file, unsigned long *out)
+{
+    return binfield_num_get(file->ctrlsum, out);
 }
 
 /* binfile_contentsize_set: set in file the content size field

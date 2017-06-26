@@ -48,9 +48,11 @@ struct bindir {
 
 int bindir_start(struct bindir *dir);
 int bindir_type_set(struct bindir *dir, char type);
+int bindir_type_get(const struct bindir *dir, char *out);
 int bindir_descsize_set(struct bindir *dir, unsigned short dirdescsize);
 int bindir_descsize_get(const struct bindir *dir, unsigned short *out);
 int bindir_desc_set(struct bindir *dir, const char *dirdesc);
+int bindir_desc_get(const struct bindir *dir, char *out);
 int bindir_num_of_files_set(struct bindir *dir, size_t num_of_files);
 int bindir_num_of_files_get(const struct bindir *dir, size_t *out);
 int bindir_file_offset_set(struct bindir *dir, size_t file_offset);
