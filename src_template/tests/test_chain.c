@@ -28,6 +28,7 @@ void test_raise_on_absent_directory(void);
 void test_can_append_file_to_empty_directory(void);
 void test_can_append_file_to_non_empty_directory(void);
 void test_raise_on_append_file_to_broken_directory(void);
+void test_raise_on_append_file_to_broken_file(void);
 
 int main(void)
 {
@@ -66,7 +67,9 @@ int main(void)
      || CU_add_test(suite2, "can append file to non-empty directory",
                     test_can_append_file_to_non_empty_directory) == NULL
      || CU_add_test(suite2, "raise on append file to broken directory",
-                    test_raise_on_append_file_to_broken_directory) == NULL) {
+                    test_raise_on_append_file_to_broken_directory) == NULL
+     || CU_add_test(suite2, "raise_on_append_file_to_broken_file",
+                    test_raise_on_append_file_to_broken_file) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -557,6 +560,86 @@ void test_raise_on_append_file_to_broken_directory(void)
         dirsize);
     if (fwrite(dirbytes, 1, dirsize, ofp_dst) != dirsize)
         CU_FAIL("can't prepare directory in temporary file");
+
+    fclose(ofp_dst);
+
+    ofp_src = fopen(source, "wb");
+    if (ofp_src == NULL)
+        CU_FAIL("can't create temporary file");
+    fprintf(ofp_src, "abc");
+    fclose(ofp_src);
+
+    fileoffset_clear(&offset);
+    chain_start(&chain, destination, &offset);
+
+    filename = "a";
+    filedesc = "b";
+    filereloff = 0;
+    chretval = chain_append_file(
+        &chain, source, filename, filedesc, filereloff);
+
+    chain_end(&chain);
+
+    CU_ASSERT_EQUAL(chretval, CHAIN_ERROR_FILE_NOFILE);
+
+    remove(source);
+    remove(destination);
+}
+
+void test_raise_on_append_file_to_broken_file(void)
+{
+    struct chain chain;
+    const char *destination = "file.txt";
+    struct file_offset offset;
+    enum chain_code chretval;
+
+    const char *source = "source.txt";
+    const char *filename;
+    const char *filedesc;
+    size_t filereloff;
+
+    FILE *ofp_src, *ofp_dst;
+    int i;
+    char dirbytes[100];
+    size_t dirsize;
+    char filebytes[100];
+    size_t filesize;
+
+    ofp_dst = fopen(destination, "wb");
+    if (ofp_dst == NULL)
+        CU_FAIL("can't create temporary file");
+    for (i = 0; i < 100; i++)
+        putc('x', ofp_dst);
+    rewind(ofp_dst);
+
+    dirsize = 14;
+    memcpy(
+        dirbytes,
+        "\x64"
+        "\x00\x03"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x02"
+        "\x00\x00\x00\x00",
+        dirsize);
+    if (fwrite(dirbytes, 1, dirsize, ofp_dst) != dirsize)
+        CU_FAIL("can't prepare directory in temporary file");
+
+    filesize = 33;
+    memcpy(
+        filebytes,
+        "\x66"
+        "\x01"
+        "\x61"
+        "\x00\x01"
+        "\x62"
+        "\x32\x30\x31\x37\x30\x31\x30\x32\x30\x33\x30\x34\x30\x35"
+        "\x01\x02\x03\x04"
+        "\x33\x00"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x00",
+        filesize);
+    if (fwrite(filebytes, 1, filesize, ofp_dst) != filesize)
+        CU_FAIL("can't prepare file in directory in temporary file");
 
     fclose(ofp_dst);
 
