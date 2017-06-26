@@ -39,7 +39,7 @@ int main(void)
 
     if (CU_add_test(suite, "can jump in dir to file offset",
                     test_can_jump_in_dir_to_file_offset) == NULL
-     || CU_add_test(suite, "test can jump in file to file offset",
+     || CU_add_test(suite, "can jump in file to file offset",
                     test_can_jump_in_file_to_file_offset) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
