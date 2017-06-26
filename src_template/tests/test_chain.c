@@ -60,7 +60,7 @@ int main(void)
 
     if (CU_add_test(suite2, "raise on absent directory",
                     test_raise_on_absent_directory) == NULL
-     || CU_add_test(suite2, "test can append file to empty directory",
+     || CU_add_test(suite2, "can append file to empty directory",
                     test_can_append_file_to_empty_directory) == NULL
      || CU_add_test(suite2, "test can append file to non-empty directory",
                     test_can_append_file_to_non_empty_directory) == NULL) {
