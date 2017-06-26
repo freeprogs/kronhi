@@ -25,6 +25,7 @@ void test_raise_on_very_big_file_offset(void);
 void test_raise_on_very_big_directory_size(void);
 void test_can_write_directory_to_the_end_of_file(void);
 void test_raise_on_absent_directory(void);
+void test_can_append_file_to_empty_directory(void);
 
 int main(void)
 {
@@ -57,7 +58,9 @@ int main(void)
     }
 
     if (CU_add_test(suite2, "raise on absent directory",
-                    test_raise_on_absent_directory) == NULL) {
+                    test_raise_on_absent_directory) == NULL
+     || CU_add_test(suite2, "test can append file to empty directory",
+                    test_can_append_file_to_empty_directory) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -197,6 +200,138 @@ void test_raise_on_absent_directory(void)
     chain_end(&chain);
 
     CU_ASSERT_EQUAL(retval, CHAIN_ERROR_FILE_NODIR);
+
+    remove(source);
+    remove(destination);
+}
+
+void test_can_append_file_to_empty_directory(void)
+{
+    struct chain chain;
+    const char *destination = "file.txt";
+    struct file_offset offset;
+    enum chain_code chretval;
+
+    const char *source = "source.txt";
+    const char *filename;
+    const char *filedesc;
+    size_t filereloff;
+
+    FILE *ofp_src, *ofp_dst, *ifp_dst;
+    int i;
+    char dirbytes[100];
+    size_t dirsize;
+    char filebytes[100];
+    int retval;
+
+    char dirbytes_match[100];
+    size_t dirbytes_match_size;
+    char filebytes_match[100];
+    size_t filebytes_match_size;
+    char datetime[100];
+
+    ofp_dst = fopen(destination, "wb");
+    if (ofp_dst == NULL)
+        CU_FAIL("can't create temporary file");
+    for (i = 0; i < 100; i++)
+        putc('x', ofp_dst);
+    rewind(ofp_dst);
+
+    dirsize = 14;
+    memcpy(
+        dirbytes,
+        "\x64"
+        "\x00\x03"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x00"
+        "\x00\x00\x00\x01",
+        dirsize);
+    if (fwrite(dirbytes, 1, dirsize, ofp_dst) != dirsize)
+        CU_FAIL("can't prepare directory in temporary file");
+
+    fclose(ofp_dst);
+
+    ofp_src = fopen(source, "wb");
+    if (ofp_src == NULL)
+        CU_FAIL("can't create temporary file");
+    fprintf(ofp_src, "abc");
+    fclose(ofp_src);
+
+
+    dirbytes_match_size = 14;
+    memcpy(
+        dirbytes_match,
+        "\x64"
+        "\x00\x03"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x01"
+        "\x00\x00\x00\x00",
+        dirbytes_match_size);
+
+    filebytes_match_size = 33;
+    memcpy(
+        filebytes_match,
+        "\x66"
+        "\x01"
+        "\x61"
+        "\x00\x01"
+        "\x62",
+        6
+    );
+    datetime_get_now(datetime);
+    memcpy(filebytes_match + 6, datetime, 14);
+    memcpy(
+        filebytes_match + 6 + 14,
+        "\x35\x24\x41\xC2"
+        "\x33\x00"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x00",
+        13
+    );
+
+    fileoffset_clear(&offset);
+    chain_start(&chain, destination, &offset);
+
+    filename = "a";
+    filedesc = "b";
+    filereloff = 0;
+    chretval = chain_append_file(
+        &chain, source, filename, filedesc, filereloff);
+
+    chain_end(&chain);
+
+    CU_ASSERT_EQUAL(chretval, CHAIN_OK);
+
+
+    ifp_dst = fopen(destination, "rb");
+    if (ifp_dst == NULL)
+        CU_FAIL("can't open destination file");
+
+    rewind(ifp_dst);
+    if (fread(dirbytes, 1, dirbytes_match_size, ifp_dst)
+     != dirbytes_match_size)
+        CU_FAIL("can't read destination file");
+    retval = memcmp(
+        dirbytes,
+        dirbytes_match,
+        dirbytes_match_size
+    );
+
+    CU_ASSERT_EQUAL(((void) "directory correct" , retval), 0);
+
+    if (fread(filebytes, 1, filebytes_match_size, ifp_dst)
+     != filebytes_match_size)
+        CU_FAIL("can't read destination file");
+    retval = memcmp(
+        filebytes,
+        filebytes_match,
+        filebytes_match_size
+    );
+
+    CU_ASSERT_EQUAL(((void) "file correct" , retval), 0);
+
+    fclose(ifp_dst);
+
 
     remove(source);
     remove(destination);
