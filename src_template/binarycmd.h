@@ -32,11 +32,36 @@ enum binarycmd_code {
     BINCMD_ERROR_DIR_WRITENODE,
     BINCMD_ERROR_DIR_WRITEFILE,
     BINCMD_ERROR_DIR_FILESYS,
+    BINCMD_ERROR_FILE_DIRENTRY,
+    BINCMD_ERROR_FILE_OPENFILE,
+    BINCMD_ERROR_FILE_SKIPOFFSET,
+    BINCMD_ERROR_FILE_NODIR,
+    BINCMD_ERROR_FILE_FILESIZE,
+    BINCMD_ERROR_FILE_READDIRHEADER,
+    BINCMD_ERROR_FILE_DIRGETNOF,
+    BINCMD_ERROR_FILE_WRITENODE,
+    BINCMD_ERROR_FILE_DIRGETOFFSET,
+    BINCMD_ERROR_FILE_NOFILE,
+    BINCMD_ERROR_FILE_READFILEHEADER,
+    BINCMD_ERROR_FILE_FILEGETOFFSET,
+    BINCMD_ERROR_FILE_WRITEFILE,
+    BINCMD_ERROR_FILE_FILESYS,
+    BINCMD_ERROR_FILE_OPENSOURCE,
+    BINCMD_ERROR_FILE_READSOURCE,
+    BINCMD_ERROR_FILE_SOURCESYS,
     BINCMD_OK
 };
 
 enum binarycmd_code binarycmd_write_dir(
     const char *destination, const struct file_offset *offset,
     const char *dirdesc, enum write_cipher_type cipher);
+enum binarycmd_code binarycmd_write_file(
+    const char *source,
+    const char *destination,
+    const struct file_offset *offset,
+    const char *filename,
+    const char *filedesc,
+    size_t filereloff,
+    enum write_cipher_type cipher);
 
 #endif

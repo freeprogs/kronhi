@@ -61,28 +61,28 @@ void read_options_clear(struct read_options *opts)
 
 /* read_options_tostr_source: convert source option to string
                               return output string */
-char *read_options_tostr_source(struct read_options *opts, char out[])
+char *read_options_tostr_source(const struct read_options *opts, char out[])
 {
     return strcpy(out, opts->src);
 }
 
 /* read_options_tostr_destination: convert destination option to string
                                    return output string */
-char *read_options_tostr_destination(struct read_options *opts, char out[])
+char *read_options_tostr_destination(const struct read_options *opts, char out[])
 {
     return strcpy(out, opts->dst);
 }
 
 /* read_options_tostr_offset: convert offset option to string
                               return output string */
-char *read_options_tostr_offset(struct read_options *opts, char out[])
+char *read_options_tostr_offset(const struct read_options *opts, char out[])
 {
     return fileoffset_tostr(&opts->offset, out);
 }
 
 /* read_options_tostr_cipher: convert cipher option to string
                               return output string */
-char *read_options_tostr_cipher(struct read_options *opts, char out[])
+char *read_options_tostr_cipher(const struct read_options *opts, char out[])
 {
     if (opts->cipher == R_CIPHER_XOR)
         sprintf(out, "%s", "xor");

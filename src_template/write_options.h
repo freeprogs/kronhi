@@ -43,13 +43,13 @@ int write_options_init(
     const char *src, const char *dst,
     const char *offset, const char *cipher);
 void write_options_clear(struct write_options *opts);
-char *write_options_tostr_source(struct write_options *opts, char out[]);
-char *write_options_tostr_destination(struct write_options *opts, char out[]);
-char *write_options_tostr_offset(struct write_options *opts, char out[]);
-char *write_options_tostr_cipher(struct write_options *opts, char out[]);
-char *write_options_source_get(struct write_options *opts, char out[]);
-char *write_options_destination_get(struct write_options *opts, char out[]);
-struct file_offset write_options_offset_get(struct write_options *opts);
-enum write_cipher_type write_options_cipher_get(struct write_options *opts);
+char *write_options_tostr_source(const struct write_options *opts, char out[]);
+char *write_options_tostr_destination(const struct write_options *opts, char out[]);
+char *write_options_tostr_offset(const struct write_options *opts, char out[]);
+char *write_options_tostr_cipher(const struct write_options *opts, char out[]);
+char *write_options_source_get(const struct write_options *opts, char out[]);
+char *write_options_destination_get(const struct write_options *opts, char out[]);
+struct file_offset write_options_offset_get(const struct write_options *opts);
+enum write_cipher_type write_options_cipher_get(const struct write_options *opts);
 
 #endif

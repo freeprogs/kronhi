@@ -67,6 +67,9 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
         else if (strcmp(input, "init write dir") == 0) {
             return CMD_INIT_WRITE_DIR;
         }
+        else if (strcmp(input, "init write file") == 0) {
+            return CMD_INIT_WRITE_FILE;
+        }
         else if (strcmp(input, "init read") == 0) {
             return CMD_INIT_READ;
         }
@@ -76,11 +79,17 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
         else if (strcmp(input, "status write dir") == 0) {
             return CMD_STATUS_WRITE_DIR;
         }
+        else if (strcmp(input, "status write file") == 0) {
+            return CMD_STATUS_WRITE_FILE;
+        }
         else if (strcmp(input, "status read") == 0) {
             return CMD_STATUS_READ;
         }
         else if (strcmp(input, "write dir") == 0) {
             return CMD_WRITE_DIR;
+        }
+        else if (strcmp(input, "write file") == 0) {
+            return CMD_WRITE_FILE;
         }
         else {
             strcpy(in, input);
@@ -113,12 +122,16 @@ void cmdshell_print_help(void)
         "                      (source, destination, offset, cipher)\n"
         "init write dir    --  initialize write directory data\n",
         "                      (description)\n",
+        "init write file   --  initialize write file data\n",
+        "                      (archive filename, description, relative offset)\n",
         "init read         --  initialize options for reading\n",
         "                      (source, destination, offset, cipher)\n"
         "status write      --  show set write options\n",
         "status write dir  --  show write directory contents\n",
+        "status write file --  show write file data\n",
         "status read       --  show set read options\n",
         "write dir         --  write directory data to destination\n",
+        "write file        --  write file data and contents to destination\n",
         "\n",
         "help              --  print this info\n",
         "quit              --  exit the command shell\n",
@@ -322,6 +335,27 @@ void cmdshell_print_status_write_dir(const char *desc)
         (*desc != '\0' ? desc : "empty\n"));
 }
 
+
+/* cmdshell_print_status_write_file:
+   print status of write file to standard output */
+void cmdshell_print_status_write_file(
+    const char *filename, const char *filedesc, const char *filereloff)
+{
+    printf(
+        "\n"
+        "Write file filename:\n"
+        "%s\n"
+        "Write file description:\n"
+        "%s"
+        "\n"
+        "Write file relative offset:\n"
+        "%s\n"
+        ,
+        (*filename != '\0' ? filename : "empty\n"),
+        (*filedesc != '\0' ? filedesc : "empty\n"),
+        (*filereloff != '\0' ? filereloff : "empty\n"));
+}
+
 /* cmdshell_print_status_read:
    print status of set read options to standard output */
 void cmdshell_print_status_read(
@@ -390,6 +424,84 @@ cmdshell_init_write_dir(char descinter[], char descfile[])
         retval = CMD_DIR_UNKNOWN;
         printf("Fail unknown command \"%s\"\n", input);
     }
+    return retval;
+}
+
+/* cmdshell_init_write_file:
+   input settings for write file
+   return 1 when right settings were input
+   return 0 when wrong settings were input */
+int cmdshell_init_write_file(
+    char filename[], char filedesc[], char filereloff[])
+{
+    int retval, retin;
+    char input[CMDSHELL_MAXINPUT];
+    char text[CMDSHELL_MAXTEXTINPUT];
+    int f_filename_is_set, f_offset_is_set;
+
+    f_filename_is_set = f_offset_is_set = 0;
+
+    *input = '\0';
+    retin = input_line("Input filename: ", input, sizeof input);
+    if (!retin || str_isspace(input)) {
+        printf("Fail empty\n");
+    }
+    else {
+        strcpy(filename, input);
+        f_filename_is_set = 1;
+        printf("Ok \"%s\"\n", input);
+    }
+
+    *text = '\0';
+    retin = input_text_end(
+        "Input description (end with single . on line):\n",
+        text, sizeof text, ".");
+    if (!retin) {
+        *filedesc = '\0';
+        printf("Ok text empty\n");
+    }
+    else {
+        strcpy(filedesc, text);
+        printf("Ok text\n%s\n", text);
+    }
+
+    *input = '\0';
+    retin = input_line(
+        "Input relative offset (number >= 0): ", input, sizeof input);
+    if (!retin || str_isspace(input)) {
+        f_offset_is_set = 1;
+        printf("Ok unchanged \"%s\"\n", filereloff);
+    }
+    else {
+        double tmp;
+        if (strlen(input) > BIG_MAXSTRING) {
+            f_offset_is_set = 0;
+            printf("Fail \"%s\", should be between 1 and %d digits\n",
+                   input, BIG_MAXSTRING);
+        }
+        else if (!str_isdigit(input)) {
+            f_offset_is_set = 0;
+            printf("Fail \"%s\", should be an unsigned number\n", input);
+        }
+        else if (sscanf(input, "%lf", &tmp) == 1) {
+            if (tmp >= 0 && tmp <= ULONG_MAX) {
+                f_offset_is_set = 1;
+                strcpy(filereloff, input);
+                printf("Ok \"%s\"\n", input);
+            }
+            else {
+                f_offset_is_set = 0;
+                printf("Fail \"%s\", should be between %d and %lu\n",
+                       input, 0, ULONG_MAX);
+            }
+        }
+        else {
+            f_offset_is_set = 0;
+            printf("Fail \"%s\", should be a number\n", input);
+        }
+    }
+
+    retval = f_filename_is_set && f_offset_is_set;
     return retval;
 }
 

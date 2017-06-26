@@ -43,9 +43,9 @@ int read_options_init(
     const char *src, const char *dst,
     const char *offset, const char *cipher);
 void read_options_clear(struct read_options *opts);
-char *read_options_tostr_source(struct read_options *opts, char out[]);
-char *read_options_tostr_destination(struct read_options *opts, char out[]);
-char *read_options_tostr_offset(struct read_options *opts, char out[]);
-char *read_options_tostr_cipher(struct read_options *opts, char out[]);
+char *read_options_tostr_source(const struct read_options *opts, char out[]);
+char *read_options_tostr_destination(const struct read_options *opts, char out[]);
+char *read_options_tostr_offset(const struct read_options *opts, char out[]);
+char *read_options_tostr_cipher(const struct read_options *opts, char out[]);
 
 #endif

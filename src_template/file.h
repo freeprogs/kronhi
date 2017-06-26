@@ -17,17 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ENDIAN_H
-#define ENDIAN_H
+#ifndef FILE_H
+#define FILE_H
 
-#include <stdio.h>
+#include <string.h>
 
-void *bytes_to_bigend(void *bytes, size_t size);
-void *bytes_from_bigend(void *bytes, size_t size);
-void *bytes_to_litend(void *bytes, size_t size);
+/* maximum length of file name */
+#define FILE_MAXFILENAME  255
 
-int is_little_endian(void);
-int is_big_endian(void);
-void *bytes_reverse(void *bytes, size_t size);
+/* maximum length of file description */
+#define FILE_MAXDESCRIPTION  65535
+
+struct file {
+    char filename[FILE_MAXFILENAME];
+    char description[FILE_MAXDESCRIPTION];
+    size_t relative_offset;
+};
+
+void file_filename_set(struct file *file, const char *s);
+char *file_filename_get(const struct file *file, char out[]);
+void file_description_set(struct file *file, const char *s);
+char *file_description_get(const struct file *file, char out[]);
+void file_relative_offset_set(struct file *file, size_t offset);
+size_t file_relative_offset_get(const struct file *wfile);
 
 #endif

@@ -17,17 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ENDIAN_H
-#define ENDIAN_H
+#ifndef CRC32_H
+#define CRC32_H
 
 #include <stdio.h>
 
-void *bytes_to_bigend(void *bytes, size_t size);
-void *bytes_from_bigend(void *bytes, size_t size);
-void *bytes_to_litend(void *bytes, size_t size);
-
-int is_little_endian(void);
-int is_big_endian(void);
-void *bytes_reverse(void *bytes, size_t size);
+unsigned long crc32(const void *bytes, size_t size);
+unsigned long crc32stream(FILE *fp);
 
 #endif

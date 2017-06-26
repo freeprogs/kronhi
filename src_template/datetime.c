@@ -17,17 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ENDIAN_H
-#define ENDIAN_H
+#include "datetime.h"
 
-#include <stdio.h>
+int datetime_get_now(char out[])
+{
+    time_t t;
+    size_t ret;
 
-void *bytes_to_bigend(void *bytes, size_t size);
-void *bytes_from_bigend(void *bytes, size_t size);
-void *bytes_to_litend(void *bytes, size_t size);
-
-int is_little_endian(void);
-int is_big_endian(void);
-void *bytes_reverse(void *bytes, size_t size);
-
-#endif
+    t = time(NULL);
+    ret = strftime(
+        out,
+        DATETIMESIZE,
+        "%Y%m%d%H%M%S",
+        localtime(&t));
+    return ret == DATETIMESIZE - 1;
+}

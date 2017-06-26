@@ -17,17 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ENDIAN_H
-#define ENDIAN_H
+#include "jumper.h"
 
-#include <stdio.h>
+/* jumper_dir_jump_file_offset:
+   jump to relative file offset of directory in the stream
+   return 1 if has jumped correctly
+   return 0 if an error happened */
+int jumper_dir_jump_file_offset(FILE *iofp, size_t offset)
+{
+    int retval;
 
-void *bytes_to_bigend(void *bytes, size_t size);
-void *bytes_from_bigend(void *bytes, size_t size);
-void *bytes_to_litend(void *bytes, size_t size);
+    while (offset-- > 0)
+        getc(iofp);
+    retval = ferror(iofp) == 0;
+    return retval;
+}
 
-int is_little_endian(void);
-int is_big_endian(void);
-void *bytes_reverse(void *bytes, size_t size);
+/* jumper_file_jump_file_offset:
+   jump to relative file offset of file in the stream
+   return 1 if has jumped correctly
+   return 0 if an error happened */
+int jumper_file_jump_file_offset(FILE *iofp, size_t offset)
+{
+    int retval;
 
-#endif
+    while (offset-- > 0)
+        getc(iofp);
+    retval = ferror(iofp) == 0;
+    return retval;
+}

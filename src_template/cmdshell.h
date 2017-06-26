@@ -24,6 +24,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include <limits.h>
 #include "input.h"
 #include "write_options.h"
 #include "read_options.h"
@@ -41,11 +42,14 @@
 enum cmdshell_code {
     CMD_INIT_WRITE,
     CMD_INIT_WRITE_DIR,
+    CMD_INIT_WRITE_FILE,
     CMD_INIT_READ,
     CMD_STATUS_WRITE,
     CMD_STATUS_WRITE_DIR,
+    CMD_STATUS_WRITE_FILE,
     CMD_STATUS_READ,
     CMD_WRITE_DIR,
+    CMD_WRITE_FILE,
     CMD_HELP,
     CMD_QUIT,
     CMD_UNKNOWN
@@ -72,11 +76,15 @@ void cmdshell_print_status_write(
     const char *wsrc, const char *wdst,
     const char *woffset, const char *wcipher);
 void cmdshell_print_status_write_dir(const char *desc);
+void cmdshell_print_status_write_file(
+    const char *filename, const char *filedesc, const char *filereloff);
 void cmdshell_print_status_read(
     const char *rsrc, const char *rdst,
     const char *roffset, const char *rcipher);
 enum cmdshell_dir_code
 cmdshell_init_write_dir(char descinter[], char descfile[]);
+int cmdshell_init_write_file(
+    char filename[], char filedesc[], char filereloff[]);
 void cmdshell_end(void);
 
 #endif

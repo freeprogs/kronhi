@@ -29,6 +29,7 @@ int run_command_shell(void)
     struct read_options ropts;
 
     struct directory wdir;
+    struct file wfile;
 
     cmdshell_start();
     cmdshell_print_message("Input `help' for help or `quit' for exit.\n");
@@ -85,6 +86,26 @@ int run_command_shell(void)
                 cmdshell_print_error("can't input write directory contents");
             }
         }
+        else if (retcmd == CMD_INIT_WRITE_FILE) {
+            char filename[CMDSHELL_MAXINPUT] = "";
+            char filedesc[CMDSHELL_MAXTEXTINPUT] = "";
+            char filereloffstr[CMDSHELL_MAXINPUT];
+            size_t filereloff;
+
+            sprintf(filereloffstr, "0");
+            if (cmdshell_init_write_file(filename, filedesc, filereloffstr)) {
+                file_filename_set(&wfile, filename);
+                file_description_set(&wfile, filedesc);
+                filereloff = strtoul(filereloffstr, NULL, 10);
+                file_relative_offset_set(&wfile, filereloff);
+                cmdshell_print_message(
+                    "File name, description and relative offset have set");
+            }
+            else {
+                cmdshell_print_error(
+                    "Can't set file name, description or relative offset");
+            }
+        }
         else if (retcmd == CMD_INIT_READ) {
             char src[CMDSHELL_MAXINPUT];
             char dst[CMDSHELL_MAXINPUT];
@@ -118,6 +139,17 @@ int run_command_shell(void)
             char desc[DIRECTORY_MAXDESCRIPTION];
             directory_description_get(&wdir, desc);
             cmdshell_print_status_write_dir(desc);
+        }
+        else if (retcmd == CMD_STATUS_WRITE_FILE) {
+            char filename[FILE_MAXFILENAME];
+            char filedesc[FILE_MAXDESCRIPTION];
+            size_t filereloff;
+            char filereloffstr[CMDSHELL_MAXINPUT];
+            file_filename_get(&wfile, filename);
+            file_description_get(&wfile, filedesc);
+            filereloff = file_relative_offset_get(&wfile);
+            sprintf(filereloffstr, "%lu", (unsigned long) filereloff);
+            cmdshell_print_status_write_file(filename, filedesc, filereloffstr);
         }
         else if (retcmd == CMD_STATUS_READ) {
             char src[CMDSHELL_MAXINPUT];
@@ -169,6 +201,105 @@ int run_command_shell(void)
                 cmdshell_print_message(
                     "Directory has written to \"%s\" with offset %s.",
                     dest, offsetstr);
+            }
+        }
+        else if (retcmd == CMD_WRITE_FILE) {
+            enum binarycmd_code retbin;
+            char src[CMDSHELL_MAXINPUT];
+            char dst[CMDSHELL_MAXINPUT];
+            char filename[FILE_MAXFILENAME];
+            char filedesc[FILE_MAXDESCRIPTION];
+            size_t filereloff;
+            struct file_offset offset;
+            char offsetstr[CMDSHELL_MAXINPUT];
+            enum write_cipher_type cipher;
+            write_options_source_get(&wopts, src);
+            write_options_destination_get(&wopts, dst);
+            offset = write_options_offset_get(&wopts);
+            write_options_tostr_offset(&wopts, offsetstr);
+            file_filename_get(&wfile, filename);
+            file_description_get(&wfile, filedesc);
+            filereloff = file_relative_offset_get(&wfile);
+            cipher = write_options_cipher_get(&wopts);
+
+            retbin = binarycmd_write_file(
+                src, dst, &offset, filename, filedesc, filereloff, cipher);
+            if (retbin == BINCMD_ERROR_FILE_DIRENTRY) {
+                cmdshell_print_error(
+                    "directory not found on \"%s\" with offset %s",
+                    dst, offsetstr);
+            }
+            else if (retbin == BINCMD_ERROR_FILE_OPENFILE) {
+                cmdshell_print_error(
+                    "can't open destination file \"%s\"", dst);
+            }
+            else if (retbin == BINCMD_ERROR_FILE_SKIPOFFSET) {
+                cmdshell_print_error(
+                    "can't skip to offset %s on destination file",
+                    offsetstr);
+            }
+            else if (retbin == BINCMD_ERROR_FILE_NODIR) {
+                cmdshell_print_error(
+                    "can't find directory at offset %s on destination file",
+                    offsetstr);
+            }
+            else if (retbin == BINCMD_ERROR_FILE_FILESIZE) {
+                cmdshell_print_error(
+                    "can't determine size of "
+                    "source file meta data and its contents");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_READDIRHEADER) {
+                cmdshell_print_error(
+                    "can't read directory header "
+                    "at offset %s on destination file",
+                    offsetstr);
+            }
+            else if (retbin == BINCMD_ERROR_FILE_DIRGETNOF) {
+                cmdshell_print_error("can't get number of files in directory");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_WRITENODE) {
+                cmdshell_print_error(
+                    "can't write source file meta data to destination file");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_DIRGETOFFSET) {
+                cmdshell_print_error(
+                    "can't get offset of the first file in directory");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_NOFILE) {
+                cmdshell_print_error("can't find file at offset in directory");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_READFILEHEADER) {
+                cmdshell_print_error(
+                    "can't read file header at offset in directory");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_FILEGETOFFSET) {
+                cmdshell_print_error(
+                    "can't get offset of the next file in file");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_WRITEFILE) {
+                cmdshell_print_error(
+                    "can't write source file contents to destination file");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_FILESYS) {
+                cmdshell_print_error(
+                    "can't close destination file correctly");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_OPENSOURCE) {
+                cmdshell_print_error(
+                    "can't open source file for reading");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_READSOURCE) {
+                cmdshell_print_error(
+                    "can't read source file correctly");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_SOURCESYS) {
+                cmdshell_print_error(
+                    "can't close source file correctly");
+            }
+            else if (retbin == BINCMD_OK) {
+                cmdshell_print_message(
+                    "File has written to \"%s\" with directory offset %s",
+                    dst, offsetstr);
             }
         }
         else if (retcmd == CMD_HELP) {

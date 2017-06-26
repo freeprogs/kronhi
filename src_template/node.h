@@ -22,7 +22,44 @@
 
 #include <stdio.h>
 #include "bindir.h"
+#include "binfile.h"
+#include "file_operation.h"
+#include "binfield.h"
 
-int node_write_dir(FILE *ofp, struct bindir *dir);
+enum dir_field_flags {
+    DIRFLD_TYPESIGN = 0x1,
+    DIRFLD_DESCSIZE = 0x2,
+    DIRFLD_DESC = 0x4,
+    DIRFLD_NUMOFFILES = 0x8,
+    DIRFLD_FILEOFFSET = 0x10
+};
+
+enum file_field_flags {
+    FILFLD_TYPESIGN = 0x1,
+    FILFLD_NAMESIZE = 0x2,
+    FILFLD_NAME = 0x4,
+    FILFLD_DESCSIZE = 0x8,
+    FILFLD_DESC = 0x10,
+    FILFLD_DATETIME = 0x20,
+    FILFLD_CTRLSUM = 0x40,
+    FILFLD_CONTENTSIZE = 0x80,
+    FILFLD_CONTENTSTREAM = 0x100,
+    FILFLD_FILEOFFSET = 0x200
+};
+
+int node_write_dir(FILE *ofp, const struct bindir *dir);
+int node_test_isdir(FILE *ifp);
+int node_read_dir_header(FILE *ifp, struct bindir *dir);
+int node_write_dir_header_field(
+    FILE *ofp,
+    const struct bindir *dir,
+    enum dir_field_flags fieldflags);
+int node_write_file(FILE *ofp, const struct binfile *file);
+int node_test_isfile(FILE *ifp);
+int node_read_file_header(FILE *ifp, struct binfile *file);
+int node_write_file_header_field(
+    FILE *ofp,
+    const struct binfile *file,
+    enum file_field_flags fieldflags);
 
 #endif

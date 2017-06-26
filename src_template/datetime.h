@@ -17,17 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ENDIAN_H
-#define ENDIAN_H
+#ifndef DATETIME_H
+#define DATETIME_H
 
 #include <stdio.h>
+#include <time.h>
 
-void *bytes_to_bigend(void *bytes, size_t size);
-void *bytes_from_bigend(void *bytes, size_t size);
-void *bytes_to_litend(void *bytes, size_t size);
+/* fixed size of datetime string with null charachter */
+#define DATETIMESIZE  15
 
-int is_little_endian(void);
-int is_big_endian(void);
-void *bytes_reverse(void *bytes, size_t size);
+int datetime_get_now(char out[]);
 
 #endif
