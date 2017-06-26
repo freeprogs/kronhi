@@ -44,6 +44,17 @@
    память не выделяется, а под её поля выделяется, так как иначе их
    надо держать снаружи.
 
+** DONE Сделать добавление файла в пустую директорию
+   CLOSED: [2017-06-26 Пн 19:43]
+   :PROPERTIES:
+   :issue_id: 9
+   :issue_type: task
+   :ARCHIVE_TIME: 2017-06-26 Пн 19:45
+   :ARCHIVE_FILE: ~/prog/projects/c/kronhi/tasks/tasks.org
+   :ARCHIVE_OLPATH: Задачи
+   :ARCHIVE_CATEGORY: tasks
+   :ARCHIVE_TODO: DONE
+   :END:
 
 * Архив багов
 
