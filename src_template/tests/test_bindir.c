@@ -73,7 +73,7 @@ void test_can_get_size(void)
     bindir_num_of_files_set(&dir, 0);
     bindir_file_offset_set(&dir, 0);
     out = 0;
-    out = bindir_get_size(&dir);
+    bindir_get_size(&dir, &out);
 
     CU_ASSERT_EQUAL(out, 12);
 
