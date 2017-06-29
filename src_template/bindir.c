@@ -150,14 +150,20 @@ int bindir_file_offset_get(const struct bindir *dir, size_t *out)
     return binfield_num_get(dir->file_offset, out);
 }
 
-/* bindir_get_size: get directory fields total size */
-size_t bindir_get_size(const struct bindir *dir)
+/* bindir_get_size: get directory fields total size
+                    return 1 if size has gotten
+                    return 0 if an error happened */
+int bindir_get_size(const struct bindir *dir, size_t *out)
 {
-    return dir->type_sign->len +
-        dir->descsize->len +
-        dir->desc->len +
-        dir->num_of_files->len +
-        dir->file_offset->len;
+    size_t size;
+
+    size = dir->type_sign->len
+        + dir->descsize->len
+        + dir->desc->len
+        + dir->num_of_files->len
+        + dir->file_offset->len;
+    *out = size;
+    return 1;
 }
 
 /* bindir_end: delete directory fields and fill it by zeros */
