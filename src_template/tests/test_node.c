@@ -250,6 +250,8 @@ void test_can_write_dir_header_by_field(void)
     bindir_file_offset_set(&dir, 2);
 
 
+    /* Check writing of type sign field */
+
     dirsize = 12;
     memcpy(dirbytes,
            "\x64"
@@ -274,6 +276,8 @@ void test_can_write_dir_header_by_field(void)
         ((void) "can't write DIRFLD_TYPESIGN correctly" ,
          memcmp(buffer, dirbytes, dirsize)), 0);
 
+
+    /* Check writing of description size field */
 
     dirsize = 12;
     memcpy(dirbytes,
@@ -300,6 +304,8 @@ void test_can_write_dir_header_by_field(void)
          memcmp(buffer, dirbytes, dirsize)), 0);
 
 
+    /* Check writing of description field */
+
     dirsize = 12;
     memcpy(dirbytes,
            "\x00"
@@ -324,6 +330,8 @@ void test_can_write_dir_header_by_field(void)
         ((void) "can't write DIRFLD_DESC correctly" ,
          memcmp(buffer, dirbytes, dirsize)), 0);
 
+
+    /* Check writing of number of files field */
 
     dirsize = 12;
     memcpy(dirbytes,
@@ -350,6 +358,8 @@ void test_can_write_dir_header_by_field(void)
          memcmp(buffer, dirbytes, dirsize)), 0);
 
 
+    /* Check writing of file offset field */
+
     dirsize = 12;
     memcpy(dirbytes,
            "\x00"
@@ -374,6 +384,8 @@ void test_can_write_dir_header_by_field(void)
         ((void) "can't write DIRFLD_FILEOFFSET correctly" ,
          memcmp(buffer, dirbytes, dirsize)), 0);
 
+
+    /* Check writing of all fields together */
 
     dirsize = 12;
     memcpy(dirbytes,
