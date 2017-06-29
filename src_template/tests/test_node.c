@@ -464,6 +464,8 @@ void test_can_write_file_header_by_field(void)
     binfile_file_offset_set(&file, 1);
 
 
+    /* Check writing of type sign field */
+
     filesize = 33;
     memcpy(filebytes,
            "\x66"
@@ -495,6 +497,8 @@ void test_can_write_file_header_by_field(void)
         ((void) "can't write FILFLD_TYPESIGN correctly" ,
          memcmp(buffer, filebytes, filesize)), 0);
 
+
+    /* Check writing of filename size field */
 
     filesize = 33;
     memcpy(filebytes,
@@ -528,6 +532,8 @@ void test_can_write_file_header_by_field(void)
          memcmp(buffer, filebytes, filesize)), 0);
 
 
+    /* Check writing of filename field */
+
     filesize = 33;
     memcpy(filebytes,
            "\x00"
@@ -559,6 +565,8 @@ void test_can_write_file_header_by_field(void)
         ((void) "can't write FILFLD_NAME correctly" ,
          memcmp(buffer, filebytes, filesize)), 0);
 
+
+    /* Check writing of description size field */
 
     filesize = 33;
     memcpy(filebytes,
@@ -592,6 +600,8 @@ void test_can_write_file_header_by_field(void)
          memcmp(buffer, filebytes, filesize)), 0);
 
 
+    /* Check writing of description field */
+
     filesize = 33;
     memcpy(filebytes,
            "\x00"
@@ -623,6 +633,8 @@ void test_can_write_file_header_by_field(void)
         ((void) "can't write FILFLD_DESC correctly" ,
          memcmp(buffer, filebytes, filesize)), 0);
 
+
+    /* Check writing of datetime field */
 
     filesize = 33;
     memcpy(filebytes,
@@ -656,6 +668,8 @@ void test_can_write_file_header_by_field(void)
          memcmp(buffer, filebytes, filesize)), 0);
 
 
+    /* Check writing of control sum field */
+
     filesize = 33;
     memcpy(filebytes,
            "\x00"
@@ -687,6 +701,8 @@ void test_can_write_file_header_by_field(void)
         ((void) "can't write FILFLD_CTRLSUM correctly" ,
          memcmp(buffer, filebytes, filesize)), 0);
 
+
+    /* Check writing of content size field */
 
     filesize = 33;
     memcpy(filebytes,
@@ -752,6 +768,8 @@ void test_can_write_file_header_by_field(void)
          memcmp(buffer, filebytes, filesize)), 0);
 
 
+    /* Check writing of file offset field */
+
     filesize = 33;
     memcpy(filebytes,
            "\x00"
@@ -783,6 +801,8 @@ void test_can_write_file_header_by_field(void)
         ((void) "can't write FILFLD_FILEOFFSET correctly" ,
          memcmp(buffer, filebytes, filesize)), 0);
 
+
+    /* Check writing of all fields together */
 
     filesize = 33;
     memcpy(filebytes,
