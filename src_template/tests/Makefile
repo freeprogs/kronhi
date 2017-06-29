@@ -26,6 +26,7 @@ CFLAGS = -ansi -pedantic -Wall
 LDFLAGS = -lcunit
 
 BUILD_DIR = build
+RUNTESTS_SHELLSCRIPT = runtests.sh
 
 TARGET_BIGNUMBER = test_bignumber
 SRC_BIGNUMBER_TEST = test_bignumber.c
@@ -68,6 +69,8 @@ all: prepare_build_directory bignumber file_operation chain binfile crc32 dateti
 prepare_build_directory:
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
 	@mkdir $(BUILD_DIR)
+	@cp $(RUNTESTS_SHELLSCRIPT) $(BUILD_DIR)
+	@chmod +x $(BUILD_DIR)/$(RUNTESTS_SHELLSCRIPT)
 
 make_build_directory:
 	@[ -d $(BUILD_DIR) ] || mkdir $(BUILD_DIR)
