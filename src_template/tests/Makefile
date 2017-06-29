@@ -69,39 +69,42 @@ prepare_build_directory:
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
 	@mkdir $(BUILD_DIR)
 
-bignumber:
+make_build_directory:
+	@[ -d $(BUILD_DIR) ] || mkdir $(BUILD_DIR)
+
+bignumber: make_build_directory
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_BIGNUMBER_SOURCES) $(SRC_BIGNUMBER_TEST) -o $(BUILD_DIR)/$(TARGET_BIGNUMBER)
 	@echo "$(TARGET_BIGNUMBER) has built"
 
-file_operation:
+file_operation: make_build_directory
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_FILE_OPERATION_SOURCES) $(SRC_FILE_OPERATION_TEST) -o $(BUILD_DIR)/$(TARGET_FILE_OPERATION)
 	@echo "$(TARGET_FILE_OPERATION) has built"
 
-chain:
+chain: make_build_directory
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_CHAIN_SOURCES) $(SRC_CHAIN_TEST) -o $(BUILD_DIR)/$(TARGET_CHAIN)
 	@echo "$(TARGET_CHAIN) has built"
 
-binfile:
+binfile: make_build_directory
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_BINFILE_SOURCES) $(SRC_BINFILE_TEST) -o $(BUILD_DIR)/$(TARGET_BINFILE)
 	@echo "$(TARGET_BINFILE) has built"
 
-crc32:
+crc32: make_build_directory
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_CRC32_SOURCES) $(SRC_CRC32_TEST) -o $(BUILD_DIR)/$(TARGET_CRC32)
 	@echo "$(TARGET_CRC32) has built"
 
-datetime:
+datetime: make_build_directory
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_DATETIME_SOURCES) $(SRC_DATETIME_TEST) -o $(BUILD_DIR)/$(TARGET_DATETIME)
 	@echo "$(TARGET_DATETIME) has built"
 
-bindir:
+bindir: make_build_directory
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_BINDIR_SOURCES) $(SRC_BINDIR_TEST) -o $(BUILD_DIR)/$(TARGET_BINDIR)
 	@echo "$(TARGET_BINDIR) has built"
 
-node:
+node: make_build_directory
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_NODE_SOURCES) $(SRC_NODE_TEST) -o $(BUILD_DIR)/$(TARGET_NODE)
 	@echo "$(TARGET_NODE) has built"
 
-jumper:
+jumper: make_build_directory
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_JUMPER_SOURCES) $(SRC_JUMPER_TEST) -o $(BUILD_DIR)/$(TARGET_JUMPER)
 	@echo "$(TARGET_JUMPER) has built"
 
@@ -120,4 +123,4 @@ clean:
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_NODE)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_JUMPER)"
 
-.PHONY: all prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper help clean
+.PHONY: all prepare_build_directory make_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper help clean
