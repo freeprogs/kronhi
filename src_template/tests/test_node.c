@@ -393,10 +393,10 @@ void test_can_write_dir_header_by_field(void)
         iofp,
         &dir,
         DIRFLD_TYPESIGN
-      | DIRFLD_DESCSIZE
-      | DIRFLD_DESC
-      | DIRFLD_NUMOFFILES
-      | DIRFLD_FILEOFFSET
+        | DIRFLD_DESCSIZE
+        | DIRFLD_DESC
+        | DIRFLD_NUMOFFILES
+        | DIRFLD_FILEOFFSET
     );
     rewind(iofp);
 
@@ -797,16 +797,16 @@ void test_can_write_file_header_by_field(void)
         iofp,
         &file,
         FILFLD_TYPESIGN
-      | FILFLD_TYPESIGN
-      | FILFLD_NAMESIZE
-      | FILFLD_NAME
-      | FILFLD_DESCSIZE
-      | FILFLD_DESC
-      | FILFLD_DATETIME
-      | FILFLD_CTRLSUM
-      | FILFLD_CONTENTSIZE
-      | FILFLD_CONTENTSTREAM
-      | FILFLD_FILEOFFSET
+        | FILFLD_TYPESIGN
+        | FILFLD_NAMESIZE
+        | FILFLD_NAME
+        | FILFLD_DESCSIZE
+        | FILFLD_DESC
+        | FILFLD_DATETIME
+        | FILFLD_CTRLSUM
+        | FILFLD_CONTENTSIZE
+        | FILFLD_CONTENTSTREAM
+        | FILFLD_FILEOFFSET
     );
     rewind(iofp);
 
