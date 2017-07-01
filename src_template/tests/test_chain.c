@@ -604,6 +604,8 @@ void test_raise_on_append_file_to_broken_directory(void)
         putc('x', ofp_dst);
     rewind(ofp_dst);
 
+    /* assert: destination has filled by x characters */
+
     dirsize = 14;
     memcpy(
         dirbytes,
@@ -618,11 +620,16 @@ void test_raise_on_append_file_to_broken_directory(void)
 
     fclose(ofp_dst);
 
+    /* assert: directory has been prepared and written on
+       destination */
+
     ofp_src = fopen(source, "wb");
     if (ofp_src == NULL)
         CU_FAIL("can't create temporary file");
     fprintf(ofp_src, "abc");
     fclose(ofp_src);
+
+    /* assert: source file has been prepared for write */
 
     fileoffset_clear(&offset);
     chain_start(&chain, destination, &offset);
@@ -636,6 +643,9 @@ void test_raise_on_append_file_to_broken_directory(void)
     chain_end(&chain);
 
     CU_ASSERT_EQUAL(chretval, CHAIN_ERROR_FILE_NOFILE);
+
+    /* assert: source file has been written to directory on
+       destination */
 
     remove(source);
     remove(destination);
