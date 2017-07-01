@@ -407,6 +407,8 @@ void test_can_append_file_to_non_empty_directory(void)
         putc('x', ofp_dst);
     rewind(ofp_dst);
 
+    /* assert: destination has filled by x characters */
+
     dirsize = 14;
     memcpy(
         dirbytes,
@@ -418,6 +420,9 @@ void test_can_append_file_to_non_empty_directory(void)
         dirsize);
     if (fwrite(dirbytes, 1, dirsize, ofp_dst) != dirsize)
         CU_FAIL("can't prepare directory in temporary file");
+
+    /* assert: directory has been prepared and written on
+       destination */
 
     filesize = 33;
     memcpy(
@@ -438,12 +443,16 @@ void test_can_append_file_to_non_empty_directory(void)
 
     fclose(ofp_dst);
 
+    /* assert: first file has been prepared and written to directory
+       on destination */
+
     ofp_src = fopen(source, "wb");
     if (ofp_src == NULL)
         CU_FAIL("can't create temporary file");
     fprintf(ofp_src, "abc");
     fclose(ofp_src);
 
+    /* assert: source file has been prepared for write */
 
     dirbytes_match_size = 14;
     memcpy(
@@ -454,6 +463,9 @@ void test_can_append_file_to_non_empty_directory(void)
         "\x00\x00\x00\x02"
         "\x00\x00\x00\x00",
         dirbytes_match_size);
+
+    /* assert: directory binary data pattern for match has been
+       prepared */
 
     filebytes1_match_size = 33;
     memcpy(
@@ -470,6 +482,9 @@ void test_can_append_file_to_non_empty_directory(void)
         "\x00\x00\x00\x00",
         filebytes1_match_size
     );
+
+    /* assert: first file binary data pattern for match has been
+       prepared */
 
     filebytes2_match_size = 33;
     memcpy(
@@ -492,6 +507,9 @@ void test_can_append_file_to_non_empty_directory(void)
         13
     );
 
+    /* assert: source file binary data pattern for match has been
+       prepared */
+
     fileoffset_clear(&offset);
     chain_start(&chain, destination, &offset);
 
@@ -505,6 +523,8 @@ void test_can_append_file_to_non_empty_directory(void)
 
     CU_ASSERT_EQUAL(chretval, CHAIN_OK);
 
+    /* assert: source file has been written to directory with file on
+       destination */
 
     ifp_dst = fopen(destination, "rb");
     if (ifp_dst == NULL)
@@ -522,6 +542,9 @@ void test_can_append_file_to_non_empty_directory(void)
 
     CU_ASSERT_EQUAL(((void) "directory correct" , retval), 0);
 
+    /* assert: directory has been read from destination and matched
+       with pattern */
+
     if (fread(filebytes, 1, filebytes1_match_size, ifp_dst)
      != filebytes1_match_size)
         CU_FAIL("can't read destination file");
@@ -533,6 +556,9 @@ void test_can_append_file_to_non_empty_directory(void)
 
     CU_ASSERT_EQUAL(((void) "file 1 correct" , retval), 0);
 
+    /* assert: first file has been read from destination and matched
+       with pattern */
+
     if (fread(filebytes, 1, filebytes2_match_size, ifp_dst)
      != filebytes2_match_size)
         CU_FAIL("can't read destination file");
@@ -543,6 +569,9 @@ void test_can_append_file_to_non_empty_directory(void)
     );
 
     CU_ASSERT_EQUAL(((void) "file 2 correct" , retval), 0);
+
+    /* assert: source file has been read from destination and matched
+       with pattern */
 
     fclose(ifp_dst);
 
