@@ -22,6 +22,7 @@
 #include "../binfile.h"
 
 void test_can_get_size(void);
+void test_can_set_and_get_type_sign_field(void);
 void test_can_set_and_get_namesize_field(void);
 void test_can_set_and_get_descsize_field(void);
 void test_can_set_and_get_contentsize_field(void);
@@ -42,6 +43,8 @@ int main(void)
 
     if (CU_add_test(suite, "can get size",
                     test_can_get_size) == NULL
+     || CU_add_test(suite, "can set and get type sign field",
+                    test_can_set_and_get_type_sign_field) == NULL
      || CU_add_test(suite, "can set and get namesize field",
                     test_can_set_and_get_namesize_field) == NULL
      || CU_add_test(suite, "can set and get descsize field",
@@ -87,6 +90,21 @@ void test_can_get_size(void)
     bignumber_tostr(&size, out);
 
     CU_ASSERT_STRING_EQUAL(out, "31");
+
+    binfile_end(&file);
+}
+
+void test_can_set_and_get_type_sign_field(void)
+{
+    struct binfile file;
+    char out;
+
+    binfile_start(&file);
+
+    binfile_type_set(&file, 'f');
+    out = 0;
+    binfile_type_get(&file, &out);
+    CU_ASSERT_EQUAL(out, 'f');
 
     binfile_end(&file);
 }
