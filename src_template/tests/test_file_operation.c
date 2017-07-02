@@ -45,7 +45,7 @@ int main(void)
                     test_can_skip_a_byte) == NULL
      || CU_add_test(suite, "raise on skip beyond end of file",
                     test_raise_on_skip_beyond_end_of_file) == NULL
-     || CU_add_test(suite, "cat get file size",
+     || CU_add_test(suite, "can get file size",
                     test_can_get_file_size) == NULL
      || CU_add_test(suite, "cat write file to file",
                     test_can_write_file_to_file) == NULL) {
