@@ -22,7 +22,7 @@
 # Build section
 
 CC = gcc
-CFLAGS = -ansi -pedantic -Wall
+CFLAGS = -ansi -pedantic -Wall -g
 LDFLAGS = -lcunit
 
 BUILD_DIR = build
