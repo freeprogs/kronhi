@@ -110,6 +110,8 @@ TESTS_LOCAL_BUILD_DIR = build
 TESTS_MAKEFILE = Makefile
 TESTS_RUNTESTS_SHELLSCRIPT = runtests.sh
 
+TESTS_MAKEFILE_COVERAGE = Makefile-coverage
+
 TEST_SRC_BIGNUMBER_C = test_bignumber.c
 TEST_SRC_FILE_OPERATION_C = test_file_operation.c
 TEST_SRC_CHAIN_C = test_chain.c
@@ -228,6 +230,7 @@ tests: build
 
 	@$(M4) $(VERSION_M4) $(TESTS_SRC_TEMPLATE_DIR)/$(TESTS_MAKEFILE) > $(TESTS_SRC_BUILD_DIR)/$(TESTS_MAKEFILE)
 	@$(M4) $(VERSION_M4) $(TESTS_SRC_TEMPLATE_DIR)/$(TESTS_RUNTESTS_SHELLSCRIPT) > $(TESTS_SRC_BUILD_DIR)/$(TESTS_RUNTESTS_SHELLSCRIPT)
+	@$(M4) $(VERSION_M4) $(TESTS_SRC_TEMPLATE_DIR)/$(TESTS_MAKEFILE_COVERAGE) > $(TESTS_SRC_BUILD_DIR)/$(TESTS_MAKEFILE_COVERAGE)
 	@$(M4) $(VERSION_M4) $(TESTS_SRC_TEMPLATE_DIR)/$(TEST_SRC_BIGNUMBER_C) > $(TESTS_SRC_BUILD_DIR)/$(TEST_SRC_BIGNUMBER_C)
 	@$(M4) $(VERSION_M4) $(TESTS_SRC_TEMPLATE_DIR)/$(TEST_SRC_FILE_OPERATION_C) > $(TESTS_SRC_BUILD_DIR)/$(TEST_SRC_FILE_OPERATION_C)
 	@$(M4) $(VERSION_M4) $(TESTS_SRC_TEMPLATE_DIR)/$(TEST_SRC_CHAIN_C) > $(TESTS_SRC_BUILD_DIR)/$(TEST_SRC_CHAIN_C)
@@ -243,6 +246,9 @@ tests: build
 	@echo "Tests have built in the \`$(TESTS_BUILD_DIR)' directory."
 	@echo "Running tests..."
 	@(cd $(BUILD_DIR)/$(TESTS_DIR) && ./$(TESTS_RUNTESTS_SHELLSCRIPT))
+
+tests-coverage: tests
+	@$(MAKE) -C $(TESTS_SRC_BUILD_DIR) coverage
 
 clean:
 	@rm -rf $(SRC_BUILD_DIR)
@@ -272,4 +278,4 @@ uninstall:
 
 	@echo "$(PROG) has uninstalled."
 
-.PHONY: all help build tests clean install uninstall
+.PHONY: all help build tests tests-coverage clean install uninstall
