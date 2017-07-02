@@ -222,7 +222,7 @@ build:
 
 	@echo "$(PROG) has built in the \`$(BUILD_DIR)' directory."
 
-tests:
+tests: build
 	@[ -d $(TESTS_SRC_BUILD_DIR) ] $&& rm -rf $(TESTS_SRC_BUILD_DIR)
 	@mkdir $(TESTS_SRC_BUILD_DIR)
 
