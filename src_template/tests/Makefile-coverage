@@ -1,0 +1,177 @@
+
+# This file is a part of __PROGRAM_NAME__ __PROGRAM_VERSION__
+#
+# This file makes automatic tests for the program parts.
+#
+# __PROGRAM_COPYRIGHT__ __PROGRAM_AUTHOR__ __PROGRAM_AUTHOR_EMAIL__
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+# Build section
+
+CC = gcc
+CFLAGS = -ansi -pedantic -Wall -g -fprofile-arcs -ftest-coverage -O0
+LDFLAGS = -lcunit
+
+GCOV = gcov
+
+FILTER_OUTPUT = grep '%\|c\.gcov'
+
+BUILD_DIR = build_cover
+
+TARGET_BIGNUMBER = test_bignumber
+SRC_BIGNUMBER_TEST = test_bignumber.c
+SRC_BIGNUMBER_SOURCES = ../bignumber.c
+GCOV_BIGNUMBER_NAME = bignumber
+GCOV_BIGNUMBER_LOGFILE = bignumber.c.gcov
+TARGET_FILE_OPERATION = test_file_operation
+SRC_FILE_OPERATION_TEST = test_file_operation.c
+SRC_FILE_OPERATION_SOURCES = ../file_operation.c ../bignumber.c ../file_offset.c ../crc32.c
+GCOV_FILE_OPERATION_NAME = file_operation
+GCOV_FILE_OPERATION_LOGFILE = file_operation.c.gcov
+TARGET_CHAIN = test_chain
+SRC_CHAIN_TEST = test_chain.c
+SRC_CHAIN_SOURCES = ../chain.c ../bignumber.c ../file_offset.c \
+                    ../bindir.c ../binfile.c ../datetime.c \
+                    ../file_operation.c ../crc32.c ../node.c \
+	            ../binfield.c ../endian.c ../jumper.c
+GCOV_CHAIN_NAME = chain
+GCOV_CHAIN_LOGFILE = chain.c.gcov
+TARGET_BINFILE = test_binfile
+SRC_BINFILE_TEST = test_binfile.c
+SRC_BINFILE_SOURCES = ../binfile.c ../binfield.c ../bignumber.c ../endian.c
+GCOV_BINFILE_NAME = binfile
+GCOV_BINFILE_LOGFILE = binfile.c.gcov
+TARGET_CRC32 = test_crc32
+SRC_CRC32_TEST = test_crc32.c
+SRC_CRC32_SOURCES = ../crc32.c
+GCOV_CRC32_NAME = crc32
+GCOV_CRC32_LOGFILE = crc32.c.gcov
+TARGET_DATETIME = test_datetime
+SRC_DATETIME_TEST = test_datetime.c
+SRC_DATETIME_SOURCES = ../datetime.c
+GCOV_DATETIME_NAME = datetime
+GCOV_DATETIME_LOGFILE = datetime.c.gcov
+TARGET_BINDIR = test_bindir
+SRC_BINDIR_TEST = test_bindir.c
+SRC_BINDIR_SOURCES = ../bindir.c ../binfield.c ../endian.c
+GCOV_BINDIR_NAME = bindir
+GCOV_BINDIR_LOGFILE = bindir.c.gcov
+TARGET_NODE = test_node
+SRC_NODE_TEST = test_node.c
+SRC_NODE_SOURCES = ../node.c ../bindir.c ../binfield.c ../endian.c \
+                   ../bignumber.c ../binfile.c ../file_operation.c \
+                   ../file_offset.c ../crc32.c
+GCOV_NODE_NAME = node
+GCOV_NODE_LOGFILE = node.c.gcov
+TARGET_JUMPER = test_jumper
+SRC_JUMPER_TEST = test_jumper.c
+SRC_JUMPER_SOURCES = ../jumper.c
+GCOV_JUMPER_NAME = jumper
+GCOV_JUMPER_LOGFILE = jumper.c.gcov
+
+
+# Commands
+
+all: prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper
+
+prepare_build_directory:
+	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
+	@mkdir $(BUILD_DIR)
+
+make_build_directory:
+	@[ -d $(BUILD_DIR) ] || mkdir $(BUILD_DIR)
+
+bignumber: make_build_directory
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_BIGNUMBER_SOURCES) $(SRC_BIGNUMBER_TEST) -o $(BUILD_DIR)/$(TARGET_BIGNUMBER)
+	@./$(BUILD_DIR)/$(TARGET_BIGNUMBER) >/dev/null
+	@$(GCOV) $(GCOV_BIGNUMBER_NAME) | $(FILTER_OUTPUT)
+	@mv $(GCOV_BIGNUMBER_LOGFILE) $(BUILD_DIR)
+	@echo "$(TARGET_BIGNUMBER) has built"
+
+file_operation: make_build_directory
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_FILE_OPERATION_SOURCES) $(SRC_FILE_OPERATION_TEST) -o $(BUILD_DIR)/$(TARGET_FILE_OPERATION)
+	@./$(BUILD_DIR)/$(TARGET_FILE_OPERATION) >/dev/null
+	@$(GCOV) $(GCOV_FILE_OPERATION_NAME) | $(FILTER_OUTPUT)
+	@mv $(GCOV_FILE_OPERATION_LOGFILE) $(BUILD_DIR)
+	@echo "$(TARGET_FILE_OPERATION) has built"
+
+chain: make_build_directory
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_CHAIN_SOURCES) $(SRC_CHAIN_TEST) -o $(BUILD_DIR)/$(TARGET_CHAIN)
+	@./$(BUILD_DIR)/$(TARGET_CHAIN) >/dev/null
+	@$(GCOV) $(GCOV_CHAIN_NAME) | $(FILTER_OUTPUT)
+	@mv $(GCOV_CHAIN_LOGFILE) $(BUILD_DIR)
+	@echo "$(TARGET_CHAIN) has built"
+
+binfile: make_build_directory
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_BINFILE_SOURCES) $(SRC_BINFILE_TEST) -o $(BUILD_DIR)/$(TARGET_BINFILE)
+	@./$(BUILD_DIR)/$(TARGET_BINFILE) >/dev/null
+	@$(GCOV) $(GCOV_BINFILE_NAME) | $(FILTER_OUTPUT)
+	@mv $(GCOV_BINFILE_LOGFILE) $(BUILD_DIR)
+	@echo "$(TARGET_BINFILE) has built"
+
+crc32: make_build_directory
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_CRC32_SOURCES) $(SRC_CRC32_TEST) -o $(BUILD_DIR)/$(TARGET_CRC32)
+	@./$(BUILD_DIR)/$(TARGET_CRC32) >/dev/null
+	@$(GCOV) $(GCOV_CRC32_NAME) | $(FILTER_OUTPUT)
+	@mv $(GCOV_CRC32_LOGFILE) $(BUILD_DIR)
+	@echo "$(TARGET_CRC32) has built"
+
+datetime: make_build_directory
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_DATETIME_SOURCES) $(SRC_DATETIME_TEST) -o $(BUILD_DIR)/$(TARGET_DATETIME)
+	@./$(BUILD_DIR)/$(TARGET_DATETIME) >/dev/null
+	@$(GCOV) $(GCOV_DATETIME_NAME) | $(FILTER_OUTPUT)
+	@mv $(GCOV_DATETIME_LOGFILE) $(BUILD_DIR)
+	@echo "$(TARGET_DATETIME) has built"
+
+bindir: make_build_directory
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_BINDIR_SOURCES) $(SRC_BINDIR_TEST) -o $(BUILD_DIR)/$(TARGET_BINDIR)
+	@./$(BUILD_DIR)/$(TARGET_BINDIR) >/dev/null
+	@$(GCOV) $(GCOV_BINDIR_NAME) | $(FILTER_OUTPUT)
+	@mv $(GCOV_BINDIR_LOGFILE) $(BUILD_DIR)
+	@echo "$(TARGET_BINDIR) has built"
+
+node: make_build_directory
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_NODE_SOURCES) $(SRC_NODE_TEST) -o $(BUILD_DIR)/$(TARGET_NODE)
+	@./$(BUILD_DIR)/$(TARGET_NODE) >/dev/null
+	@$(GCOV) $(GCOV_NODE_NAME) | $(FILTER_OUTPUT)
+	@mv $(GCOV_NODE_LOGFILE) $(BUILD_DIR)
+	@echo "$(TARGET_NODE) has built"
+
+jumper: make_build_directory
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_JUMPER_SOURCES) $(SRC_JUMPER_TEST) -o $(BUILD_DIR)/$(TARGET_JUMPER)
+	@./$(BUILD_DIR)/$(TARGET_JUMPER) >/dev/null
+	@$(GCOV) $(GCOV_JUMPER_NAME) | $(FILTER_OUTPUT)
+	@mv $(GCOV_JUMPER_LOGFILE) $(BUILD_DIR)
+	@echo "$(TARGET_JUMPER) has built"
+
+help:
+	@echo "usage: make [ clean ]" 1>&2
+
+clean:
+	@rm -rf $(BUILD_DIR)
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_BIGNUMBER)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_FILE_OPERATION)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_CHAIN)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_BINFILE)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_CRC32)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_DATETIME)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_BINDIR)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_NODE)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_JUMPER)"
+	@rm -f *.gcda *.gcno
+	@echo "Cleaned *.gcda and *.gcno"
+
+.PHONY: all prepare_build_directory make_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper help clean
