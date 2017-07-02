@@ -138,7 +138,7 @@ DOCS_INSTALL_DIR = $(system_docs_dir)/$(PROG)
 all: build
 
 help:
-	@echo "usage: make [ tests | clean | install | uninstall ]"
+	@echo "usage: make [ tests | tests-coverage | clean | install | uninstall ]"
 
 build:
 	@[ -d $(SRC_BUILD_DIR) ] $&& rm -rf $(SRC_BUILD_DIR)
