@@ -27,6 +27,7 @@ void test_can_set_and_get_namesize_field(void);
 void test_can_set_and_get_name_field(void);
 void test_can_set_and_get_descsize_field(void);
 void test_can_set_and_get_desc_field(void);
+void test_can_set_and_get_datetime_field(void);
 void test_can_set_and_get_contentsize_field(void);
 void test_can_set_and_get_file_offset_field(void);
 
@@ -55,6 +56,8 @@ int main(void)
                     test_can_set_and_get_descsize_field) == NULL
      || CU_add_test(suite, "can set and get desc field",
                     test_can_set_and_get_desc_field) == NULL
+     || CU_add_test(suite, "can set and get datetime field",
+                    test_can_set_and_get_datetime_field) == NULL
      || CU_add_test(suite, "can set and get contentsize field",
                     test_can_set_and_get_contentsize_field) == NULL
      || CU_add_test(suite, "can set and get file_offset field",
@@ -171,6 +174,21 @@ void test_can_set_and_get_desc_field(void)
     *out = '\0';
     binfile_desc_get(&file, out);
     CU_ASSERT_NSTRING_EQUAL(out, "abc", 3);
+
+    binfile_end(&file);
+}
+
+void test_can_set_and_get_datetime_field(void)
+{
+    struct binfile file;
+    char out[100];
+
+    binfile_start(&file);
+
+    binfile_datetime_set(&file, "11112233445566");
+    *out = '\0';
+    binfile_datetime_get(&file, out);
+    CU_ASSERT_NSTRING_EQUAL(out, "11112233445566", 14);
 
     binfile_end(&file);
 }
