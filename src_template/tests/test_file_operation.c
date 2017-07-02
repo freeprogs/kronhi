@@ -47,7 +47,7 @@ int main(void)
                     test_raise_on_skip_beyond_end_of_file) == NULL
      || CU_add_test(suite, "can get file size",
                     test_can_get_file_size) == NULL
-     || CU_add_test(suite, "cat write file to file",
+     || CU_add_test(suite, "can write file to file",
                     test_can_write_file_to_file) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
