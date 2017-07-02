@@ -24,6 +24,7 @@
 void test_can_get_size(void);
 void test_can_set_and_get_type_sign_field(void);
 void test_can_set_and_get_descsize_field(void);
+void test_can_set_and_get_desc_field(void);
 void test_can_set_and_get_file_offset_field(void);
 void test_can_set_and_get_num_of_files_field(void);
 
@@ -46,6 +47,8 @@ int main(void)
                     test_can_set_and_get_type_sign_field) == NULL
      || CU_add_test(suite, "can set and get descsize field",
                     test_can_set_and_get_descsize_field) == NULL
+     || CU_add_test(suite, "can set and get desc field",
+                    test_can_set_and_get_desc_field) == NULL
      || CU_add_test(suite, "can set and get num_of_files field",
                     test_can_set_and_get_num_of_files_field) == NULL
      || CU_add_test(suite, "can set and get file_offset field",
@@ -109,6 +112,21 @@ void test_can_set_and_get_descsize_field(void)
     out = 0;
     bindir_descsize_get(&dir, &out);
     CU_ASSERT_EQUAL(out, 1);
+
+    bindir_end(&dir);
+}
+
+void test_can_set_and_get_desc_field(void)
+{
+    struct bindir dir;
+    char out[100];
+
+    bindir_start(&dir);
+
+    bindir_desc_set(&dir, "abc");
+    *out = '\0';
+    bindir_desc_get(&dir, out);
+    CU_ASSERT_NSTRING_EQUAL(out, "abc", 3);
 
     bindir_end(&dir);
 }
