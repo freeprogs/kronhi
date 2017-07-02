@@ -111,8 +111,11 @@ jumper: make_build_directory
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_JUMPER_SOURCES) $(SRC_JUMPER_TEST) -o $(BUILD_DIR)/$(TARGET_JUMPER)
 	@echo "$(TARGET_JUMPER) has built"
 
+coverage:
+	@$(MAKE) -f Makefile-coverage
+
 help:
-	@echo "usage: make [ clean ]" 1>&2
+	@echo "usage: make [ coverage | clean ]" 1>&2
 
 clean:
 	@rm -rf $(BUILD_DIR)
@@ -126,5 +129,6 @@ clean:
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_BINDIR)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_NODE)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_JUMPER)"
+	@$(MAKE) -f Makefile-coverage clean
 
-.PHONY: all prepare_build_directory make_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper help clean
+.PHONY: all prepare_build_directory make_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper coverage help clean
