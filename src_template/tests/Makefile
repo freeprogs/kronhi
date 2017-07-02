@@ -116,6 +116,7 @@ help:
 
 clean:
 	@rm -rf $(BUILD_DIR)
+	@echo "Cleaned $(BUILD_DIR)/$(RUNTESTS_SHELLSCRIPT)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_BIGNUMBER)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_FILE_OPERATION)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_CHAIN)"
