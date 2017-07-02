@@ -23,6 +23,7 @@
 
 void test_can_set_value_from_int(void);
 void test_can_set_value_from_string(void);
+void test_raise_on_set_value_from_very_long_string(void);
 void test_can_get_value_to_string(void);
 void test_can_compare_two_big_numbers_for_lt(void);
 void test_can_add_integer_number(void);
@@ -47,6 +48,8 @@ int main(void)
                     test_can_set_value_from_int) == NULL
      || CU_add_test(suite, "can set value from string",
                     test_can_set_value_from_string) == NULL
+     || CU_add_test(suite, "raise on set value from very long string",
+                    test_raise_on_set_value_from_very_long_string) == NULL
      || CU_add_test(suite, "can get value to string",
                     test_can_get_value_to_string) == NULL
      || CU_add_test(suite, "can compare two big numbers for less than",
@@ -90,6 +93,26 @@ void test_can_set_value_from_string(void)
     bignumber_set_value_string(&number, "1");
     bignumber_tostr(&number, out);
     CU_ASSERT_STRING_EQUAL(out, "1");
+}
+
+void test_raise_on_set_value_from_very_long_string(void)
+{
+    struct bignumber number;
+
+    char buffer[100];
+    int retval;
+
+    memset(buffer, '1', BIG_MAXSTRING);
+    buffer[BIG_MAXSTRING] = '\0';
+
+    retval = bignumber_set_value_string(&number, buffer);
+    CU_ASSERT_TRUE(((void) "can set <= BIG_MAXSTRING" , retval));
+
+    memset(buffer, '1', BIG_MAXSTRING + 1);
+    buffer[BIG_MAXSTRING + 1] = '\0';
+
+    retval = bignumber_set_value_string(&number, buffer);
+    CU_ASSERT_FALSE(((void) "can't set > BIG_MAXSTRING" , retval));
 }
 
 void test_can_get_value_to_string(void)
