@@ -29,24 +29,36 @@ enum binarycmd_code binarycmd_write_dir(
 {
     struct chain chain;
     enum chain_code chret;
+    enum binarycmd_code retval;
 
     chain_start(&chain, destination, offset);
     chret = chain_create_dir(&chain, dirdesc, 0, 0);
     chain_end(&chain);
 
-    if (chret == CHAIN_ERROR_DIR_OPENFILE)
-        return BINCMD_ERROR_DIR_OPENFILE;
-    if (chret == CHAIN_ERROR_DIR_SKIPOFFSET)
-        return BINCMD_ERROR_DIR_SKIPOFFSET;
-    if (chret == CHAIN_ERROR_DIR_FILESIZE)
-        return BINCMD_ERROR_DIR_FILESIZE;
-    if (chret == CHAIN_ERROR_DIR_WRITENODE)
-        return BINCMD_ERROR_DIR_WRITENODE;
-    if (chret == CHAIN_ERROR_DIR_WRITEFILE)
-        return BINCMD_ERROR_DIR_WRITEFILE;
-    if (chret == CHAIN_ERROR_DIR_FILESYS)
-        return BINCMD_ERROR_DIR_FILESYS;
-    return BINCMD_OK;
+    switch (chret) {
+    case CHAIN_ERROR_DIR_OPENFILE:
+        retval = BINCMD_ERROR_DIR_OPENFILE;
+        break;
+    case CHAIN_ERROR_DIR_SKIPOFFSET:
+        retval = BINCMD_ERROR_DIR_SKIPOFFSET;
+        break;
+    case CHAIN_ERROR_DIR_FILESIZE:
+        retval = BINCMD_ERROR_DIR_FILESIZE;
+        break;
+    case CHAIN_ERROR_DIR_WRITENODE:
+        retval = BINCMD_ERROR_DIR_WRITENODE;
+        break;
+    case CHAIN_ERROR_DIR_WRITEFILE:
+        retval = BINCMD_ERROR_DIR_WRITEFILE;
+        break;
+    case CHAIN_ERROR_DIR_FILESYS:
+        retval = BINCMD_ERROR_DIR_FILESYS;
+        break;
+    default:
+        retval = BINCMD_OK;
+        break;
+    }
+    return retval;
 }
 
 /* binarycmd_write_file:
