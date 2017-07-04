@@ -76,44 +76,67 @@ enum binarycmd_code binarycmd_write_file(
 {
     struct chain chain;
     enum chain_code chret;
+    enum binarycmd_code retval;
 
     chain_start(&chain, destination, offset);
     chret = chain_append_file(&chain, source, filename, filedesc, filereloff);
     chain_end(&chain);
 
-    if (chret == CHAIN_ERROR_FILE_DIRENTRY)
-        return BINCMD_ERROR_FILE_DIRENTRY;
-    if (chret == CHAIN_ERROR_FILE_OPENFILE)
-        return BINCMD_ERROR_FILE_OPENFILE;
-    if (chret == CHAIN_ERROR_FILE_SKIPOFFSET)
-        return BINCMD_ERROR_FILE_SKIPOFFSET;
-    if (chret == CHAIN_ERROR_FILE_NODIR)
-        return BINCMD_ERROR_FILE_NODIR;
-    if (chret == CHAIN_ERROR_FILE_FILESIZE)
-        return BINCMD_ERROR_FILE_FILESIZE;
-    if (chret == CHAIN_ERROR_FILE_READDIRHEADER)
-        return BINCMD_ERROR_FILE_READDIRHEADER;
-    if (chret == CHAIN_ERROR_FILE_DIRGETNOF)
-        return BINCMD_ERROR_FILE_DIRGETNOF;
-    if (chret == CHAIN_ERROR_FILE_WRITENODE)
-        return BINCMD_ERROR_FILE_WRITENODE;
-    if (chret == CHAIN_ERROR_FILE_DIRGETOFFSET)
-        return BINCMD_ERROR_FILE_DIRGETOFFSET;
-    if (chret == CHAIN_ERROR_FILE_NOFILE)
-        return BINCMD_ERROR_FILE_NOFILE;
-    if (chret == CHAIN_ERROR_FILE_READFILEHEADER)
-        return BINCMD_ERROR_FILE_READFILEHEADER;
-    if (chret == CHAIN_ERROR_FILE_FILEGETOFFSET)
-        return BINCMD_ERROR_FILE_FILEGETOFFSET;
-    if (chret == CHAIN_ERROR_FILE_WRITEFILE)
-        return BINCMD_ERROR_FILE_WRITEFILE;
-    if (chret == CHAIN_ERROR_FILE_FILESYS)
-        return BINCMD_ERROR_FILE_FILESYS;
-    if (chret == CHAIN_ERROR_FILE_OPENSOURCE)
-        return BINCMD_ERROR_FILE_OPENSOURCE;
-    if (chret == CHAIN_ERROR_FILE_READSOURCE)
-        return BINCMD_ERROR_FILE_READSOURCE;
-    if (chret == CHAIN_ERROR_FILE_SOURCESYS)
-        return BINCMD_ERROR_FILE_SOURCESYS;
-    return BINCMD_OK;
+    switch (chret) {
+    case CHAIN_ERROR_FILE_DIRENTRY:
+        retval = BINCMD_ERROR_FILE_DIRENTRY;
+        break;
+    case CHAIN_ERROR_FILE_OPENFILE:
+        retval = BINCMD_ERROR_FILE_OPENFILE;
+        break;
+    case CHAIN_ERROR_FILE_SKIPOFFSET:
+        retval = BINCMD_ERROR_FILE_SKIPOFFSET;
+        break;
+    case CHAIN_ERROR_FILE_NODIR:
+        retval = BINCMD_ERROR_FILE_NODIR;
+        break;
+    case CHAIN_ERROR_FILE_FILESIZE:
+        retval = BINCMD_ERROR_FILE_FILESIZE;
+        break;
+    case CHAIN_ERROR_FILE_READDIRHEADER:
+        retval = BINCMD_ERROR_FILE_READDIRHEADER;
+        break;
+    case CHAIN_ERROR_FILE_DIRGETNOF:
+        retval = BINCMD_ERROR_FILE_DIRGETNOF;
+        break;
+    case CHAIN_ERROR_FILE_WRITENODE:
+        retval = BINCMD_ERROR_FILE_WRITENODE;
+        break;
+    case CHAIN_ERROR_FILE_DIRGETOFFSET:
+        retval = BINCMD_ERROR_FILE_DIRGETOFFSET;
+        break;
+    case CHAIN_ERROR_FILE_NOFILE:
+        retval = BINCMD_ERROR_FILE_NOFILE;
+        break;
+    case CHAIN_ERROR_FILE_READFILEHEADER:
+        retval = BINCMD_ERROR_FILE_READFILEHEADER;
+        break;
+    case CHAIN_ERROR_FILE_FILEGETOFFSET:
+        retval = BINCMD_ERROR_FILE_FILEGETOFFSET;
+        break;
+    case CHAIN_ERROR_FILE_WRITEFILE:
+        retval = BINCMD_ERROR_FILE_WRITEFILE;
+        break;
+    case CHAIN_ERROR_FILE_FILESYS:
+        retval = BINCMD_ERROR_FILE_FILESYS;
+        break;
+    case CHAIN_ERROR_FILE_OPENSOURCE:
+        retval = BINCMD_ERROR_FILE_OPENSOURCE;
+        break;
+    case CHAIN_ERROR_FILE_READSOURCE:
+        retval = BINCMD_ERROR_FILE_READSOURCE;
+        break;
+    case CHAIN_ERROR_FILE_SOURCESYS:
+        retval = BINCMD_ERROR_FILE_SOURCESYS;
+        break;
+    default:
+        retval = BINCMD_OK;
+        break;
+    }
+    return retval;
 }
