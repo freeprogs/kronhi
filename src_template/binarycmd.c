@@ -25,7 +25,7 @@
    return error code if was not written or was written with errors */
 enum binarycmd_code binarycmd_write_dir(
     const char *destination, const struct file_offset *offset,
-    const char *dirdesc, enum write_cipher_type cipher)
+    const char *dirdesc, enum write_cipher_type cipher, const char *password)
 {
     struct chain chain;
     enum chain_code chret;

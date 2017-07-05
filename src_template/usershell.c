@@ -188,7 +188,8 @@ int run_command_shell(void)
             directory_description_get(&wdir, dirdesc);
             cipher = write_options_cipher_get(&wopts);
 
-            retbin = binarycmd_write_dir(dest, &offset, dirdesc, cipher);
+            retbin = binarycmd_write_dir(
+                dest, &offset, dirdesc, cipher, password);
             if (retbin == BINCMD_ERROR_DIR_OPENFILE) {
                 cmdshell_print_error("can't open file \"%s\"", dest);
             }
