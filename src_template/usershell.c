@@ -31,6 +31,8 @@ int run_command_shell(void)
     struct directory wdir;
     struct file wfile;
 
+    char password[CMDSHELL_MAXINPUT];
+
     cmdshell_start();
     cmdshell_print_message("Input `help' for help or `quit' for exit.\n");
     write_options_clear(&wopts);
@@ -122,6 +124,14 @@ int run_command_shell(void)
             }
             else {
                 cmdshell_print_error("can't input read options");
+            }
+        }
+        else if (retcmd == CMD_INIT_PASSWORD) {
+            if (cmdshell_init_password(password)) {
+                cmdshell_print_message("Password has set");
+            }
+            else {
+                cmdshell_print_error("can't set password");
             }
         }
         else if (retcmd == CMD_STATUS_WRITE) {

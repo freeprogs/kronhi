@@ -44,6 +44,7 @@ enum cmdshell_code {
     CMD_INIT_WRITE_DIR,
     CMD_INIT_WRITE_FILE,
     CMD_INIT_READ,
+    CMD_INIT_PASSWORD,
     CMD_STATUS_WRITE,
     CMD_STATUS_WRITE_DIR,
     CMD_STATUS_WRITE_FILE,
@@ -72,6 +73,7 @@ int cmdshell_init_write(
     char src[], char dst[], char offset[], char cipher[]);
 int cmdshell_init_read(
     char src[], char dst[], char offset[], char cipher[]);
+int cmdshell_init_password(char password[]);
 void cmdshell_print_status_write(
     const char *wsrc, const char *wdst,
     const char *woffset, const char *wcipher);
