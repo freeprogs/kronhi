@@ -172,6 +172,9 @@ int run_command_shell(void)
             read_options_tostr_cipher(&ropts, cipher);
             cmdshell_print_status_read(src, dst, offset, cipher);
         }
+        else if (retcmd == CMD_STATUS_PASSWORD) {
+            cmdshell_print_status_password(password);
+        }
         else if (retcmd == CMD_WRITE_DIR) {
             enum binarycmd_code retbin;
             char dest[CMDSHELL_MAXINPUT];

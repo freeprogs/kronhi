@@ -88,6 +88,9 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
         else if (strcmp(input, "status read") == 0) {
             return CMD_STATUS_READ;
         }
+        else if (strcmp(input, "status password") == 0) {
+            return CMD_STATUS_PASSWORD;
+        }
         else if (strcmp(input, "write dir") == 0) {
             return CMD_WRITE_DIR;
         }
@@ -134,6 +137,7 @@ void cmdshell_print_help(void)
         "status write dir  --  show write directory contents\n",
         "status write file --  show write file data\n",
         "status read       --  show set read options\n",
+        "status password   --  show set password for read and write operations\n",
         "write dir         --  write directory data to destination\n",
         "write file        --  write file data and contents to destination\n",
         "\n",
@@ -400,6 +404,21 @@ void cmdshell_print_status_read(
         "\n"
         ,
         rsrc, rdst, roffset, rcipher);
+}
+
+/* cmdshell_print_status_password:
+   print status of set password for read and write operations to
+   standard output */
+void cmdshell_print_status_password(const char *password)
+{
+    printf(
+        "\n"
+        "Password (in angle brackets):\n"
+        "<%s>\n"
+        "%u characters\n",
+        password,
+        (unsigned) strlen(password)
+    );
 }
 
 /* cmdshell_init_write_dir: input settings for write directory
