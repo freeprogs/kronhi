@@ -237,7 +237,9 @@ int run_command_shell(void)
             cipher = write_options_cipher_get(&wopts);
 
             retbin = binarycmd_write_file(
-                src, dst, &offset, filename, filedesc, filereloff, cipher);
+                src, dst, &offset,
+                filename, filedesc, filereloff,
+                cipher, password);
             if (retbin == BINCMD_ERROR_FILE_DIRENTRY) {
                 cmdshell_print_error(
                     "directory not found on \"%s\" with offset %s",

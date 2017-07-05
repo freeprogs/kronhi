@@ -62,6 +62,7 @@ enum binarycmd_code binarycmd_write_file(
     const char *filename,
     const char *filedesc,
     size_t filereloff,
-    enum write_cipher_type cipher);
+    enum write_cipher_type cipher,
+    const char *password);
 
 #endif
