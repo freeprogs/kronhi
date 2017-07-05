@@ -31,7 +31,7 @@ int run_command_shell(void)
     struct directory wdir;
     struct file wfile;
 
-    char password[CMDSHELL_MAXINPUT];
+    char password[MAXPASSWORDZ];
 
     cmdshell_start();
     cmdshell_print_message("Input `help' for help or `quit' for exit.\n");

@@ -329,9 +329,19 @@ int cmdshell_init_password(char password[])
         retval = 1;
     }
     else {
-        strcpy(password, input);
-        printf("Ok %u characters\n", (unsigned) strlen(password));
-        retval = 1;
+        size_t len = strlen(input);
+        if (len <= MAXPASSWORD) {
+            strcpy(password, input);
+            printf("Ok %u characters\n", len);
+            retval = 1;
+        }
+        else {
+            printf("Fail too long password %u, "
+                   "maximum may be %u characters\n",
+                   len,
+                   MAXPASSWORD);
+            retval = 0;
+        }
     }
     return retval;
 }

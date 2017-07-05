@@ -17,17 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef USERSHELL_H
-#define USERSHELL_H
+#ifndef PASSWORD_H
+#define PASSWORD_H
 
-#include <stdio.h>
-#include "cmdshell.h"
-#include "directory.h"
-#include "input.h"
-#include "binarycmd.h"
-#include "file.h"
-#include "password.h"
+/* maximum length of password string */
+#define MAXPASSWORD  100
 
-int run_command_shell(void);
+/* maximum length of password string with null character */
+#define MAXPASSWORDZ  MAXPASSWORD + 1
 
 #endif
