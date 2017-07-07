@@ -97,6 +97,8 @@ SRC_CRC32_H = crc32.h
 SRC_JUMPER_C = jumper.c
 SRC_JUMPER_H = jumper.h
 SRC_PASSWORD_H = password.h
+SRC_CRYPTOR_C = cryptor.c
+SRC_CRYPTOR_H = cryptor.h
 
 
 # Tests
@@ -189,6 +191,8 @@ build:
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_JUMPER_C) > $(SRC_BUILD_DIR)/$(SRC_JUMPER_C)
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_JUMPER_H) > $(SRC_BUILD_DIR)/$(SRC_JUMPER_H)
 	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_PASSWORD_H) > $(SRC_BUILD_DIR)/$(SRC_PASSWORD_H)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_CRYPTOR_C) > $(SRC_BUILD_DIR)/$(SRC_CRYPTOR_C)
+	@$(M4) $(VERSION_M4) $(SRC_TEMPLATE_DIR)/$(SRC_CRYPTOR_H) > $(SRC_BUILD_DIR)/$(SRC_CRYPTOR_H)
 
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
 	@mkdir $(BUILD_DIR)
@@ -216,6 +220,7 @@ build:
             $(SRC_BUILD_DIR)/$(SRC_DATETIME_C) \
             $(SRC_BUILD_DIR)/$(SRC_CRC32_C) \
             $(SRC_BUILD_DIR)/$(SRC_JUMPER_C) \
+            $(SRC_BUILD_DIR)/$(SRC_CRYPTOR_C) \
             -o $(BUILD_DIR)/$(TARGET_BINARY)
 	@chmod u+x $(BUILD_DIR)/$(TARGET_BINARY)
 
