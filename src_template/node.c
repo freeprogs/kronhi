@@ -19,24 +19,32 @@
 
 #include "node.h"
 
+/* node_start: start node and set internal values */
+void node_start(struct node *self, struct binfield *field)
+{
+    self->field = field;
+}
+
 /* node_write_dir: write directory node to output stream
                    return 1 if has written correctly
                    return 0 if errors happened */
-int node_write_dir(FILE *ofp, const struct bindir *dir)
+int node_write_dir(struct node *self, FILE *ofp, const struct bindir *dir)
 {
+    struct binfield *field;
     int f_error;
 
+    field = self->field;
     f_error = 0;
 
-    if (!binfield_raw_write(dir->type_sign, ofp))
+    if (!binfield_raw_write(field, dir->type_sign, ofp))
         f_error = 1;
-    if (!binfield_num_write(dir->descsize, ofp))
+    if (!binfield_num_write(field, dir->descsize, ofp))
         f_error = 1;
-    if (!binfield_raw_write(dir->desc, ofp))
+    if (!binfield_raw_write(field, dir->desc, ofp))
         f_error = 1;
-    if (!binfield_num_write(dir->num_of_files, ofp))
+    if (!binfield_num_write(field, dir->num_of_files, ofp))
         f_error = 1;
-    if (!binfield_num_write(dir->file_offset, ofp))
+    if (!binfield_num_write(field, dir->file_offset, ofp))
         f_error = 1;
 
     if (f_error)
@@ -49,17 +57,20 @@ int node_write_dir(FILE *ofp, const struct bindir *dir)
 /* node_test_isdir: test if there is a directory node in input stream
                     return 1 if there is a directory node
                     return 0 if an error happened */
-int node_test_isdir(FILE *ifp)
+int node_test_isdir(struct node *self, FILE *ifp)
 {
+    struct binfield *field;
     fpos_t pos;
-    struct field_raw *f;
+    struct binfield_raw *f;
     int retval;
 
+    field = self->field;
+
     fgetpos(ifp, &pos);
-    f = binfield_raw_create(1);
-    binfield_raw_read(f, ifp, 1);
+    f = binfield_raw_create(field, 1);
+    binfield_raw_read(field, f, ifp, 1);
     retval = f->val[0] == 'd';
-    binfield_raw_free(f);
+    binfield_raw_free(field, f);
     fsetpos(ifp, &pos);
     return retval;
 }
@@ -67,24 +78,26 @@ int node_test_isdir(FILE *ifp)
 /* node_read_dir_header: read directory node header from input stream
                          return 1 if has read correctly
                          return 0 if errors happened */
-int node_read_dir_header(FILE *ifp, struct bindir *dir)
+int node_read_dir_header(struct node *self, FILE *ifp, struct bindir *dir)
 {
+    struct binfield *field;
     unsigned short descsize;
     int f_error;
 
+    field = self->field;
     f_error = 0;
 
-    if (!binfield_raw_read(dir->type_sign, ifp, 1))
+    if (!binfield_raw_read(field, dir->type_sign, ifp, 1))
         f_error = 1;
-    if (!binfield_num_read(dir->descsize, ifp, 2))
+    if (!binfield_num_read(field, dir->descsize, ifp, 2))
         f_error = 1;
     if (!bindir_descsize_get(dir, &descsize))
         f_error = 1;
-    if (!binfield_raw_read(dir->desc, ifp, descsize))
+    if (!binfield_raw_read(field, dir->desc, ifp, descsize))
         f_error = 1;
-    if (!binfield_num_read(dir->num_of_files, ifp, 4))
+    if (!binfield_num_read(field, dir->num_of_files, ifp, 4))
         f_error = 1;
-    if (!binfield_num_read(dir->file_offset, ifp, 4))
+    if (!binfield_num_read(field, dir->file_offset, ifp, 4))
         f_error = 1;
 
     if (f_error)
@@ -100,56 +113,59 @@ int node_read_dir_header(FILE *ifp, struct bindir *dir)
    return 1 if fields have written and skipped correctly
    return 0 if errors happened */
 int node_write_dir_header_field(
+    struct node *self,
     FILE *ofp,
     const struct bindir *dir,
-    enum dir_field_flags fieldflags)
+    enum node_dir_field_flags fieldflags)
 {
+    struct binfield *field;
     int f_error;
 
+    field = self->field;
     f_error = 0;
 
     if (fieldflags & DIRFLD_TYPESIGN) {
-        if (!binfield_raw_write(dir->type_sign, ofp))
+        if (!binfield_raw_write(field, dir->type_sign, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_raw_skip(dir->type_sign, ofp))
+        if (!binfield_raw_skip(field, dir->type_sign, ofp))
             f_error = 1;
     }
 
     if (fieldflags & DIRFLD_DESCSIZE) {
-        if (!binfield_num_write(dir->descsize, ofp))
+        if (!binfield_num_write(field, dir->descsize, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_num_skip(dir->descsize, ofp))
+        if (!binfield_num_skip(field, dir->descsize, ofp))
             f_error = 1;
     }
 
     if (fieldflags & DIRFLD_DESC) {
-        if (!binfield_raw_write(dir->desc, ofp))
+        if (!binfield_raw_write(field, dir->desc, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_raw_skip(dir->desc, ofp))
+        if (!binfield_raw_skip(field, dir->desc, ofp))
             f_error = 1;
     }
 
     if (fieldflags & DIRFLD_NUMOFFILES) {
-        if (!binfield_num_write(dir->num_of_files, ofp))
+        if (!binfield_num_write(field, dir->num_of_files, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_num_skip(dir->num_of_files, ofp))
+        if (!binfield_num_skip(field, dir->num_of_files, ofp))
             f_error = 1;
     }
 
     if (fieldflags & DIRFLD_FILEOFFSET) {
-        if (!binfield_num_write(dir->file_offset, ofp))
+        if (!binfield_num_write(field, dir->file_offset, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_num_skip(dir->file_offset, ofp))
+        if (!binfield_num_skip(field, dir->file_offset, ofp))
             f_error = 1;
     }
 
@@ -163,31 +179,33 @@ int node_write_dir_header_field(
 /* node_write_file: write file node to output stream
                     return 1 if has written correctly
                     return 0 if errors happened */
-int node_write_file(FILE *ofp, const struct binfile *file)
+int node_write_file(struct node *self, FILE *ofp, const struct binfile *file)
 {
+    struct binfield *field;
     int f_error, f_file_to_file_error;
 
+    field = self->field;
     f_error = f_file_to_file_error = 0;
 
-    if (!binfield_raw_write(file->type_sign, ofp))
+    if (!binfield_raw_write(field, file->type_sign, ofp))
         f_error = 1;
-    if (!binfield_num_write(file->namesize, ofp))
+    if (!binfield_num_write(field, file->namesize, ofp))
         f_error = 1;
-    if (!binfield_raw_write(file->name, ofp))
+    if (!binfield_raw_write(field, file->name, ofp))
         f_error = 1;
-    if (!binfield_num_write(file->descsize, ofp))
+    if (!binfield_num_write(field, file->descsize, ofp))
         f_error = 1;
-    if (!binfield_raw_write(file->desc, ofp))
+    if (!binfield_raw_write(field, file->desc, ofp))
         f_error = 1;
-    if (!binfield_raw_write(file->datetime, ofp))
+    if (!binfield_raw_write(field, file->datetime, ofp))
         f_error = 1;
-    if (!binfield_num_write(file->ctrlsum, ofp))
+    if (!binfield_num_write(field, file->ctrlsum, ofp))
         f_error = 1;
-    if (!binfield_raw_write(file->contentsize, ofp))
+    if (!binfield_raw_write(field, file->contentsize, ofp))
         f_error = 1;
     if (!file_write_file(ofp, file->contentstream))
         f_file_to_file_error = 1;
-    if (!binfield_num_write(file->file_offset, ofp))
+    if (!binfield_num_write(field, file->file_offset, ofp))
         f_error = 1;
 
     if (f_error || f_file_to_file_error)
@@ -200,17 +218,20 @@ int node_write_file(FILE *ofp, const struct binfile *file)
 /* node_test_isfile: test if there is a file node in input stream
                      return 1 if there is a file node
                      return 0 if an error happened */
-int node_test_isfile(FILE *ifp)
+int node_test_isfile(struct node *self, FILE *ifp)
 {
+    struct binfield *field;
     fpos_t pos;
-    struct field_raw *f;
+    struct binfield_raw *f;
     int retval;
 
+    field = self->field;
+
     fgetpos(ifp, &pos);
-    f = binfield_raw_create(1);
-    binfield_raw_read(f, ifp, 1);
+    f = binfield_raw_create(field, 1);
+    binfield_raw_read(field, f, ifp, 1);
     retval = f->val[0] == 'f';
-    binfield_raw_free(f);
+    binfield_raw_free(field, f);
     fsetpos(ifp, &pos);
     return retval;
 }
@@ -218,8 +239,9 @@ int node_test_isfile(FILE *ifp)
 /* node_read_file_header: read file node header from input stream
                           return 1 if has read correctly
                           return 0 if errors happened */
-int node_read_file_header(FILE *ifp, struct binfile *file)
+int node_read_file_header(struct node *self, FILE *ifp, struct binfile *file)
 {
+    struct binfield *field;
     unsigned char namesize;
     unsigned short descsize;
     char buffer[100], *p = buffer;
@@ -227,25 +249,26 @@ int node_read_file_header(FILE *ifp, struct binfile *file)
     int c;
     int f_error;
 
+    field = self->field;
     f_error = 0;
 
-    if (!binfield_raw_read(file->type_sign, ifp, 1))
+    if (!binfield_raw_read(field, file->type_sign, ifp, 1))
         f_error = 1;
-    if (!binfield_num_read(file->namesize, ifp, 1))
+    if (!binfield_num_read(field, file->namesize, ifp, 1))
         f_error = 1;
     if (!binfile_namesize_get(file, &namesize))
         f_error = 1;
-    if (!binfield_raw_read(file->name, ifp, namesize))
+    if (!binfield_raw_read(field, file->name, ifp, namesize))
         f_error = 1;
-    if (!binfield_num_read(file->descsize, ifp, 2))
+    if (!binfield_num_read(field, file->descsize, ifp, 2))
         f_error = 1;
     if (!binfile_descsize_get(file, &descsize))
         f_error = 1;
-    if (!binfield_raw_read(file->desc, ifp, descsize))
+    if (!binfield_raw_read(field, file->desc, ifp, descsize))
         f_error = 1;
-    if (!binfield_raw_read(file->datetime, ifp, 14))
+    if (!binfield_raw_read(field, file->datetime, ifp, 14))
         f_error = 1;
-    if (!binfield_num_read(file->ctrlsum, ifp, 4))
+    if (!binfield_num_read(field, file->ctrlsum, ifp, 4))
         f_error = 1;
 
     for (p = buffer; (c = getc(ifp)) != EOF; p++) {
@@ -268,7 +291,7 @@ int node_read_file_header(FILE *ifp, struct binfile *file)
     if (c == EOF)
         return 0;
 
-    if (!binfield_num_read(file->file_offset, ifp, 4))
+    if (!binfield_num_read(field, file->file_offset, ifp, 4))
         f_error = 1;
 
     if (f_error)
@@ -284,83 +307,86 @@ int node_read_file_header(FILE *ifp, struct binfile *file)
    return 1 if fields have written and skipped correctly
    return 0 if errors happened */
 int node_write_file_header_field(
+    struct node *self,
     FILE *ofp,
     const struct binfile *file,
-    enum file_field_flags fieldflags)
+    enum node_file_field_flags fieldflags)
 {
+    struct binfield *field;
     int f_error, f_file_to_file_error, f_file_skip_error;
 
+    field = self->field;
     f_error = f_file_to_file_error = f_file_skip_error = 0;
 
     if (fieldflags & FILFLD_TYPESIGN) {
-        if (!binfield_raw_write(file->type_sign, ofp))
+        if (!binfield_raw_write(field, file->type_sign, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_raw_skip(file->type_sign, ofp))
+        if (!binfield_raw_skip(field, file->type_sign, ofp))
             f_error = 1;
     }
 
     if (fieldflags & FILFLD_NAMESIZE) {
-        if (!binfield_num_write(file->namesize, ofp))
+        if (!binfield_num_write(field, file->namesize, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_num_skip(file->namesize, ofp))
+        if (!binfield_num_skip(field, file->namesize, ofp))
             f_error = 1;
     }
 
     if (fieldflags & FILFLD_NAME) {
-        if (!binfield_raw_write(file->name, ofp))
+        if (!binfield_raw_write(field, file->name, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_raw_skip(file->name, ofp))
+        if (!binfield_raw_skip(field, file->name, ofp))
             f_error = 1;
     }
 
     if (fieldflags & FILFLD_DESCSIZE) {
-        if (!binfield_num_write(file->descsize, ofp))
+        if (!binfield_num_write(field, file->descsize, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_num_skip(file->descsize, ofp))
+        if (!binfield_num_skip(field, file->descsize, ofp))
             f_error = 1;
     }
 
     if (fieldflags & FILFLD_DESC) {
-        if (!binfield_raw_write(file->desc, ofp))
+        if (!binfield_raw_write(field, file->desc, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_raw_skip(file->desc, ofp))
+        if (!binfield_raw_skip(field, file->desc, ofp))
             f_error = 1;
     }
 
     if (fieldflags & FILFLD_DATETIME) {
-        if (!binfield_raw_write(file->datetime, ofp))
+        if (!binfield_raw_write(field, file->datetime, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_raw_skip(file->datetime, ofp))
+        if (!binfield_raw_skip(field, file->datetime, ofp))
             f_error = 1;
     }
 
     if (fieldflags & FILFLD_CTRLSUM) {
-        if (!binfield_num_write(file->ctrlsum, ofp))
+        if (!binfield_num_write(field, file->ctrlsum, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_num_skip(file->ctrlsum, ofp))
+        if (!binfield_num_skip(field, file->ctrlsum, ofp))
             f_error = 1;
     }
 
     if (fieldflags & FILFLD_CONTENTSIZE) {
-        if (!binfield_raw_write(file->contentsize, ofp))
+        if (!binfield_raw_write(field, file->contentsize, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_raw_skip(file->contentsize, ofp))
+        if (!binfield_raw_skip(field, file->contentsize, ofp))
             f_error = 1;
     }
 
@@ -381,11 +407,11 @@ int node_write_file_header_field(
     }
 
     if (fieldflags & FILFLD_FILEOFFSET) {
-        if (!binfield_num_write(file->file_offset, ofp))
+        if (!binfield_num_write(field, file->file_offset, ofp))
             f_error = 1;
     }
     else {
-        if (!binfield_num_skip(file->file_offset, ofp))
+        if (!binfield_num_skip(field, file->file_offset, ofp))
             f_error = 1;
     }
 
@@ -394,4 +420,10 @@ int node_write_file_header_field(
     if (ferror(ofp))
         return 0;
     return 1;
+}
+
+/* node_end: stop node and clear internal values */
+void node_end(struct node *self)
+{
+    self->field = NULL;
 }
