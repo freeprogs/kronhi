@@ -31,12 +31,40 @@ enum binarycmd_code binarycmd_write_dir(
     const char *password)
 {
     struct chain chain;
+    struct node node;
+    struct binfield binfield;
+    struct cryptor cryptor;
     enum chain_code chret;
     enum binarycmd_code retval;
 
-    chain_start(&chain, destination, offset);
-    chret = chain_create_dir(&chain, dirdesc, 0, 0);
-    chain_end(&chain);
+    if (cipher == W_CIPHER_NONE) {
+        binfield_start(&binfield, NULL);
+        node_start(&node, &binfield);
+
+        chain_start(&chain, destination, offset, &node);
+        chret = chain_create_dir(&chain, dirdesc, 0, 0);
+        chain_end(&chain);
+
+        node_end(&node);
+        binfield_end(&binfield);
+    }
+    else if (cipher == W_CIPHER_XOR) {
+        cryptor_start(
+            &cryptor,
+            CRYPTOR_ALGORITHM_XOR,
+            (unsigned char *) password,
+            strlen(password));
+        binfield_start(&binfield, &cryptor);
+        node_start(&node, &binfield);
+
+        chain_start(&chain, destination, offset, &node);
+        chret = chain_create_dir(&chain, dirdesc, 0, 0);
+        chain_end(&chain);
+
+        node_end(&node);
+        binfield_end(&binfield);
+        cryptor_end(&cryptor);
+    }
 
     switch (chret) {
     case CHAIN_ERROR_DIR_OPENFILE:
