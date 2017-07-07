@@ -19,13 +19,21 @@
 
 #include "binfield.h"
 
+/* binfield_start: start binfield and set internal values */
+void binfield_start(
+    struct binfield *self,
+    struct cryptor *cryptor)
+{
+    self->cryptor = cryptor;
+}
+
 /* binfield_raw_create:
    allocate a raw field with allocated value of given size
    return pointer to field
    return NULL if can't allocate */
-struct field_raw *binfield_raw_create(size_t size)
+struct binfield_raw *binfield_raw_create(struct binfield *self, size_t size)
 {
-    struct field_raw *p;
+    struct binfield_raw *p;
 
     p = malloc(sizeof *p);
     if (p == NULL)
@@ -44,9 +52,9 @@ struct field_raw *binfield_raw_create(size_t size)
    allocate a number field with allocated value of given size
    return pointer to field
    return NULL if can't allocate */
-struct field_num *binfield_num_create(size_t size)
+struct binfield_num *binfield_num_create(struct binfield *self, size_t size)
 {
-    struct field_num *p;
+    struct binfield_num *p;
 
     p = malloc(sizeof *p);
     if (p == NULL)
@@ -65,7 +73,11 @@ struct field_num *binfield_num_create(size_t size)
    set raw field value and length to given value and length
    return 1 if has set correctly
    return 0 if can't set */
-int binfield_raw_set(struct field_raw *field, const void *value, size_t length)
+int binfield_raw_set(
+    struct binfield *self,
+    struct binfield_raw *field,
+    const void *value,
+    size_t length)
 {
     if (length > field->maxsize)
         return 0;
@@ -77,7 +89,10 @@ int binfield_raw_set(struct field_raw *field, const void *value, size_t length)
 /* binfield_raw_get: get raw field value
                      return 1 if has gotten correctly
                      return 0 if can't get */
-int binfield_raw_get(const struct field_raw *field, void *out)
+int binfield_raw_get(
+    struct binfield *self,
+    const struct binfield_raw *field,
+    void *out)
 {
     memcpy(out, field->val, field->len);
     return 1;
@@ -87,7 +102,11 @@ int binfield_raw_get(const struct field_raw *field, void *out)
    set number field value and length to given value and length
    return 1 if has set correctly
    return 0 if can't set */
-int binfield_num_set(struct field_num *field, const void *value, size_t length)
+int binfield_num_set(
+    struct binfield *self,
+    struct binfield_num *field,
+    const void *value,
+    size_t length)
 {
     if (length > field->maxsize)
         return 0;
@@ -99,7 +118,10 @@ int binfield_num_set(struct field_num *field, const void *value, size_t length)
 /* binfield_num_get: get number field value
                      return 1 if has gotten correctly
                      return 0 if can't get */
-int binfield_num_get(const struct field_num *field, void *out)
+int binfield_num_get(
+    struct binfield *self,
+    const struct binfield_num *field,
+    void *out)
 {
     memcpy(out, field->val, field->len);
     return 1;
@@ -108,7 +130,11 @@ int binfield_num_get(const struct field_num *field, void *out)
 /* binfield_raw_read: read raw field from input stream
                       return 1 if has read correctly
                       return 0 if an error happened */
-int binfield_raw_read(struct field_raw *field, FILE *ifp, size_t size)
+int binfield_raw_read(
+    struct binfield *self,
+    struct binfield_raw *field,
+    FILE *ifp,
+    size_t size)
 {
     int retval;
 
@@ -122,7 +148,10 @@ int binfield_raw_read(struct field_raw *field, FILE *ifp, size_t size)
 /* binfield_raw_write: write raw field to output stream
                        return 1 if has written correctly
                        return 0 if an error happened */
-int binfield_raw_write(const struct field_raw *field, FILE *ofp)
+int binfield_raw_write(
+    struct binfield *self,
+    const struct binfield_raw *field,
+    FILE *ofp)
 {
     if (field->len > 0)
         return fwrite(field->val, field->len, 1, ofp) == 1;
@@ -132,7 +161,10 @@ int binfield_raw_write(const struct field_raw *field, FILE *ofp)
 /* binfield_raw_skip: skip raw field in stream
                       return 1 if has skipped correctly
                       return 0 if an error happened */
-int binfield_raw_skip(const struct field_raw *field, FILE *iofp)
+int binfield_raw_skip(
+    struct binfield *self,
+    const struct binfield_raw *field,
+    FILE *iofp)
 {
     int retval;
     size_t i;
@@ -146,7 +178,11 @@ int binfield_raw_skip(const struct field_raw *field, FILE *iofp)
 /* binfield_num_read: read number field from input stream
                       return 1 if has read correctly
                       return 0 if an error happened */
-int binfield_num_read(struct field_num *field, FILE *ifp, size_t size)
+int binfield_num_read(
+    struct binfield *self,
+    struct binfield_num *field,
+    FILE *ifp,
+    size_t size)
 {
     unsigned char buf[NUMBUFMAX];
 
@@ -161,7 +197,10 @@ int binfield_num_read(struct field_num *field, FILE *ifp, size_t size)
 /* binfield_num_write: write number field to output stream
                        return 1 if has written correctly
                        return 0 if an error happened */
-int binfield_num_write(const struct field_num *field, FILE *ofp)
+int binfield_num_write(
+    struct binfield *self,
+    const struct binfield_num *field,
+    FILE *ofp)
 {
     unsigned char buf[NUMBUFMAX];
 
@@ -176,7 +215,10 @@ int binfield_num_write(const struct field_num *field, FILE *ofp)
 /* binfield_num_skip: skip number field in stream
                       return 1 if has skipped correctly
                       return 0 if an error happened */
-int binfield_num_skip(const struct field_num *field, FILE *iofp)
+int binfield_num_skip(
+    struct binfield *self,
+    const struct binfield_num *field,
+    FILE *iofp)
 {
     int retval;
     size_t i;
@@ -188,15 +230,25 @@ int binfield_num_skip(const struct field_num *field, FILE *iofp)
 }
 
 /* binfield_raw_free: free raw field value and field itself */
-void binfield_raw_free(struct field_raw *field)
+void binfield_raw_free(
+    struct binfield *self,
+    struct binfield_raw *field)
 {
     free(field->val);
     free(field);
 }
 
 /* binfield_num_free: free number field value and field itself */
-void binfield_num_free(struct field_num *field)
+void binfield_num_free(
+    struct binfield *self,
+    struct binfield_num *field)
 {
     free(field->val);
     free(field);
+}
+
+/* binfield_end: stop binfield and clear internal values */
+void binfield_end(struct binfield *self)
+{
+    self->cryptor = NULL;
 }
