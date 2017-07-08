@@ -31,6 +31,8 @@ TARGET_BINARY = $(PROG)
 TARGET_README = README
 TARGET_NEWS = NEWS
 TARGET_LICENSE = LICENSE
+TARGET_MANPAGE = $(PROG).1
+TARGET_MANPAGE_GZ = $(TARGET_MANPAGE).gz
 
 
 # Build section
@@ -51,6 +53,8 @@ docs_dir = docs
 DOCS_DIR = $(docs_dir)
 
 VERSION_M4 = $(M4DIR)/version.m4
+
+MANPAGE_TEMPLATE = manpage
 
 
 SRC_MAIN_C = main.c
@@ -127,10 +131,13 @@ TEST_SRC_JUMPER_C = test_jumper.c
 
 binary_dir = /usr/local/bin
 system_docs_dir = /usr/share/doc
+man_dir = /usr/share/man/man1
 
 BINARY_INSTALL_DIR = $(binary_dir)
 
 DOCS_INSTALL_DIR = $(system_docs_dir)/$(PROG)
+
+MAN_INSTALL_DIR = $(man_dir)
 
 
 # Commands
@@ -221,6 +228,8 @@ build:
 	@$(M4) $(VERSION_M4) $(TARGET_README) > $(BUILD_DIR)/$(DOCS_DIR)/$(TARGET_README)
 	@$(M4) $(VERSION_M4) $(TARGET_NEWS) > $(BUILD_DIR)/$(DOCS_DIR)/$(TARGET_NEWS)
 	@cp $(TARGET_LICENSE) $(BUILD_DIR)/$(DOCS_DIR)/$(TARGET_LICENSE)
+	@$(M4) $(VERSION_M4) $(MANPAGE_TEMPLATE) > $(BUILD_DIR)/$(DOCS_DIR)/$(TARGET_MANPAGE)
+	@gzip $(BUILD_DIR)/$(DOCS_DIR)/$(TARGET_MANPAGE)
 
 	@echo "$(PROG) has built in the \`$(BUILD_DIR)' directory."
 
@@ -269,12 +278,14 @@ install:
 	install -m 644 $(BUILD_DIR)/$(DOCS_DIR)/$(TARGET_README) $(DOCS_INSTALL_DIR)/$(TARGET_README)
 	install -m 644 $(BUILD_DIR)/$(DOCS_DIR)/$(TARGET_NEWS) $(DOCS_INSTALL_DIR)/$(TARGET_NEWS)
 	install -m 644 $(BUILD_DIR)/$(DOCS_DIR)/$(TARGET_LICENSE) $(DOCS_INSTALL_DIR)/$(TARGET_LICENSE)
+	install -m 644 $(BUILD_DIR)/$(DOCS_DIR)/$(TARGET_MANPAGE_GZ) $(MAN_INSTALL_DIR)/$(TARGET_MANPAGE_GZ)
 
 	@echo "$(PROG) has installed."
 
 uninstall:
 	rm -f $(BINARY_INSTALL_DIR)/$(TARGET_BINARY)
 	rm -rf $(DOCS_INSTALL_DIR)
+	rm -f $(MAN_INSTALL_DIR)/$(TARGET_MANPAGE_GZ)
 
 	@echo "$(PROG) has uninstalled."
 

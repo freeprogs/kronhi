@@ -1,0 +1,9 @@
+.\"
+.\" This is the man page of __PROGRAM_NAME__ __PROGRAM_VERSION__
+.\" __PROGRAM_COPYRIGHT__ __PROGRAM_AUTHOR__ __PROGRAM_AUTHOR_EMAIL__
+.\"
+.TH __PROGRAM_NAME__ 1
+.SH NAME
+__PROGRAM_NAME__ \- description
+.SH SYNOPSIS
+Long description.
