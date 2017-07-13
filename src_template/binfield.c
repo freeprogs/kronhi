@@ -69,6 +69,24 @@ struct binfield_num *binfield_num_create(struct binfield *self, size_t size)
     return p;
 }
 
+/* binfield_stream_make: allocate a stream field
+   return pointer to field
+   return NULL if can't allocate */
+struct binfield_stream *binfield_stream_create(struct binfield *self)
+{
+    struct binfield_stream *p;
+
+    p = malloc(sizeof *p);
+    if (p == NULL)
+        return NULL;
+    p->valfp = NULL;
+    if (!bignumber_set_value_int(&p->len, 0)) {
+        free(p);
+        return NULL;
+    }
+    return p;
+}
+
 /* binfield_raw_set:
    set raw field value and length to given value and length
    return 1 if has set correctly
@@ -124,6 +142,33 @@ int binfield_num_get(
     void *out)
 {
     memcpy(out, field->val, field->len);
+    return 1;
+}
+
+/* binfield_stream_set:
+   set stream field value to given stream and zero length
+   return 1 if has set correctly
+   return 0 if can't set */
+int binfield_stream_set(
+    struct binfield *self,
+    struct binfield_stream *field,
+    FILE *iofp)
+{
+    field->valfp = iofp;
+    if (!bignumber_set_value_int(&field->len, 0))
+        return 0;
+    return 1;
+}
+
+/* binfield_stream_get: get stream field value
+                        return 1 if has gotten correctly
+                        return 0 if can't get */
+int binfield_stream_get(
+    struct binfield *self,
+    const struct binfield_stream *field,
+    FILE **out)
+{
+    *out = field->valfp;
     return 1;
 }
 
@@ -229,6 +274,45 @@ int binfield_num_skip(
     return retval;
 }
 
+/* binfield_stream_write: write stream field to output stream
+                          return 1 if has written correctly
+                          return 0 if an error happened */
+int binfield_stream_write(
+    struct binfield *self,
+    const struct binfield_stream *field,
+    FILE *ofp)
+{
+    int retval;
+
+    retval = 1;
+    if (field->valfp != NULL) {
+        retval = file_write_file(ofp, field->valfp);
+        rewind(field->valfp);
+    }
+    return retval;
+}
+
+/* binfield_stream_skip: skip stream field in stream
+                         return 1 if has skipped correctly
+                         return 0 if an error happened */
+int binfield_stream_skip(
+    struct binfield *self,
+    const struct binfield_stream *field,
+    FILE *iofp)
+{
+    int retval;
+    struct bignumber i;
+
+    bignumber_set_value_int(&i, 0);
+    while (bignumber_lt_big(&i, &field->len)) {
+        if (getc(iofp) == EOF)
+            break;
+        bignumber_add_int(&i, 1);
+    }
+    retval = ferror(iofp) == 0;
+    return retval;
+}
+
 /* binfield_raw_free: free raw field value and field itself */
 void binfield_raw_free(
     struct binfield *self,
@@ -244,6 +328,14 @@ void binfield_num_free(
     struct binfield_num *field)
 {
     free(field->val);
+    free(field);
+}
+
+/* binfield_stream_free: free stream field itself */
+void binfield_stream_free(
+    struct binfield *self,
+    struct binfield_stream *field)
+{
     free(field);
 }
 
