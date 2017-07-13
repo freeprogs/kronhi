@@ -182,10 +182,10 @@ int node_write_dir_header_field(
 int node_write_file(struct node *self, FILE *ofp, const struct binfile *file)
 {
     struct binfield *field;
-    int f_error, f_file_to_file_error;
+    int f_error;
 
     field = self->field;
-    f_error = f_file_to_file_error = 0;
+    f_error = 0;
 
     if (!binfield_raw_write(field, file->type_sign, ofp))
         f_error = 1;
@@ -203,12 +203,12 @@ int node_write_file(struct node *self, FILE *ofp, const struct binfile *file)
         f_error = 1;
     if (!binfield_raw_write(field, file->contentsize, ofp))
         f_error = 1;
-    if (!file_write_file(ofp, file->contentstream))
-        f_file_to_file_error = 1;
+    if (!binfield_stream_write(field, file->contentstream, ofp))
+        f_error = 1;
     if (!binfield_num_write(field, file->file_offset, ofp))
         f_error = 1;
 
-    if (f_error || f_file_to_file_error)
+    if (f_error)
         return 0;
     if (ferror(ofp))
         return 0;
@@ -313,10 +313,10 @@ int node_write_file_header_field(
     enum node_file_field_flags fieldflags)
 {
     struct binfield *field;
-    int f_error, f_file_to_file_error, f_file_skip_error;
+    int f_error;
 
     field = self->field;
-    f_error = f_file_to_file_error = f_file_skip_error = 0;
+    f_error = 0;
 
     if (fieldflags & FILFLD_TYPESIGN) {
         if (!binfield_raw_write(field, file->type_sign, ofp))
@@ -391,19 +391,20 @@ int node_write_file_header_field(
     }
 
     if (fieldflags & FILFLD_CONTENTSTREAM) {
-        if (!file_write_file(ofp, file->contentstream))
-            f_file_to_file_error = 1;
+        if (!binfield_stream_write(field, file->contentstream, ofp))
+            f_error = 1;
     }
     else {
         struct bignumber contentsize;
         char buffer[100];
 
         if (!binfile_contentsize_get(file, buffer))
-            f_file_skip_error = 1;
+            f_error = 1;
         if (!bignumber_set_value_string(&contentsize, buffer))
-            f_file_skip_error = 1;
-        if (!file_skip_bytes(ofp, &contentsize))
-            f_file_skip_error = 1;
+            f_error = 1;
+        file->contentstream->len = contentsize;
+        if (!binfield_stream_skip(field, file->contentstream, ofp))
+            f_error = 1;
     }
 
     if (fieldflags & FILFLD_FILEOFFSET) {
@@ -415,7 +416,7 @@ int node_write_file_header_field(
             f_error = 1;
     }
 
-    if (f_error || f_file_skip_error)
+    if (f_error)
         return 0;
     if (ferror(ofp))
         return 0;
