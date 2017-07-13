@@ -57,7 +57,7 @@ struct binfile {
     struct binfield_raw *datetime;
     struct binfield_num *ctrlsum;
     struct binfield_raw *contentsize;
-    FILE *contentstream;
+    struct binfield_stream *contentstream;
     struct binfield_num *file_offset;
 };
 
@@ -79,6 +79,7 @@ int binfile_ctrlsum_get(const struct binfile *file, unsigned long *out);
 int binfile_contentsize_set(struct binfile *file, const char *contentsize);
 int binfile_contentsize_get(const struct binfile *file, char *out);
 int binfile_contentstream_set(struct binfile *file, FILE *contentstream);
+int binfile_contentstream_get(const struct binfile *file, FILE **out);
 int binfile_file_offset_set(struct binfile *file, size_t file_offset);
 int binfile_file_offset_get(const struct binfile *file, size_t *out);
 int binfile_get_size(const struct binfile *file, struct bignumber *out);
