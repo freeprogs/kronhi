@@ -27,6 +27,7 @@ int binfile_start(struct binfile *file)
     struct binfield field;
     struct binfield_raw *rp;
     struct binfield_num *np;
+    struct binfield_stream *sp;
 
     binfield_start(&field, NULL);
 
@@ -78,7 +79,11 @@ int binfile_start(struct binfile *file)
     file->contentsize = rp;
     binfield_raw_set(&field, rp, "\0", 1);
 
-    file->contentstream = NULL;
+    sp = binfield_stream_create(&field);
+    if (!sp)
+        return 0;
+    file->contentstream = sp;
+    binfield_stream_set(&field, sp, NULL);
 
     np = binfield_num_create(&field, _FILE_OFFSET_FIELD_SIZE);
     if (!np)
@@ -347,13 +352,35 @@ int binfile_contentsize_get(const struct binfile *file, char *out)
     return retval;
 }
 
-/* binfile_contentstream_set: set in file the content stream
+/* binfile_contentstream_set: set in file the content stream field
                               return 1 if field has set
                               return 0 if an error happened */
 int binfile_contentstream_set(struct binfile *file, FILE *contentstream)
 {
-    file->contentstream = contentstream;
-    return 1;
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_stream_set(
+        &field,
+        file->contentstream,
+        contentstream);
+    binfield_end(&field);
+    return retval;
+}
+
+/* binfile_contentstream_get: get from file the content stream field
+                              return 1 if field has gotten
+                              return 0 if an error happened */
+int binfile_contentstream_get(const struct binfile *file, FILE **out)
+{
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_stream_get(&field, file->contentstream, out);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_file_offset_set: set in file the file offset field
@@ -445,6 +472,7 @@ void binfile_end(struct binfile *file)
     binfield_raw_free(&field, file->datetime);
     binfield_num_free(&field, file->ctrlsum);
     binfield_raw_free(&field, file->contentsize);
+    binfield_stream_free(&field, file->contentstream);
     binfield_num_free(&field, file->file_offset);
     file->type_sign = NULL;
     file->namesize = NULL;
