@@ -35,7 +35,7 @@ struct binfield_raw *binfield_raw_create(struct binfield *self, size_t size)
 {
     struct binfield_raw *p;
 
-    p = malloc(sizeof *p);
+    p = malloc(sizeof(struct binfield_raw));
     if (p == NULL)
         return NULL;
     p->val = malloc(size);
