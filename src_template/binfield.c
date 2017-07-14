@@ -172,6 +172,16 @@ int binfield_stream_get(
     return 1;
 }
 
+int _binfield_raw_read_plain(
+    struct binfield_raw *field,
+    FILE *ifp,
+    size_t size);
+int _binfield_raw_read_crypt(
+    struct binfield_raw *field,
+    FILE *ifp,
+    size_t size,
+    struct cryptor *cryptor);
+
 /* binfield_raw_read: read raw field from input stream
                       return 1 if has read correctly
                       return 0 if an error happened */
@@ -183,11 +193,48 @@ int binfield_raw_read(
 {
     int retval;
 
+    if (self->cryptor == NULL) {
+        retval = _binfield_raw_read_plain(field, ifp, size);
+    }
+    else {
+        retval = _binfield_raw_read_crypt(field, ifp, size, self->cryptor);
+    }
+    return retval;
+}
+
+int _binfield_raw_read_plain(
+    struct binfield_raw *field,
+    FILE *ifp,
+    size_t size)
+{
+    int retval;
+
     if (size > field->maxsize)
         return 0;
     retval = fread(field->val, 1, size, ifp) == size;
     field->len = size;
     return retval;
+}
+
+int _binfield_raw_read_crypt(
+    struct binfield_raw *field,
+    FILE *ifp,
+    size_t size,
+    struct cryptor *cryptor)
+{
+    unsigned char ibuffer[CRYPTBUFMAX];
+    size_t isize;
+    unsigned char obuffer[CRYPTBUFMAX];
+    size_t osize;
+
+    if (fread(ibuffer, 1, size, ifp) != size)
+        return 0;
+    isize = size;
+    if (!cryptor_decrypt(cryptor, ibuffer, isize, obuffer, &osize))
+        return 0;
+    memcpy(field->val, obuffer, osize);
+    field->len = osize;
+    return 1;
 }
 
 /* binfield_raw_write: write raw field to output stream
