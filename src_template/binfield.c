@@ -353,11 +353,37 @@ int _binfield_raw_skip_crypt(
     return ferror(iofp) == 0;
 }
 
+int _binfield_num_read_plain(
+    struct binfield_num *field,
+    FILE *ifp,
+    size_t size);
+int _binfield_num_read_crypt(
+    struct binfield_num *field,
+    FILE *ifp,
+    size_t size,
+    struct cryptor *cryptor);
+
 /* binfield_num_read: read number field from input stream
                       return 1 if has read correctly
                       return 0 if an error happened */
 int binfield_num_read(
     struct binfield *self,
+    struct binfield_num *field,
+    FILE *ifp,
+    size_t size)
+{
+    int retval;
+
+    if (self->cryptor == NULL) {
+        retval = _binfield_num_read_plain(field, ifp, size);
+    }
+    else {
+        retval = _binfield_num_read_crypt(field, ifp, size, self->cryptor);
+    }
+    return retval;
+}
+
+int _binfield_num_read_plain(
     struct binfield_num *field,
     FILE *ifp,
     size_t size)
@@ -369,6 +395,28 @@ int binfield_num_read(
     bytes_from_bigend(buf, size);
     memcpy(field->val, buf, size);
     field->len = size;
+    return 1;
+}
+
+int _binfield_num_read_crypt(
+    struct binfield_num *field,
+    FILE *ifp,
+    size_t size,
+    struct cryptor *cryptor)
+{
+    unsigned char ibuffer[CRYPTBUFMAX];
+    size_t isize;
+    unsigned char obuffer[CRYPTBUFMAX];
+    size_t osize;
+
+    if (fread(ibuffer, 1, size, ifp) != size)
+        return 0;
+    isize = size;
+    if (!cryptor_decrypt(cryptor, ibuffer, isize, obuffer, &osize))
+        return 0;
+    bytes_from_bigend(obuffer, osize);
+    memcpy(field->val, obuffer, osize);
+    field->len = osize;
     return 1;
 }
 
