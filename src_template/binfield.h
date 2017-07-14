@@ -31,6 +31,9 @@
 /* maximum number buffer length for changing endianness */
 #define NUMBUFMAX  10
 
+/* maximum buffer length for encrypt/decrypt */
+#define CRYPTBUFMAX  100
+
 struct binfield {
     struct cryptor *cryptor;
 };
