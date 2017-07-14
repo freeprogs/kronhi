@@ -30,6 +30,7 @@ void test_can_set_and_get_desc_field(void);
 void test_can_set_and_get_datetime_field(void);
 void test_can_set_and_get_ctrlsum_field(void);
 void test_can_set_and_get_contentsize_field(void);
+void test_can_set_and_get_contentstream_field(void);
 void test_can_set_and_get_file_offset_field(void);
 
 int main(void)
@@ -63,6 +64,8 @@ int main(void)
                     test_can_set_and_get_ctrlsum_field) == NULL
      || CU_add_test(suite, "can set and get contentsize field",
                     test_can_set_and_get_contentsize_field) == NULL
+     || CU_add_test(suite, "can set and get contentstream field",
+                    test_can_set_and_get_contentstream_field) == NULL
      || CU_add_test(suite, "can set and get file_offset field",
                     test_can_set_and_get_file_offset_field) == NULL) {
         CU_cleanup_registry();
@@ -222,6 +225,22 @@ void test_can_set_and_get_contentsize_field(void)
     *out = '\0';
     binfile_contentsize_get(&file, out);
     CU_ASSERT_STRING_EQUAL(out, "1");
+
+    binfile_end(&file);
+}
+
+void test_can_set_and_get_contentstream_field(void)
+{
+    struct binfile file;
+    FILE *ifp, *out;
+
+    binfile_start(&file);
+
+    ifp = (void *) 1;
+    binfile_contentstream_set(&file, ifp);
+    out = NULL;
+    binfile_contentstream_get(&file, &out);
+    CU_ASSERT_PTR_EQUAL(out, ifp);
 
     binfile_end(&file);
 }

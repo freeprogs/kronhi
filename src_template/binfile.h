@@ -49,16 +49,16 @@
  *                       this offset is relative to its place in memory
 */
 struct binfile {
-    struct field_raw *type_sign;
-    struct field_num *namesize;
-    struct field_raw *name;
-    struct field_num *descsize;
-    struct field_raw *desc;
-    struct field_raw *datetime;
-    struct field_num *ctrlsum;
-    struct field_raw *contentsize;
-    FILE *contentstream;
-    struct field_num *file_offset;
+    struct binfield_raw *type_sign;
+    struct binfield_num *namesize;
+    struct binfield_raw *name;
+    struct binfield_num *descsize;
+    struct binfield_raw *desc;
+    struct binfield_raw *datetime;
+    struct binfield_num *ctrlsum;
+    struct binfield_raw *contentsize;
+    struct binfield_stream *contentstream;
+    struct binfield_num *file_offset;
 };
 
 int binfile_start(struct binfile *file);
@@ -79,6 +79,7 @@ int binfile_ctrlsum_get(const struct binfile *file, unsigned long *out);
 int binfile_contentsize_set(struct binfile *file, const char *contentsize);
 int binfile_contentsize_get(const struct binfile *file, char *out);
 int binfile_contentstream_set(struct binfile *file, FILE *contentstream);
+int binfile_contentstream_get(const struct binfile *file, FILE **out);
 int binfile_file_offset_set(struct binfile *file, size_t file_offset);
 int binfile_file_offset_get(const struct binfile *file, size_t *out);
 int binfile_get_size(const struct binfile *file, struct bignumber *out);

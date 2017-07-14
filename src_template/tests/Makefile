@@ -33,16 +33,18 @@ SRC_BIGNUMBER_TEST = test_bignumber.c
 SRC_BIGNUMBER_SOURCES = ../bignumber.c
 TARGET_FILE_OPERATION = test_file_operation
 SRC_FILE_OPERATION_TEST = test_file_operation.c
-SRC_FILE_OPERATION_SOURCES = ../file_operation.c ../bignumber.c ../file_offset.c ../crc32.c
+SRC_FILE_OPERATION_SOURCES = ../file_operation.c ../bignumber.c ../file_offset.c \
+                             ../crc32.c
 TARGET_CHAIN = test_chain
 SRC_CHAIN_TEST = test_chain.c
 SRC_CHAIN_SOURCES = ../chain.c ../bignumber.c ../file_offset.c \
                     ../bindir.c ../binfile.c ../datetime.c \
                     ../file_operation.c ../crc32.c ../node.c \
-	            ../binfield.c ../endian.c ../jumper.c
+	            ../binfield.c ../endian.c ../cryptor.c ../jumper.c
 TARGET_BINFILE = test_binfile
 SRC_BINFILE_TEST = test_binfile.c
-SRC_BINFILE_SOURCES = ../binfile.c ../binfield.c ../bignumber.c ../endian.c
+SRC_BINFILE_SOURCES = ../binfile.c ../binfield.c ../bignumber.c ../endian.c \
+                      ../file_operation.c ../file_offset.c ../crc32.c ../cryptor.c
 TARGET_CRC32 = test_crc32
 SRC_CRC32_TEST = test_crc32.c
 SRC_CRC32_SOURCES = ../crc32.c
@@ -51,12 +53,13 @@ SRC_DATETIME_TEST = test_datetime.c
 SRC_DATETIME_SOURCES = ../datetime.c
 TARGET_BINDIR = test_bindir
 SRC_BINDIR_TEST = test_bindir.c
-SRC_BINDIR_SOURCES = ../bindir.c ../binfield.c ../endian.c
+SRC_BINDIR_SOURCES = ../bindir.c ../binfield.c ../bignumber.c ../endian.c \
+                     ../file_operation.c ../file_offset.c ../crc32.c ../cryptor.c
 TARGET_NODE = test_node
 SRC_NODE_TEST = test_node.c
 SRC_NODE_SOURCES = ../node.c ../bindir.c ../binfield.c ../endian.c \
                    ../bignumber.c ../binfile.c ../file_operation.c \
-                   ../file_offset.c ../crc32.c
+                   ../file_offset.c ../crc32.c ../cryptor.c
 TARGET_JUMPER = test_jumper
 SRC_JUMPER_TEST = test_jumper.c
 SRC_JUMPER_SOURCES = ../jumper.c

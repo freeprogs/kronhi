@@ -93,6 +93,8 @@ void test_raise_on_very_big_file_offset(void)
     const char *dirdesc = "";
 
     struct chain chain;
+    struct node node;
+    struct binfield field;
     enum chain_code retval;
     struct file_offset offset;
 
@@ -104,12 +106,18 @@ void test_raise_on_very_big_file_offset(void)
     putc('x', fp);
     fclose(fp);
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     fileoffset_clear(&offset);
     fileoffset_add_number(&offset, 2);
 
-    chain_start(&chain, destination, &offset);
+    chain_start(&chain, destination, &offset, &node);
     retval = chain_create_dir(&chain, dirdesc, 0, 0);
     chain_end(&chain);
+
+    node_end(&node);
+    binfield_end(&field);
 
     CU_ASSERT_EQUAL(retval, CHAIN_ERROR_DIR_SKIPOFFSET);
 
@@ -122,6 +130,8 @@ void test_raise_on_very_big_directory_size(void)
     const char *dirdesc = "";
 
     struct chain chain;
+    struct node node;
+    struct binfield field;
     enum chain_code retval;
     struct file_offset offset;
 
@@ -133,11 +143,17 @@ void test_raise_on_very_big_directory_size(void)
     putc('x', fp);
     fclose(fp);
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     fileoffset_clear(&offset);
 
-    chain_start(&chain, destination, &offset);
+    chain_start(&chain, destination, &offset, &node);
     retval = chain_create_dir(&chain, dirdesc, 0, 0);
     chain_end(&chain);
+
+    node_end(&node);
+    binfield_end(&field);
 
     CU_ASSERT_EQUAL(retval, CHAIN_ERROR_DIR_FILESIZE);
 
@@ -151,6 +167,8 @@ void test_can_write_directory_to_the_end_of_file(void)
     const int DIRSIZE = 11;
 
     struct chain chain;
+    struct node node;
+    struct binfield field;
     enum chain_code retval;
     struct file_offset offset;
 
@@ -164,11 +182,17 @@ void test_can_write_directory_to_the_end_of_file(void)
         putc('x', fp);
     fclose(fp);
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     fileoffset_clear(&offset);
 
-    chain_start(&chain, destination, &offset);
+    chain_start(&chain, destination, &offset, &node);
     retval = chain_create_dir(&chain, dirdesc, 0, 0);
     chain_end(&chain);
+
+    node_end(&node);
+    binfield_end(&field);
 
     CU_ASSERT_EQUAL(retval, CHAIN_OK);
 
@@ -178,6 +202,8 @@ void test_can_write_directory_to_the_end_of_file(void)
 void test_raise_on_absent_directory(void)
 {
     struct chain chain;
+    struct node node;
+    struct binfield field;
     const char *destination = "file.txt";
     struct file_offset offset;
     enum chain_code retval;
@@ -203,8 +229,11 @@ void test_raise_on_absent_directory(void)
     fprintf(fp, "abc");
     fclose(fp);
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     fileoffset_clear(&offset);
-    chain_start(&chain, destination, &offset);
+    chain_start(&chain, destination, &offset, &node);
 
     filename = "a";
     filedesc = "b";
@@ -213,6 +242,9 @@ void test_raise_on_absent_directory(void)
         &chain, source, filename, filedesc, filereloff);
 
     chain_end(&chain);
+
+    node_end(&node);
+    binfield_end(&field);
 
     CU_ASSERT_EQUAL(retval, CHAIN_ERROR_FILE_NODIR);
 
@@ -223,6 +255,8 @@ void test_raise_on_absent_directory(void)
 void test_can_append_file_to_empty_directory(void)
 {
     struct chain chain;
+    struct node node;
+    struct binfield field;
     const char *destination = "file.txt";
     struct file_offset offset;
     enum chain_code chretval;
@@ -316,8 +350,11 @@ void test_can_append_file_to_empty_directory(void)
     /* assert: source file binary data pattern for match has been
        prepared */
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     fileoffset_clear(&offset);
-    chain_start(&chain, destination, &offset);
+    chain_start(&chain, destination, &offset, &node);
 
     filename = "a";
     filedesc = "b";
@@ -326,6 +363,9 @@ void test_can_append_file_to_empty_directory(void)
         &chain, source, filename, filedesc, filereloff);
 
     chain_end(&chain);
+
+    node_end(&node);
+    binfield_end(&field);
 
     CU_ASSERT_EQUAL(chretval, CHAIN_OK);
 
@@ -375,6 +415,8 @@ void test_can_append_file_to_empty_directory(void)
 void test_can_append_file_to_non_empty_directory(void)
 {
     struct chain chain;
+    struct node node;
+    struct binfield field;
     const char *destination = "file.txt";
     struct file_offset offset;
     enum chain_code chretval;
@@ -510,8 +552,11 @@ void test_can_append_file_to_non_empty_directory(void)
     /* assert: source file binary data pattern for match has been
        prepared */
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     fileoffset_clear(&offset);
-    chain_start(&chain, destination, &offset);
+    chain_start(&chain, destination, &offset, &node);
 
     filename = "a";
     filedesc = "b";
@@ -520,6 +565,9 @@ void test_can_append_file_to_non_empty_directory(void)
         &chain, source, filename, filedesc, filereloff);
 
     chain_end(&chain);
+
+    node_end(&node);
+    binfield_end(&field);
 
     CU_ASSERT_EQUAL(chretval, CHAIN_OK);
 
@@ -583,6 +631,8 @@ void test_can_append_file_to_non_empty_directory(void)
 void test_raise_on_append_file_to_broken_directory(void)
 {
     struct chain chain;
+    struct node node;
+    struct binfield field;
     const char *destination = "file.txt";
     struct file_offset offset;
     enum chain_code chretval;
@@ -631,8 +681,11 @@ void test_raise_on_append_file_to_broken_directory(void)
 
     /* assert: source file has been prepared for write */
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     fileoffset_clear(&offset);
-    chain_start(&chain, destination, &offset);
+    chain_start(&chain, destination, &offset, &node);
 
     filename = "a";
     filedesc = "b";
@@ -641,6 +694,9 @@ void test_raise_on_append_file_to_broken_directory(void)
         &chain, source, filename, filedesc, filereloff);
 
     chain_end(&chain);
+
+    node_end(&node);
+    binfield_end(&field);
 
     CU_ASSERT_EQUAL(chretval, CHAIN_ERROR_FILE_NOFILE);
 
@@ -654,6 +710,8 @@ void test_raise_on_append_file_to_broken_directory(void)
 void test_raise_on_append_file_to_broken_file(void)
 {
     struct chain chain;
+    struct node node;
+    struct binfield field;
     const char *destination = "file.txt";
     struct file_offset offset;
     enum chain_code chretval;
@@ -724,8 +782,11 @@ void test_raise_on_append_file_to_broken_file(void)
 
     /* assert: source file has been prepared for write */
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     fileoffset_clear(&offset);
-    chain_start(&chain, destination, &offset);
+    chain_start(&chain, destination, &offset, &node);
 
     filename = "a";
     filedesc = "b";
@@ -734,6 +795,9 @@ void test_raise_on_append_file_to_broken_file(void)
         &chain, source, filename, filedesc, filereloff);
 
     chain_end(&chain);
+
+    node_end(&node);
+    binfield_end(&field);
 
     CU_ASSERT_EQUAL(chretval, CHAIN_ERROR_FILE_NOFILE);
 
@@ -747,6 +811,8 @@ void test_raise_on_append_file_to_broken_file(void)
 void test_can_append_file_with_offset_to_directory(void)
 {
     struct chain chain;
+    struct node node;
+    struct binfield field;
     const char *destination = "file.txt";
     struct file_offset offset;
     enum chain_code chretval;
@@ -840,8 +906,11 @@ void test_can_append_file_with_offset_to_directory(void)
     /* assert: source file binary data pattern for match has been
        prepared */
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     fileoffset_clear(&offset);
-    chain_start(&chain, destination, &offset);
+    chain_start(&chain, destination, &offset, &node);
 
     filename = "a";
     filedesc = "b";
@@ -850,6 +919,9 @@ void test_can_append_file_with_offset_to_directory(void)
         &chain, source, filename, filedesc, filereloff);
 
     chain_end(&chain);
+
+    node_end(&node);
+    binfield_end(&field);
 
     CU_ASSERT_EQUAL(chretval, CHAIN_OK);
 
@@ -904,6 +976,8 @@ void test_can_append_file_with_offset_to_directory(void)
 void test_can_append_file_with_offset_to_file(void)
 {
     struct chain chain;
+    struct node node;
+    struct binfield field;
     const char *destination = "file.txt";
     struct file_offset offset;
     enum chain_code chretval;
@@ -1039,8 +1113,11 @@ void test_can_append_file_with_offset_to_file(void)
     /* assert: source file binary data pattern for match has been
        prepared */
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     fileoffset_clear(&offset);
-    chain_start(&chain, destination, &offset);
+    chain_start(&chain, destination, &offset, &node);
 
     filename = "a";
     filedesc = "b";
@@ -1049,6 +1126,9 @@ void test_can_append_file_with_offset_to_file(void)
         &chain, source, filename, filedesc, filereloff);
 
     chain_end(&chain);
+
+    node_end(&node);
+    binfield_end(&field);
 
     CU_ASSERT_EQUAL(chretval, CHAIN_OK);
 

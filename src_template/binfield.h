@@ -24,35 +24,117 @@
 #include <stdlib.h>
 #include <string.h>
 #include "endian.h"
+#include "bignumber.h"
+#include "file_operation.h"
+#include "cryptor.h"
 
 /* maximum number buffer length for changing endianness */
 #define NUMBUFMAX  10
 
-struct field_raw {
+/* maximum buffer length for encrypt/decrypt */
+#define CRYPTBUFMAX  100
+
+struct binfield {
+    struct cryptor *cryptor;
+};
+
+struct binfield_raw {
     unsigned char *val;
     size_t len;
     size_t maxsize;
 };
 
-struct field_num {
+struct binfield_num {
     unsigned char *val;
     size_t len;
     size_t maxsize;
 };
 
-struct field_raw *binfield_raw_create(size_t size);
-struct field_num *binfield_num_create(size_t size);
-int binfield_raw_set(struct field_raw *field, const void *value, size_t length);
-int binfield_raw_get(const struct field_raw *field, void *out);
-int binfield_num_set(struct field_num *field, const void *value, size_t length);
-int binfield_num_get(const struct field_num *field, void *out);
-int binfield_raw_read(struct field_raw *field, FILE *ifp, size_t size);
-int binfield_raw_write(const struct field_raw *field, FILE *ofp);
-int binfield_raw_skip(const struct field_raw *field, FILE *iofp);
-int binfield_num_read(struct field_num *field, FILE *ifp, size_t size);
-int binfield_num_write(const struct field_num *field, FILE *ofp);
-int binfield_num_skip(const struct field_num *field, FILE *iofp);
-void binfield_raw_free(struct field_raw *field);
-void binfield_num_free(struct field_num *field);
+struct binfield_stream {
+    FILE *valfp;
+    struct bignumber len;
+};
+
+void binfield_start(
+    struct binfield *self,
+    struct cryptor *cryptor);
+struct binfield_raw *binfield_raw_create(
+    struct binfield *self,
+    size_t size);
+struct binfield_num *binfield_num_create(
+    struct binfield *self,
+    size_t size);
+struct binfield_stream *binfield_stream_create(
+    struct binfield *self);
+int binfield_raw_set(
+    struct binfield *self,
+    struct binfield_raw *field,
+    const void *value,
+    size_t length);
+int binfield_raw_get(
+    struct binfield *self,
+    const struct binfield_raw *field,
+    void *out);
+int binfield_num_set(
+    struct binfield *self,
+    struct binfield_num *field,
+    const void *value,
+    size_t length);
+int binfield_num_get(
+    struct binfield *self,
+    const struct binfield_num *field,
+    void *out);
+int binfield_stream_set(
+    struct binfield *self,
+    struct binfield_stream *field,
+    FILE *iofp);
+int binfield_stream_get(
+    struct binfield *self,
+    const struct binfield_stream *field,
+    FILE **out);
+int binfield_raw_read(
+    struct binfield *self,
+    struct binfield_raw *field,
+    FILE *ifp,
+    size_t size);
+int binfield_raw_write(
+    struct binfield *self,
+    const struct binfield_raw *field,
+    FILE *ofp);
+int binfield_raw_skip(
+    struct binfield *self,
+    const struct binfield_raw *field,
+    FILE *iofp);
+int binfield_num_read(
+    struct binfield *self,
+    struct binfield_num *field,
+    FILE *ifp,
+    size_t size);
+int binfield_num_write(
+    struct binfield *self,
+    const struct binfield_num *field,
+    FILE *ofp);
+int binfield_num_skip(
+    struct binfield *self,
+    const struct binfield_num *field,
+    FILE *iofp);
+int binfield_stream_write(
+    struct binfield *self,
+    const struct binfield_stream *field,
+    FILE *ofp);
+int binfield_stream_skip(
+    struct binfield *self,
+    const struct binfield_stream *field,
+    FILE *iofp);
+void binfield_raw_free(
+    struct binfield *self,
+    struct binfield_raw *field);
+void binfield_num_free(
+    struct binfield *self,
+    struct binfield_num *field);
+void binfield_stream_free(
+    struct binfield *self,
+    struct binfield_stream *field);
+void binfield_end(struct binfield *self);
 
 #endif

@@ -24,64 +24,74 @@
                   return 0 if an error happened */
 int binfile_start(struct binfile *file)
 {
-    struct field_raw *rp;
-    struct field_num *np;
+    struct binfield field;
+    struct binfield_raw *rp;
+    struct binfield_num *np;
+    struct binfield_stream *sp;
 
-    rp = binfield_raw_create(_TYPE_SIGN_FIELD_SIZE);
+    binfield_start(&field, NULL);
+
+    rp = binfield_raw_create(&field, _TYPE_SIGN_FIELD_SIZE);
     if (!rp)
         return 0;
     file->type_sign = rp;
-    binfield_raw_set(rp, "\0", 1);
+    binfield_raw_set(&field, rp, "\0", 1);
 
-    np = binfield_num_create(_NAMESIZE_FIELD_SIZE);
+    np = binfield_num_create(&field, _NAMESIZE_FIELD_SIZE);
     if (!np)
         return 0;
     file->namesize = np;
-    binfield_num_set(np, "\0", 1);
+    binfield_num_set(&field, np, "\0", 1);
 
-    rp = binfield_raw_create(_NAME_FIELD_SIZE);
+    rp = binfield_raw_create(&field, _NAME_FIELD_SIZE);
     if (!rp)
         return 0;
     file->name = rp;
-    binfield_raw_set(rp, "\0", 1);
+    binfield_raw_set(&field, rp, "\0", 1);
 
-    np = binfield_num_create(_DESCSIZE_FIELD_SIZE);
+    np = binfield_num_create(&field, _DESCSIZE_FIELD_SIZE);
     if (!np)
         return 0;
     file->descsize = np;
-    binfield_num_set(np, "\0", 1);
+    binfield_num_set(&field, np, "\0", 1);
 
-    rp = binfield_raw_create(_DESC_FIELD_SIZE);
+    rp = binfield_raw_create(&field, _DESC_FIELD_SIZE);
     if (!rp)
         return 0;
     file->desc = rp;
-    binfield_raw_set(rp, "\0", 1);
+    binfield_raw_set(&field, rp, "\0", 1);
 
-    rp = binfield_raw_create(_DATETIME_FIELD_SIZE);
+    rp = binfield_raw_create(&field, _DATETIME_FIELD_SIZE);
     if (!rp)
         return 0;
     file->datetime = rp;
-    binfield_raw_set(rp, "\0", 1);
+    binfield_raw_set(&field, rp, "\0", 1);
 
-    np = binfield_num_create(_CTRLSUM_FIELD_SIZE);
+    np = binfield_num_create(&field, _CTRLSUM_FIELD_SIZE);
     if (!np)
         return 0;
     file->ctrlsum = np;
-    binfield_num_set(np, "\0", 1);
+    binfield_num_set(&field, np, "\0", 1);
 
-    rp = binfield_raw_create(_CONTENTSIZE_FIELD_SIZE);
+    rp = binfield_raw_create(&field, _CONTENTSIZE_FIELD_SIZE);
     if (!rp)
         return 0;
     file->contentsize = rp;
-    binfield_raw_set(rp, "\0", 1);
+    binfield_raw_set(&field, rp, "\0", 1);
 
-    file->contentstream = NULL;
+    sp = binfield_stream_create(&field);
+    if (!sp)
+        return 0;
+    file->contentstream = sp;
+    binfield_stream_set(&field, sp, NULL);
 
-    np = binfield_num_create(_FILE_OFFSET_FIELD_SIZE);
+    np = binfield_num_create(&field, _FILE_OFFSET_FIELD_SIZE);
     if (!np)
         return 0;
     file->file_offset = np;
-    binfield_num_set(np, "\0", 1);
+    binfield_num_set(&field, np, "\0", 1);
+
+    binfield_end(&field);
 
     return 1;
 }
@@ -91,9 +101,17 @@ int binfile_start(struct binfile *file)
                      return 0 if an error happened */
 int binfile_type_set(struct binfile *file, char type)
 {
-    return binfield_raw_set(file->type_sign,
-                            &type,
-                            sizeof type);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_raw_set(
+        &field,
+        file->type_sign,
+        &type,
+        sizeof type);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_type_get: get from file the type sign field
@@ -101,7 +119,13 @@ int binfile_type_set(struct binfile *file, char type)
                      return 0 if an error happened */
 int binfile_type_get(const struct binfile *file, char *out)
 {
-    return binfield_raw_get(file->type_sign, out);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_raw_get(&field, file->type_sign, out);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_namesize_set: set in file the name size field
@@ -109,9 +133,17 @@ int binfile_type_get(const struct binfile *file, char *out)
                          return 0 if an error happened */
 int binfile_namesize_set(struct binfile *file, unsigned char filenamesize)
 {
-    return binfield_num_set(file->namesize,
-                            &filenamesize,
-                            sizeof filenamesize);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_num_set(
+        &field,
+        file->namesize,
+        &filenamesize,
+        sizeof filenamesize);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_namesize_get: get from file the name size field
@@ -119,7 +151,13 @@ int binfile_namesize_set(struct binfile *file, unsigned char filenamesize)
                          return 0 if an error happened */
 int binfile_namesize_get(struct binfile *file, unsigned char *out)
 {
-    return binfield_num_get(file->namesize, out);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_num_get(&field, file->namesize, out);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_name_set: set in file the name field
@@ -127,9 +165,17 @@ int binfile_namesize_get(struct binfile *file, unsigned char *out)
                      return 0 if an error happened */
 int binfile_name_set(struct binfile *file, const char *filename)
 {
-    return binfield_raw_set(file->name,
-                            filename,
-                            strlen(filename));
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_raw_set(
+        &field,
+        file->name,
+        filename,
+        strlen(filename));
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_name_get: get from file the name field
@@ -137,7 +183,13 @@ int binfile_name_set(struct binfile *file, const char *filename)
                      return 0 if an error happened */
 int binfile_name_get(const struct binfile *file, char *out)
 {
-    return binfield_raw_get(file->name, out);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_raw_get(&field, file->name, out);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_descsize_set: set in file the description size field
@@ -145,9 +197,17 @@ int binfile_name_get(const struct binfile *file, char *out)
                          return 0 if an error happened */
 int binfile_descsize_set(struct binfile *file, unsigned short filedescsize)
 {
-    return binfield_num_set(file->descsize,
-                            &filedescsize,
-                            sizeof filedescsize);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_num_set(
+        &field,
+        file->descsize,
+        &filedescsize,
+        sizeof filedescsize);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_descsize_get: get from file the description size field
@@ -155,7 +215,13 @@ int binfile_descsize_set(struct binfile *file, unsigned short filedescsize)
                          return 0 if an error happened */
 int binfile_descsize_get(struct binfile *file, unsigned short *out)
 {
-    return binfield_num_get(file->descsize, out);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_num_get(&field, file->descsize, out);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_desc_set: set in file the description field
@@ -163,9 +229,17 @@ int binfile_descsize_get(struct binfile *file, unsigned short *out)
                      return 0 if an error happened */
 int binfile_desc_set(struct binfile *file, const char *filedesc)
 {
-    return binfield_raw_set(file->desc,
-                            filedesc,
-                            strlen(filedesc));
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_raw_set(
+        &field,
+        file->desc,
+        filedesc,
+        strlen(filedesc));
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_desc_get: get from file the description field
@@ -173,7 +247,13 @@ int binfile_desc_set(struct binfile *file, const char *filedesc)
                      return 0 if an error happened */
 int binfile_desc_get(const struct binfile *file, char *out)
 {
-    return binfield_raw_get(file->desc, out);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_raw_get(&field, file->desc, out);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_datetime_set: set in file the datetime field
@@ -181,9 +261,17 @@ int binfile_desc_get(const struct binfile *file, char *out)
                          return 0 if an error happened */
 int binfile_datetime_set(struct binfile *file, const char *datetime)
 {
-    return binfield_raw_set(file->datetime,
-                            datetime,
-                            strlen(datetime));
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_raw_set(
+        &field,
+        file->datetime,
+        datetime,
+        strlen(datetime));
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_datetime_get: get from file the datetime field
@@ -191,7 +279,13 @@ int binfile_datetime_set(struct binfile *file, const char *datetime)
                          return 0 if an error happened */
 int binfile_datetime_get(const struct binfile *file, char *out)
 {
-    return binfield_raw_get(file->datetime, out);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_raw_get(&field, file->datetime, out);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_ctrlsum_set: set in file the control sum field
@@ -199,9 +293,17 @@ int binfile_datetime_get(const struct binfile *file, char *out)
                         return 0 if an error happened */
 int binfile_ctrlsum_set(struct binfile *file, unsigned long ctrlsum)
 {
-    return binfield_num_set(file->ctrlsum,
-                            &ctrlsum,
-                            sizeof ctrlsum);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_num_set(
+        &field,
+        file->ctrlsum,
+        &ctrlsum,
+        sizeof ctrlsum);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_ctrlsum_get: get from file the control sum field
@@ -209,7 +311,13 @@ int binfile_ctrlsum_set(struct binfile *file, unsigned long ctrlsum)
                         return 0 if an error happened */
 int binfile_ctrlsum_get(const struct binfile *file, unsigned long *out)
 {
-    return binfield_num_get(file->ctrlsum, out);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_num_get(&field, file->ctrlsum, out);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_contentsize_set: set in file the content size field
@@ -217,9 +325,17 @@ int binfile_ctrlsum_get(const struct binfile *file, unsigned long *out)
                             return 0 if an error happened */
 int binfile_contentsize_set(struct binfile *file, const char *contentsize)
 {
-    return binfield_raw_set(file->contentsize,
-                            contentsize,
-                            strlen(contentsize) + 1);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_raw_set(
+        &field,
+        file->contentsize,
+        contentsize,
+        strlen(contentsize) + 1);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_contentsize_get: get from file the content size field
@@ -227,16 +343,44 @@ int binfile_contentsize_set(struct binfile *file, const char *contentsize)
                             return 0 if an error happened */
 int binfile_contentsize_get(const struct binfile *file, char *out)
 {
-    return binfield_raw_get(file->contentsize, out);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_raw_get(&field, file->contentsize, out);
+    binfield_end(&field);
+    return retval;
 }
 
-/* binfile_contentstream_set: set in file the content stream
+/* binfile_contentstream_set: set in file the content stream field
                               return 1 if field has set
                               return 0 if an error happened */
 int binfile_contentstream_set(struct binfile *file, FILE *contentstream)
 {
-    file->contentstream = contentstream;
-    return 1;
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_stream_set(
+        &field,
+        file->contentstream,
+        contentstream);
+    binfield_end(&field);
+    return retval;
+}
+
+/* binfile_contentstream_get: get from file the content stream field
+                              return 1 if field has gotten
+                              return 0 if an error happened */
+int binfile_contentstream_get(const struct binfile *file, FILE **out)
+{
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_stream_get(&field, file->contentstream, out);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_file_offset_set: set in file the file offset field
@@ -244,9 +388,17 @@ int binfile_contentstream_set(struct binfile *file, FILE *contentstream)
                             return 0 if an error happened */
 int binfile_file_offset_set(struct binfile *file, size_t file_offset)
 {
-    return binfield_num_set(file->file_offset,
-                            &file_offset,
-                            sizeof file_offset);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_num_set(
+        &field,
+        file->file_offset,
+        &file_offset,
+        sizeof file_offset);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_file_offset_get: get from file the file offset field
@@ -254,7 +406,13 @@ int binfile_file_offset_set(struct binfile *file, size_t file_offset)
                             return 0 if an error happened */
 int binfile_file_offset_get(const struct binfile *file, size_t *out)
 {
-    return binfield_num_get(file->file_offset, out);
+    struct binfield field;
+    int retval;
+
+    binfield_start(&field, NULL);
+    retval = binfield_num_get(&field, file->file_offset, out);
+    binfield_end(&field);
+    return retval;
 }
 
 /* binfile_get_size: get file fields total size */
@@ -285,7 +443,8 @@ int binfile_get_size(const struct binfile *file, struct bignumber *out)
         f_error = 1;
     if (!bignumber_set_value_int(&contentsize, 0))
         f_error = 1;
-    if(!bignumber_set_value_string(&contentsize, (char *) file->contentsize->val))
+    if(!bignumber_set_value_string(&contentsize,
+                                   (char *) file->contentsize->val))
         f_error = 1;
     if(!bignumber_add_big(&tmp, &contentsize))
         f_error = 1;
@@ -301,15 +460,20 @@ int binfile_get_size(const struct binfile *file, struct bignumber *out)
 /* binfile_end: delete file fields and fill it by zeros */
 void binfile_end(struct binfile *file)
 {
-    binfield_raw_free(file->type_sign);
-    binfield_num_free(file->namesize);
-    binfield_raw_free(file->name);
-    binfield_num_free(file->descsize);
-    binfield_raw_free(file->desc);
-    binfield_raw_free(file->datetime);
-    binfield_num_free(file->ctrlsum);
-    binfield_raw_free(file->contentsize);
-    binfield_num_free(file->file_offset);
+    struct binfield field;
+
+    binfield_start(&field, NULL);
+
+    binfield_raw_free(&field, file->type_sign);
+    binfield_num_free(&field, file->namesize);
+    binfield_raw_free(&field, file->name);
+    binfield_num_free(&field, file->descsize);
+    binfield_raw_free(&field, file->desc);
+    binfield_raw_free(&field, file->datetime);
+    binfield_num_free(&field, file->ctrlsum);
+    binfield_raw_free(&field, file->contentsize);
+    binfield_stream_free(&field, file->contentstream);
+    binfield_num_free(&field, file->file_offset);
     file->type_sign = NULL;
     file->namesize = NULL;
     file->name = NULL;
@@ -320,4 +484,6 @@ void binfile_end(struct binfile *file)
     file->contentsize = NULL;
     file->contentstream = NULL;
     file->file_offset = NULL;
+
+    binfield_end(&field);
 }

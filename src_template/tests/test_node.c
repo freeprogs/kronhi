@@ -72,46 +72,64 @@ int main(void)
 
 void test_can_test_for_dir_type(void)
 {
+    struct node node;
+    struct binfield field;
     FILE *iofp;
 
     iofp = tmpfile();
     if (iofp == NULL)
         CU_FAIL("can't create temporary file");
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     putc('d', iofp);
     rewind(iofp);
-    CU_ASSERT_TRUE(node_test_isdir(iofp));
+    CU_ASSERT_TRUE(node_test_isdir(&node, iofp));
 
     rewind(iofp);
     putc('x', iofp);
     rewind(iofp);
-    CU_ASSERT_FALSE(node_test_isdir(iofp));
+    CU_ASSERT_FALSE(node_test_isdir(&node, iofp));
+
+    node_end(&node);
+    binfield_end(&field);
 
     fclose(iofp);
 }
 
 void test_can_test_for_file_type(void)
 {
+    struct node node;
+    struct binfield field;
     FILE *iofp;
 
     iofp = tmpfile();
     if (iofp == NULL)
         CU_FAIL("can't create temporary file");
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     putc('f', iofp);
     rewind(iofp);
-    CU_ASSERT_TRUE(node_test_isfile(iofp));
+    CU_ASSERT_TRUE(node_test_isfile(&node, iofp));
 
     rewind(iofp);
     putc('x', iofp);
     rewind(iofp);
-    CU_ASSERT_FALSE(node_test_isfile(iofp));
+    CU_ASSERT_FALSE(node_test_isfile(&node, iofp));
+
+    node_end(&node);
+    binfield_end(&field);
 
     fclose(iofp);
 }
 
 void test_can_write_dir(void)
 {
+    struct node node;
+    struct binfield field;
     FILE *iofp;
 
     int i;
@@ -145,8 +163,14 @@ void test_can_write_dir(void)
     bindir_num_of_files_set(&dir, 1);
     bindir_file_offset_set(&dir, 2);
 
-    node_write_dir(iofp, &dir);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_dir(&node, iofp, &dir);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -159,6 +183,8 @@ void test_can_write_dir(void)
 
 void test_can_write_file(void)
 {
+    struct node node;
+    struct binfield field;
     FILE *iofp;
     FILE *ifp;
 
@@ -210,8 +236,14 @@ void test_can_write_file(void)
     binfile_contentstream_set(&file, ifp);
     binfile_file_offset_set(&file, 1);
 
-    node_write_file(iofp, &file);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_file(&node, iofp, &file);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -225,6 +257,8 @@ void test_can_write_file(void)
 
 void test_can_write_dir_header_by_field(void)
 {
+    struct node node;
+    struct binfield field;
     FILE *iofp;
 
     int i;
@@ -266,8 +300,14 @@ void test_can_write_dir_header_by_field(void)
         putc('\0', iofp);
     rewind(iofp);
 
-    node_write_dir_header_field(iofp, &dir, DIRFLD_TYPESIGN);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_dir_header_field(&node, iofp, &dir, DIRFLD_TYPESIGN);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -293,8 +333,14 @@ void test_can_write_dir_header_by_field(void)
         putc('\0', iofp);
     rewind(iofp);
 
-    node_write_dir_header_field(iofp, &dir, DIRFLD_DESCSIZE);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_dir_header_field(&node, iofp, &dir, DIRFLD_DESCSIZE);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -320,8 +366,14 @@ void test_can_write_dir_header_by_field(void)
         putc('\0', iofp);
     rewind(iofp);
 
-    node_write_dir_header_field(iofp, &dir, DIRFLD_DESC);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_dir_header_field(&node, iofp, &dir, DIRFLD_DESC);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -347,8 +399,14 @@ void test_can_write_dir_header_by_field(void)
         putc('\0', iofp);
     rewind(iofp);
 
-    node_write_dir_header_field(iofp, &dir, DIRFLD_NUMOFFILES);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_dir_header_field(&node, iofp, &dir, DIRFLD_NUMOFFILES);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -374,8 +432,14 @@ void test_can_write_dir_header_by_field(void)
         putc('\0', iofp);
     rewind(iofp);
 
-    node_write_dir_header_field(iofp, &dir, DIRFLD_FILEOFFSET);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_dir_header_field(&node, iofp, &dir, DIRFLD_FILEOFFSET);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -401,7 +465,11 @@ void test_can_write_dir_header_by_field(void)
         putc('\0', iofp);
     rewind(iofp);
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     node_write_dir_header_field(
+        &node,
         iofp,
         &dir,
         DIRFLD_TYPESIGN
@@ -411,6 +479,9 @@ void test_can_write_dir_header_by_field(void)
         | DIRFLD_FILEOFFSET
     );
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -426,6 +497,8 @@ void test_can_write_dir_header_by_field(void)
 
 void test_can_write_file_header_by_field(void)
 {
+    struct node node;
+    struct binfield field;
     FILE *iofp;
     FILE *ifp;
 
@@ -487,8 +560,14 @@ void test_can_write_file_header_by_field(void)
 
     rewind(ifp);
 
-    node_write_file_header_field(iofp, &file, FILFLD_TYPESIGN);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_file_header_field(&node, iofp, &file, FILFLD_TYPESIGN);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -521,8 +600,14 @@ void test_can_write_file_header_by_field(void)
 
     rewind(ifp);
 
-    node_write_file_header_field(iofp, &file, FILFLD_NAMESIZE);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_file_header_field(&node, iofp, &file, FILFLD_NAMESIZE);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -555,8 +640,14 @@ void test_can_write_file_header_by_field(void)
 
     rewind(ifp);
 
-    node_write_file_header_field(iofp, &file, FILFLD_NAME);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_file_header_field(&node, iofp, &file, FILFLD_NAME);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -589,8 +680,14 @@ void test_can_write_file_header_by_field(void)
 
     rewind(ifp);
 
-    node_write_file_header_field(iofp, &file, FILFLD_DESCSIZE);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_file_header_field(&node, iofp, &file, FILFLD_DESCSIZE);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -623,8 +720,14 @@ void test_can_write_file_header_by_field(void)
 
     rewind(ifp);
 
-    node_write_file_header_field(iofp, &file, FILFLD_DESC);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_file_header_field(&node, iofp, &file, FILFLD_DESC);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -657,8 +760,14 @@ void test_can_write_file_header_by_field(void)
 
     rewind(ifp);
 
-    node_write_file_header_field(iofp, &file, FILFLD_DATETIME);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_file_header_field(&node, iofp, &file, FILFLD_DATETIME);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -691,8 +800,14 @@ void test_can_write_file_header_by_field(void)
 
     rewind(ifp);
 
-    node_write_file_header_field(iofp, &file, FILFLD_CTRLSUM);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_file_header_field(&node, iofp, &file, FILFLD_CTRLSUM);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -725,8 +840,14 @@ void test_can_write_file_header_by_field(void)
 
     rewind(ifp);
 
-    node_write_file_header_field(iofp, &file, FILFLD_CONTENTSIZE);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_file_header_field(&node, iofp, &file, FILFLD_CONTENTSIZE);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -757,8 +878,14 @@ void test_can_write_file_header_by_field(void)
 
     rewind(ifp);
 
-    node_write_file_header_field(iofp, &file, FILFLD_CONTENTSTREAM);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_file_header_field(&node, iofp, &file, FILFLD_CONTENTSTREAM);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -791,8 +918,14 @@ void test_can_write_file_header_by_field(void)
 
     rewind(ifp);
 
-    node_write_file_header_field(iofp, &file, FILFLD_FILEOFFSET);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_write_file_header_field(&node, iofp, &file, FILFLD_FILEOFFSET);
     rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
 
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
@@ -825,7 +958,11 @@ void test_can_write_file_header_by_field(void)
 
     rewind(ifp);
 
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
     node_write_file_header_field(
+        &node,
         iofp,
         &file,
         FILFLD_TYPESIGN
@@ -842,6 +979,9 @@ void test_can_write_file_header_by_field(void)
     );
     rewind(iofp);
 
+    node_end(&node);
+    binfield_end(&field);
+
     memset(buffer, 0, sizeof buffer);
     fread(buffer, 1, sizeof buffer, iofp);
 
@@ -857,6 +997,8 @@ void test_can_write_file_header_by_field(void)
 
 void can_read_dir_header(void)
 {
+    struct node node;
+    struct binfield field;
     FILE *iofp;
 
     int i;
@@ -892,7 +1034,13 @@ void can_read_dir_header(void)
 
     bindir_start(&dir);
 
-    node_read_dir_header(iofp, &dir);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_read_dir_header(&node, iofp, &dir);
+
+    node_end(&node);
+    binfield_end(&field);
 
     bindir_type_get(&dir, &dir_type_sign);
     CU_ASSERT_EQUAL(dir_type_sign, 'd');
@@ -915,6 +1063,8 @@ void can_read_dir_header(void)
 
 void can_read_file_header(void)
 {
+    struct node node;
+    struct binfield field;
     FILE *iofp;
 
     int i;
@@ -960,7 +1110,13 @@ void can_read_file_header(void)
 
     binfile_start(&file);
 
-    node_read_file_header(iofp, &file);
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    node_read_file_header(&node, iofp, &file);
+
+    node_end(&node);
+    binfield_end(&field);
 
     binfile_type_get(&file, &file_type_sign);
     CU_ASSERT_EQUAL(file_type_sign, 'f');
