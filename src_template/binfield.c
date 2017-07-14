@@ -482,11 +482,34 @@ int _binfield_num_write_crypt(
     return 1;
 }
 
+int _binfield_num_skip_plain(
+    const struct binfield_num *field,
+    FILE *iofp);
+int _binfield_num_skip_crypt(
+    const struct binfield_num *field,
+    FILE *iofp,
+    struct cryptor *cryptor);
+
 /* binfield_num_skip: skip number field in stream
                       return 1 if has skipped correctly
                       return 0 if an error happened */
 int binfield_num_skip(
     struct binfield *self,
+    const struct binfield_num *field,
+    FILE *iofp)
+{
+    int retval;
+
+    if (self->cryptor == NULL) {
+        retval = _binfield_num_skip_plain(field, iofp);
+    }
+    else {
+        retval = _binfield_num_skip_crypt(field, iofp, self->cryptor);
+    }
+    return retval;
+}
+
+int _binfield_num_skip_plain(
     const struct binfield_num *field,
     FILE *iofp)
 {
@@ -497,6 +520,26 @@ int binfield_num_skip(
         getc(iofp);
     retval = ferror(iofp) == 0;
     return retval;
+}
+
+int _binfield_num_skip_crypt(
+    const struct binfield_num *field,
+    FILE *iofp,
+    struct cryptor *cryptor)
+{
+    unsigned char ibuffer[CRYPTBUFMAX];
+    size_t isize;
+    unsigned char obuffer[CRYPTBUFMAX];
+    size_t osize;
+    size_t i;
+
+    memcpy(ibuffer, field->val, field->len);
+    isize = field->len;
+    if (!cryptor_encrypt(cryptor, ibuffer, isize, obuffer, &osize))
+        return 0;
+    for (i = 0; i < osize; i++)
+        getc(iofp);
+    return ferror(iofp) == 0;
 }
 
 /* binfield_stream_write: write stream field to output stream
