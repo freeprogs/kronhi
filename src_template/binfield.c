@@ -237,6 +237,14 @@ int _binfield_raw_read_crypt(
     return 1;
 }
 
+int _binfield_raw_write_plain(
+    const struct binfield_raw *field,
+    FILE *ofp);
+int _binfield_raw_write_crypt(
+    const struct binfield_raw *field,
+    FILE *ofp,
+    struct cryptor *cryptor);
+
 /* binfield_raw_write: write raw field to output stream
                        return 1 if has written correctly
                        return 0 if an error happened */
@@ -245,8 +253,43 @@ int binfield_raw_write(
     const struct binfield_raw *field,
     FILE *ofp)
 {
+    int retval;
+
+    if (self->cryptor == NULL) {
+        retval = _binfield_raw_write_plain(field, ofp);
+    }
+    else {
+        retval = _binfield_raw_write_crypt(field, ofp, self->cryptor);
+    }
+    return retval;
+}
+
+int _binfield_raw_write_plain(
+    const struct binfield_raw *field,
+    FILE *ofp)
+{
     if (field->len > 0)
         return fwrite(field->val, field->len, 1, ofp) == 1;
+    return 1;
+}
+
+int _binfield_raw_write_crypt(
+    const struct binfield_raw *field,
+    FILE *ofp,
+    struct cryptor *cryptor)
+{
+    unsigned char ibuffer[CRYPTBUFMAX];
+    size_t isize;
+    unsigned char obuffer[CRYPTBUFMAX];
+    size_t osize;
+
+    if (field->len > 0) {
+        memcpy(ibuffer, field->val, field->len);
+        isize = field->len;
+        if (cryptor_encrypt(cryptor, ibuffer, isize, obuffer, &osize)) {
+            return fwrite(obuffer, osize, 1, ofp) == 1;
+        }
+    }
     return 1;
 }
 
