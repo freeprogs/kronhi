@@ -56,7 +56,7 @@ struct binfield_num *binfield_num_create(struct binfield *self, size_t size)
 {
     struct binfield_num *p;
 
-    p = malloc(sizeof *p);
+    p = malloc(sizeof(struct binfield_num));
     if (p == NULL)
         return NULL;
     p->val = malloc(size);
