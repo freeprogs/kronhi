@@ -76,7 +76,7 @@ struct binfield_stream *binfield_stream_create(struct binfield *self)
 {
     struct binfield_stream *p;
 
-    p = malloc(sizeof *p);
+    p = malloc(sizeof(struct binfield_stream));
     if (p == NULL)
         return NULL;
     p->valfp = NULL;
