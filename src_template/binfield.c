@@ -598,6 +598,14 @@ int _binfield_stream_write_crypt(
     return retval;
 }
 
+int _binfield_stream_skip_plain(
+    const struct binfield_stream *field,
+    FILE *iofp);
+int _binfield_stream_skip_crypt(
+    const struct binfield_stream *field,
+    FILE *ofp,
+    struct cryptor *cryptor);
+
 /* binfield_stream_skip: skip stream field in stream
                          return 1 if has skipped correctly
                          return 0 if an error happened */
@@ -607,16 +615,29 @@ int binfield_stream_skip(
     FILE *iofp)
 {
     int retval;
-    struct bignumber i;
 
-    bignumber_set_value_int(&i, 0);
-    while (bignumber_lt_big(&i, &field->len)) {
-        if (getc(iofp) == EOF)
-            break;
-        bignumber_add_int(&i, 1);
+    if (self->cryptor == NULL) {
+        retval = _binfield_stream_skip_plain(field, iofp);
     }
-    retval = ferror(iofp) == 0;
+    else {
+        retval = _binfield_stream_skip_crypt(field, iofp, self->cryptor);
+    }
     return retval;
+}
+
+int _binfield_stream_skip_plain(
+    const struct binfield_stream *field,
+    FILE *iofp)
+{
+    return file_skip_bytes(iofp, &field->len);
+}
+
+int _binfield_stream_skip_crypt(
+    const struct binfield_stream *field,
+    FILE *iofp,
+    struct cryptor *cryptor)
+{
+    return file_skip_bytes(iofp, &field->len);
 }
 
 /* binfield_raw_free: free raw field value and field itself */
