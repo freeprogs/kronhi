@@ -542,6 +542,14 @@ int _binfield_num_skip_crypt(
     return ferror(iofp) == 0;
 }
 
+int _binfield_stream_write_plain(
+    const struct binfield_stream *field,
+    FILE *ofp);
+int _binfield_stream_write_crypt(
+    const struct binfield_stream *field,
+    FILE *ofp,
+    struct cryptor *cryptor);
+
 /* binfield_stream_write: write stream field to output stream
                           return 1 if has written correctly
                           return 0 if an error happened */
@@ -549,6 +557,36 @@ int binfield_stream_write(
     struct binfield *self,
     const struct binfield_stream *field,
     FILE *ofp)
+{
+    int retval;
+
+    if (self->cryptor == NULL) {
+        retval = _binfield_stream_write_plain(field, ofp);
+    }
+    else {
+        retval = _binfield_stream_write_crypt(field, ofp, self->cryptor);
+    }
+    return retval;
+}
+
+int _binfield_stream_write_plain(
+    const struct binfield_stream *field,
+    FILE *ofp)
+{
+    int retval;
+
+    retval = 1;
+    if (field->valfp != NULL) {
+        retval = file_write_file(ofp, field->valfp);
+        rewind(field->valfp);
+    }
+    return retval;
+}
+
+int _binfield_stream_write_crypt(
+    const struct binfield_stream *field,
+    FILE *ofp,
+    struct cryptor *cryptor)
 {
     int retval;
 
