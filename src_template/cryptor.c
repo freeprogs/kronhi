@@ -43,7 +43,7 @@ int cryptor_algo_get(
     return 1;
 }
 
-/* cryptor_pos_set: set password position cyclically
+/* cryptor_pos_set: set password position (from 0) cyclically
                     return 1 if position set correctly
                     return 0 if an error happened */
 int cryptor_pos_set(struct cryptor *self, size_t pos)
