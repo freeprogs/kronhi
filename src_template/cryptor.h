@@ -39,6 +39,9 @@ void cryptor_start(
     enum cryptor_algorithm algorithm,
     const unsigned char *password,
     size_t password_length);
+int cryptor_algo_get(
+    struct cryptor *self,
+    enum cryptor_algorithm *out);
 int cryptor_pos_set(struct cryptor *self, size_t pos);
 int cryptor_pos_get(struct cryptor *self, size_t *out);
 int cryptor_pos_rshift(struct cryptor *self, size_t n);

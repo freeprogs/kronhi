@@ -32,6 +32,17 @@ void cryptor_start(
     self->pos = 0;
 }
 
+/* cryptor_algo_get: get encryption algorithm
+                     return 1 if algorithm has gotten correctly
+                     return 0 if an error happened */
+int cryptor_algo_get(
+    struct cryptor *self,
+    enum cryptor_algorithm *out)
+{
+    *out = self->algo;
+    return 1;
+}
+
 /* cryptor_pos_set: set password position cyclically
                     return 1 if position set correctly
                     return 0 if an error happened */
