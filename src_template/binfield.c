@@ -632,12 +632,39 @@ int _binfield_stream_skip_plain(
     return file_skip_bytes(iofp, &field->len);
 }
 
+int _stream_size_to_encrypted_size(
+    struct cryptor *cryptor,
+    const struct bignumber *size,
+    struct bignumber *out);
+
 int _binfield_stream_skip_crypt(
     const struct binfield_stream *field,
     FILE *iofp,
     struct cryptor *cryptor)
 {
-    return file_skip_bytes(iofp, &field->len);
+    struct bignumber len;
+
+    if (!_stream_size_to_encrypted_size(cryptor, &field->len, &len))
+        return 0;
+    return file_skip_bytes(iofp, &len);
+}
+
+int _stream_size_to_encrypted_size(
+    struct cryptor *cryptor,
+    const struct bignumber *size,
+    struct bignumber *out)
+{
+    enum cryptor_algorithm algo;
+
+    if (!cryptor_algo_get(cryptor, &algo))
+        return 0;
+    if (algo == CRYPTOR_ALGORITHM_XOR) {
+        *out = *size;
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }
 
 /* binfield_raw_free: free raw field value and field itself */
