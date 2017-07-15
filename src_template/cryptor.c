@@ -57,6 +57,7 @@ int cryptor_pos_set(struct cryptor *self, size_t pos)
                     return 0 if an error happened */
 int cryptor_pos_get(struct cryptor *self, size_t *out)
 {
+    *out = self->pos;
     return 1;
 }
 
