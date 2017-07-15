@@ -48,6 +48,7 @@ int cryptor_algo_get(
                     return 0 if an error happened */
 int cryptor_pos_set(struct cryptor *self, size_t pos)
 {
+    self->pos = pos % self->len;
     return 1;
 }
 
