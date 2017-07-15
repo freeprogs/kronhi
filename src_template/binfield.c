@@ -589,10 +589,20 @@ int _binfield_stream_write_crypt(
     struct cryptor *cryptor)
 {
     int retval;
+    unsigned char ibuffer[CRYPTBUFMOD];
+    size_t isize;
+    unsigned char obuffer[CRYPTBUFMOD];
+    size_t osize;
 
     retval = 1;
     if (field->valfp != NULL) {
-        retval = file_write_file(ofp, field->valfp);
+        while ((isize = fread(ibuffer, 1, CRYPTBUFMOD, field->valfp)) > 0) {
+            if (!cryptor_encrypt(cryptor, ibuffer, isize, obuffer, &osize))
+                return 0;
+            if (fwrite(obuffer, 1, osize, ofp) != osize)
+                break;
+        }
+        retval = !ferror(field->valfp) && feof(field->valfp) && !ferror(ofp);
         rewind(field->valfp);
     }
     return retval;

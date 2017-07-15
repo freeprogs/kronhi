@@ -34,6 +34,9 @@
 /* maximum encrypt/decrypt buffer length for raw and number field */
 #define CRYPTBUFMAX  100
 
+/* buffer length in 16x bytes for encrypt/decrypt stream field */
+#define CRYPTBUFMOD  1024
+
 struct binfield {
     struct cryptor *cryptor;
 };
