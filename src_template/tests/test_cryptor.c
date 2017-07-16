@@ -23,6 +23,7 @@
 
 void test_can_set_password_position(void);
 void test_can_get_password_position(void);
+void test_can_get_encryption_algorithm(void);
 
 int main(void)
 {
@@ -40,7 +41,9 @@ int main(void)
     if (CU_add_test(suite, "can set password position",
                     test_can_set_password_position) == NULL
      || CU_add_test(suite, "can get password position",
-                    test_can_get_password_position) == NULL) {
+                    test_can_get_password_position) == NULL
+     || CU_add_test(suite, "can get encryption algorithm",
+                    test_can_get_encryption_algorithm) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -89,4 +92,23 @@ void test_can_get_password_position(void)
     cryptor_end(&cryptor);
 
     CU_ASSERT_EQUAL(out, 1);
+}
+
+void test_can_get_encryption_algorithm(void)
+{
+    struct cryptor cryptor;
+    unsigned char psw[] = {'a', 'b', 'c'};
+
+    enum cryptor_algorithm out;
+
+    cryptor_start(
+        &cryptor,
+        CRYPTOR_ALGORITHM_XOR,
+        psw,
+        sizeof psw);
+    out = CRYPTOR_ALGORITHM_NONE;
+    cryptor_algo_get(&cryptor, &out);
+    cryptor_end(&cryptor);
+
+    CU_ASSERT_EQUAL(out, CRYPTOR_ALGORITHM_XOR);
 }
