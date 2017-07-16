@@ -66,6 +66,7 @@ int cryptor_pos_get(struct cryptor *self, size_t *out)
                        return 0 if an error happened */
 int cryptor_pos_rshift(struct cryptor *self, size_t n)
 {
+    self->pos = (self->pos + (n % self->len)) % self->len;
     return 1;
 }
 
