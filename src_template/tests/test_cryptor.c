@@ -24,6 +24,7 @@
 void test_can_set_password_position(void);
 void test_can_get_password_position(void);
 void test_can_get_encryption_algorithm(void);
+void test_can_shift_password_position_to_right(void);
 
 int main(void)
 {
@@ -43,7 +44,9 @@ int main(void)
      || CU_add_test(suite, "can get password position",
                     test_can_get_password_position) == NULL
      || CU_add_test(suite, "can get encryption algorithm",
-                    test_can_get_encryption_algorithm) == NULL) {
+                    test_can_get_encryption_algorithm) == NULL
+     || CU_add_test(suite, "can shift password position to right",
+                    test_can_shift_password_position_to_right) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -111,4 +114,50 @@ void test_can_get_encryption_algorithm(void)
     cryptor_end(&cryptor);
 
     CU_ASSERT_EQUAL(out, CRYPTOR_ALGORITHM_XOR);
+}
+
+void test_can_shift_password_position_to_right(void)
+{
+    struct cryptor cryptor;
+    unsigned char psw[] = {'a', 'b', 'c'};
+
+    size_t out;
+
+    cryptor_start(
+        &cryptor,
+        CRYPTOR_ALGORITHM_XOR,
+        psw,
+        sizeof psw);
+
+    cryptor_pos_set(&cryptor, 0);
+    cryptor_pos_rshift(&cryptor, 0);
+    out = 0;
+    cryptor_pos_get(&cryptor, &out);
+    CU_ASSERT_EQUAL(out, 0);
+
+    cryptor_pos_set(&cryptor, 0);
+    cryptor_pos_rshift(&cryptor, 1);
+    out = 0;
+    cryptor_pos_get(&cryptor, &out);
+    CU_ASSERT_EQUAL(out, 1);
+
+    cryptor_pos_set(&cryptor, 0);
+    cryptor_pos_rshift(&cryptor, 2);
+    out = 0;
+    cryptor_pos_get(&cryptor, &out);
+    CU_ASSERT_EQUAL(out, 2);
+
+    cryptor_pos_set(&cryptor, 0);
+    cryptor_pos_rshift(&cryptor, 3);
+    out = 0;
+    cryptor_pos_get(&cryptor, &out);
+    CU_ASSERT_EQUAL(out, 0);
+
+    cryptor_pos_set(&cryptor, 0);
+    cryptor_pos_rshift(&cryptor, 4);
+    out = 0;
+    cryptor_pos_get(&cryptor, &out);
+    CU_ASSERT_EQUAL(out, 1);
+
+    cryptor_end(&cryptor);
 }
