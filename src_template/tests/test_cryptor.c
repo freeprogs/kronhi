@@ -25,6 +25,7 @@ void test_can_set_password_position(void);
 void test_can_get_password_position(void);
 void test_can_get_encryption_algorithm(void);
 void test_can_shift_password_position_to_right(void);
+void test_can_encrypt_bytes(void);
 
 int main(void)
 {
@@ -46,7 +47,9 @@ int main(void)
      || CU_add_test(suite, "can get encryption algorithm",
                     test_can_get_encryption_algorithm) == NULL
      || CU_add_test(suite, "can shift password position to right",
-                    test_can_shift_password_position_to_right) == NULL) {
+                    test_can_shift_password_position_to_right) == NULL
+     || CU_add_test(suite, "can encrypt bytes",
+                    test_can_encrypt_bytes) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -158,6 +161,63 @@ void test_can_shift_password_position_to_right(void)
     out = 0;
     cryptor_pos_get(&cryptor, &out);
     CU_ASSERT_EQUAL(out, 1);
+
+    cryptor_end(&cryptor);
+}
+
+void test_can_encrypt_bytes(void)
+{
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+
+    unsigned char ibuffer[100];
+    size_t isize;
+    unsigned char obuffer[200];
+    size_t osize;
+    unsigned char obuffer_match[200];
+    size_t osize_match;
+
+    cryptor_start(
+        &cryptor,
+        CRYPTOR_ALGORITHM_XOR,
+        psw,
+        pswlen);
+
+    isize = 3;
+    memcpy(ibuffer, "123", isize);
+    osize_match = 3;
+    memcpy(obuffer_match, "PPP", osize_match);
+
+    osize = 0;
+    memset(obuffer, 0, isize);
+    cryptor_encrypt(&cryptor, ibuffer, isize, obuffer, &osize);
+    CU_ASSERT_EQUAL(osize, osize_match);
+    CU_ASSERT_NSTRING_EQUAL(
+        ((void) "string: <123> password: <abc>" , obuffer),
+        obuffer_match, osize);
+
+    cryptor_end(&cryptor);
+
+
+    cryptor_start(
+        &cryptor,
+        CRYPTOR_ALGORITHM_XOR,
+        psw,
+        pswlen);
+
+    isize = 6;
+    memcpy(ibuffer, "123456", isize);
+    osize_match = 6;
+    memcpy(obuffer_match, "PPPUWU", osize_match);
+
+    osize = 0;
+    memset(obuffer, 0, isize);
+    cryptor_encrypt(&cryptor, ibuffer, isize, obuffer, &osize);
+    CU_ASSERT_EQUAL(osize, osize_match);
+    CU_ASSERT_NSTRING_EQUAL(
+        ((void) "string: <123456> password: <abc>" , obuffer),
+        obuffer_match, osize);
 
     cryptor_end(&cryptor);
 }
