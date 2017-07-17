@@ -43,11 +43,12 @@ int cryptor_algo_get(
     return 1;
 }
 
-/* cryptor_pos_set: set password position cyclically
+/* cryptor_pos_set: set password position (from 0) cyclically
                     return 1 if position set correctly
                     return 0 if an error happened */
 int cryptor_pos_set(struct cryptor *self, size_t pos)
 {
+    self->pos = pos % self->len;
     return 1;
 }
 
@@ -56,6 +57,7 @@ int cryptor_pos_set(struct cryptor *self, size_t pos)
                     return 0 if an error happened */
 int cryptor_pos_get(struct cryptor *self, size_t *out)
 {
+    *out = self->pos;
     return 1;
 }
 
@@ -64,6 +66,7 @@ int cryptor_pos_get(struct cryptor *self, size_t *out)
                        return 0 if an error happened */
 int cryptor_pos_rshift(struct cryptor *self, size_t n)
 {
+    self->pos = (self->pos + (n % self->len)) % self->len;
     return 1;
 }
 
@@ -78,6 +81,17 @@ int cryptor_encrypt(
     unsigned char *obytes,
     size_t *olen)
 {
+    size_t i;
+
+    if (self->algo == CRYPTOR_ALGORITHM_XOR) {
+        for (i = 0; i < ilen; i++) {
+            *obytes = *ibytes ^ self->psw[self->pos];
+            self->pos = (self->pos + 1) % self->len;
+            ibytes++;
+            obytes++;
+        }
+        *olen = i;
+    }
     return 1;
 }
 
@@ -92,6 +106,17 @@ int cryptor_decrypt(
     unsigned char *obytes,
     size_t *olen)
 {
+    size_t i;
+
+    if (self->algo == CRYPTOR_ALGORITHM_XOR) {
+        for (i = 0; i < ilen; i++) {
+            *obytes = *ibytes ^ self->psw[self->pos];
+            self->pos = (self->pos + 1) % self->len;
+            ibytes++;
+            obytes++;
+        }
+        *olen = i;
+    }
     return 1;
 }
 

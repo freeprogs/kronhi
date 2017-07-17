@@ -81,11 +81,16 @@ SRC_JUMPER_TEST = test_jumper.c
 SRC_JUMPER_SOURCES = ../jumper.c
 GCOV_JUMPER_NAME = jumper
 GCOV_JUMPER_LOGFILE = jumper.c.gcov
+TARGET_CRYPTOR = test_cryptor
+SRC_CRYPTOR_TEST = test_cryptor.c
+SRC_CRYPTOR_SOURCES = ../cryptor.c
+GCOV_CRYPTOR_NAME = cryptor
+GCOV_CRYPTOR_LOGFILE = cryptor.c.gcov
 
 
 # Commands
 
-all: prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper
+all: prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper cryptor
 
 prepare_build_directory:
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
@@ -157,6 +162,13 @@ jumper: make_build_directory
 	@mv $(GCOV_JUMPER_LOGFILE) $(BUILD_DIR)
 	@echo "$(TARGET_JUMPER) has built"
 
+cryptor: make_build_directory
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_CRYPTOR_SOURCES) $(SRC_CRYPTOR_TEST) -o $(BUILD_DIR)/$(TARGET_CRYPTOR)
+	@./$(BUILD_DIR)/$(TARGET_CRYPTOR) >/dev/null
+	@$(GCOV) $(GCOV_CRYPTOR_NAME) | $(FILTER_OUTPUT)
+	@mv $(GCOV_CRYPTOR_LOGFILE) $(BUILD_DIR)
+	@echo "$(TARGET_CRYPTOR) has built"
+
 help:
 	@echo "usage: make [ clean ]" 1>&2
 
@@ -171,7 +183,8 @@ clean:
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_BINDIR)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_NODE)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_JUMPER)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_CRYPTOR)"
 	@rm -f *.gcda *.gcno
 	@echo "Cleaned *.gcda and *.gcno"
 
-.PHONY: all prepare_build_directory make_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper help clean
+.PHONY: all prepare_build_directory make_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper cryptor help clean

@@ -63,11 +63,14 @@ SRC_NODE_SOURCES = ../node.c ../bindir.c ../binfield.c ../endian.c \
 TARGET_JUMPER = test_jumper
 SRC_JUMPER_TEST = test_jumper.c
 SRC_JUMPER_SOURCES = ../jumper.c
+TARGET_CRYPTOR = test_cryptor
+SRC_CRYPTOR_TEST = test_cryptor.c
+SRC_CRYPTOR_SOURCES = ../cryptor.c
 
 
 # Commands
 
-all: prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper
+all: prepare_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper cryptor
 
 prepare_build_directory:
 	@[ -d $(BUILD_DIR) ] $&& rm -rf $(BUILD_DIR)
@@ -114,6 +117,10 @@ jumper: make_build_directory
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_JUMPER_SOURCES) $(SRC_JUMPER_TEST) -o $(BUILD_DIR)/$(TARGET_JUMPER)
 	@echo "$(TARGET_JUMPER) has built"
 
+cryptor: make_build_directory
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(SRC_CRYPTOR_SOURCES) $(SRC_CRYPTOR_TEST) -o $(BUILD_DIR)/$(TARGET_CRYPTOR)
+	@echo "$(TARGET_CRYPTOR) has built"
+
 coverage:
 	@$(MAKE) -f Makefile-coverage
 
@@ -132,6 +139,7 @@ clean:
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_BINDIR)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_NODE)"
 	@echo "Cleaned $(BUILD_DIR)/$(TARGET_JUMPER)"
+	@echo "Cleaned $(BUILD_DIR)/$(TARGET_CRYPTOR)"
 	@$(MAKE) -f Makefile-coverage clean
 
-.PHONY: all prepare_build_directory make_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper coverage help clean
+.PHONY: all prepare_build_directory make_build_directory bignumber file_operation chain binfile crc32 datetime bindir node jumper cryptor coverage help clean
