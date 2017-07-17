@@ -81,6 +81,17 @@ int cryptor_encrypt(
     unsigned char *obytes,
     size_t *olen)
 {
+    size_t i;
+
+    if (self->algo == CRYPTOR_ALGORITHM_XOR) {
+        for (i = 0; i < ilen; i++) {
+            *obytes = *ibytes ^ self->psw[self->pos];
+            self->pos = (self->pos + 1) % self->len;
+            ibytes++;
+            obytes++;
+        }
+        *olen = i;
+    }
     return 1;
 }
 
