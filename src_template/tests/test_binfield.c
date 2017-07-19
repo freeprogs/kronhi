@@ -28,6 +28,7 @@ void test_can_get_raw_field(void);
 void test_can_read_raw_field(void);
 void test_can_write_raw_field(void);
 void test_can_skip_raw_field(void);
+
 void test_can_create_number_field(void);
 void test_can_set_number_field(void);
 void test_raise_on_set_number_field_with_value_overflow(void);
