@@ -27,6 +27,7 @@ void test_raise_on_set_raw_field_with_value_overflow(void);
 void test_can_get_raw_field(void);
 void test_can_read_raw_field(void);
 void test_can_write_raw_field(void);
+void test_can_skip_raw_field(void);
 
 int main(void)
 {
@@ -52,7 +53,9 @@ int main(void)
      || CU_add_test(suite1, "test can read raw field",
                     test_can_read_raw_field) == NULL
      || CU_add_test(suite1, "test can write raw field",
-                    test_can_write_raw_field) == NULL) {
+                    test_can_write_raw_field) == NULL
+     || CU_add_test(suite1, "test can skip raw field",
+                    test_can_skip_raw_field) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -238,6 +241,46 @@ void test_can_write_raw_field(void)
     CU_ASSERT_EQUAL(fread(value, 1, vlen, iofp), vlen);
 
     CU_ASSERT_NSTRING_EQUAL(value, data->val, vlen);
+
+    binfield_end(&field);
+
+    fclose(iofp);
+}
+
+void test_can_skip_raw_field(void)
+{
+    struct binfield field;
+    struct binfield_raw *data;
+    size_t maxsize = 3;
+
+    FILE *iofp;
+    size_t vlen;
+    int c;
+    int retval;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    fprintf(iofp, "abcd");
+    rewind(iofp);
+
+    binfield_start(&field, NULL);
+
+    data = binfield_raw_create(&field, maxsize);
+
+    CU_ASSERT_PTR_NOT_NULL(data);
+
+    vlen = 3;
+    memcpy(data->val, "123", vlen);
+    data->len = vlen;
+
+    retval = binfield_raw_skip(&field, data, iofp);
+
+    CU_ASSERT_EQUAL(retval, 1);
+
+    c = getc(iofp);
+    CU_ASSERT_EQUAL(c, 'd');
 
     binfield_end(&field);
 
