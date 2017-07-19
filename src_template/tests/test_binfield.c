@@ -24,6 +24,7 @@
 void test_can_create_raw_field(void);
 void test_can_set_raw_field(void);
 void test_raise_on_set_raw_field_with_value_overflow(void);
+void test_can_get_raw_field(void);
 
 int main(void)
 {
@@ -43,7 +44,9 @@ int main(void)
      || CU_add_test(suite1, "can create set field",
                     test_can_set_raw_field) == NULL
      || CU_add_test(suite1, "raise on set raw field with value overflow",
-                    test_raise_on_set_raw_field_with_value_overflow) == NULL) {
+                    test_raise_on_set_raw_field_with_value_overflow) == NULL
+     || CU_add_test(suite1, "test can get raw field",
+                    test_can_get_raw_field) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -121,6 +124,39 @@ void test_raise_on_set_raw_field_with_value_overflow(void)
     retval = binfield_raw_set(&field, data, value, vlen);
 
     CU_ASSERT_EQUAL(retval, 0);
+
+    binfield_end(&field);
+}
+
+void test_can_get_raw_field(void)
+{
+    struct binfield field;
+    struct binfield_raw *data;
+    size_t maxsize = 3;
+
+    unsigned char value[100];
+    size_t vlen;
+    int retval;
+
+    unsigned char out[100];
+
+    binfield_start(&field, NULL);
+
+    data = binfield_raw_create(&field, maxsize);
+
+    CU_ASSERT_PTR_NOT_NULL(data);
+
+    vlen = 3;
+    memcpy(value, "abc", vlen);
+    retval = binfield_raw_set(&field, data, value, vlen);
+
+    CU_ASSERT_EQUAL(retval, 1);
+
+    memset(out, 0, vlen);
+    retval = binfield_raw_get(&field, data, out);
+
+    CU_ASSERT_EQUAL(retval, 1);
+    CU_ASSERT_NSTRING_EQUAL(out, value, vlen);
 
     binfield_end(&field);
 }
