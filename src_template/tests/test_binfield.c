@@ -28,6 +28,7 @@ void test_can_get_raw_field(void);
 void test_can_read_raw_field(void);
 void test_can_write_raw_field(void);
 void test_can_skip_raw_field(void);
+void test_can_create_number_field(void);
 
 int main(void)
 {
@@ -55,7 +56,9 @@ int main(void)
      || CU_add_test(suite1, "test can write raw field",
                     test_can_write_raw_field) == NULL
      || CU_add_test(suite1, "test can skip raw field",
-                    test_can_skip_raw_field) == NULL) {
+                    test_can_skip_raw_field) == NULL
+     || CU_add_test(suite1, "can create number field",
+                    test_can_create_number_field) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -285,4 +288,22 @@ void test_can_skip_raw_field(void)
     binfield_end(&field);
 
     fclose(iofp);
+}
+
+void test_can_create_number_field(void)
+{
+    struct binfield field;
+
+    struct binfield_num *out;
+
+    binfield_start(&field, NULL);
+
+    out = NULL;
+    out = binfield_num_create(&field, 3);
+
+    CU_ASSERT_PTR_NOT_NULL(out);
+    CU_ASSERT_EQUAL(out->maxsize, 3);
+    CU_ASSERT_EQUAL(out->len, 0);
+
+    binfield_end(&field);
 }
