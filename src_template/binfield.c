@@ -224,7 +224,7 @@ int _binfield_raw_read_crypt(
 {
     unsigned char ibuffer[CRYPTBUFMAX];
     size_t isize;
-    unsigned char obuffer[CRYPTBUFMAX];
+    unsigned char obuffer[CRYPTBUFMAX * 2];
     size_t osize;
 
     if (fread(ibuffer, 1, size, ifp) != size)
@@ -280,7 +280,7 @@ int _binfield_raw_write_crypt(
 {
     unsigned char ibuffer[CRYPTBUFMAX];
     size_t isize;
-    unsigned char obuffer[CRYPTBUFMAX];
+    unsigned char obuffer[CRYPTBUFMAX * 2];
     size_t osize;
 
     if (field->len > 0) {
@@ -340,7 +340,7 @@ int _binfield_raw_skip_crypt(
 {
     unsigned char ibuffer[CRYPTBUFMAX];
     size_t isize;
-    unsigned char obuffer[CRYPTBUFMAX];
+    unsigned char obuffer[CRYPTBUFMAX * 2];
     size_t osize;
     size_t i;
 
@@ -406,7 +406,7 @@ int _binfield_num_read_crypt(
 {
     unsigned char ibuffer[CRYPTBUFMAX];
     size_t isize;
-    unsigned char obuffer[CRYPTBUFMAX];
+    unsigned char obuffer[CRYPTBUFMAX * 2];
     size_t osize;
 
     if (fread(ibuffer, 1, size, ifp) != size)
@@ -468,7 +468,7 @@ int _binfield_num_write_crypt(
 {
     unsigned char ibuffer[CRYPTBUFMAX];
     size_t isize;
-    unsigned char obuffer[CRYPTBUFMAX];
+    unsigned char obuffer[CRYPTBUFMAX * 2];
     size_t osize;
 
     if (field->len > 0) {
@@ -529,7 +529,7 @@ int _binfield_num_skip_crypt(
 {
     unsigned char ibuffer[CRYPTBUFMAX];
     size_t isize;
-    unsigned char obuffer[CRYPTBUFMAX];
+    unsigned char obuffer[CRYPTBUFMAX * 2];
     size_t osize;
     size_t i;
 
@@ -591,7 +591,7 @@ int _binfield_stream_write_crypt(
     int retval;
     unsigned char ibuffer[CRYPTBUFMOD];
     size_t isize;
-    unsigned char obuffer[CRYPTBUFMOD];
+    unsigned char obuffer[CRYPTBUFMOD * 2];
     size_t osize;
 
     retval = 1;
