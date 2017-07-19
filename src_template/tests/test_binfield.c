@@ -33,9 +33,11 @@ void test_can_set_number_field(void);
 void test_raise_on_set_number_field_with_value_overflow(void);
 void test_can_get_number_field(void);
 void test_can_read_number_field(void);
+void test_can_write_number_field(void);
 
 int _is_big_endian(void);
 int _is_little_endian(void);
+void *_bytes_reverse(void *bytes, size_t size);
 
 int main(void)
 {
@@ -73,7 +75,9 @@ int main(void)
      || CU_add_test(suite1, "test can get number field",
                     test_can_get_number_field) == NULL
      || CU_add_test(suite1, "test can read number field",
-                    test_can_read_number_field) == NULL) {
+                    test_can_read_number_field) == NULL
+     || CU_add_test(suite1, "test can write number field",
+                    test_can_write_number_field) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -97,6 +101,16 @@ int _is_big_endian(void)
     unsigned short n = 1;
 
     return *((unsigned char *) &n) != 256;
+}
+
+void *_bytes_reverse(void *bytes, size_t size)
+{
+    unsigned char *p, *q;
+    unsigned char c;
+
+    for (p = bytes, q = (unsigned char *) bytes + size - 1; p < q; p++, q--)
+        c = *p, *p = *q, *q = c;
+    return bytes;
 }
 
 void test_can_create_raw_field(void)
@@ -459,6 +473,53 @@ void test_can_read_number_field(void)
     CU_ASSERT_EQUAL(retval, 1);
     CU_ASSERT_NSTRING_EQUAL(data->val, "abc", vlen);
     CU_ASSERT_EQUAL(data->len, vlen);
+
+    binfield_end(&field);
+
+    fclose(iofp);
+}
+
+void test_can_write_number_field(void)
+{
+    struct binfield field;
+    struct binfield_num *data;
+    size_t maxsize = 3;
+
+    FILE *iofp;
+    unsigned char value[100];
+    size_t vlen;
+    int retval;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    binfield_start(&field, NULL);
+
+    data = binfield_num_create(&field, maxsize);
+
+    CU_ASSERT_PTR_NOT_NULL(data);
+
+    vlen = 3;
+    memcpy(data->val, "abc", vlen);
+    data->len = vlen;
+
+    retval = binfield_num_write(&field, data, iofp);
+
+    CU_ASSERT_EQUAL(retval, 1);
+
+    rewind(iofp);
+    memset(value, 0, vlen);
+    CU_ASSERT_EQUAL(fread(value, 1, vlen, iofp), vlen);
+
+    if (_is_little_endian()) {
+        _bytes_reverse(value, vlen);
+    }
+    else if (_is_big_endian()) {
+        ;
+    }
+
+    CU_ASSERT_NSTRING_EQUAL(value, data->val, vlen);
 
     binfield_end(&field);
 
