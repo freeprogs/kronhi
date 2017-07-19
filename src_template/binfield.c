@@ -286,9 +286,9 @@ int _binfield_raw_write_crypt(
     if (field->len > 0) {
         memcpy(ibuffer, field->val, field->len);
         isize = field->len;
-        if (cryptor_encrypt(cryptor, ibuffer, isize, obuffer, &osize)) {
-            return fwrite(obuffer, osize, 1, ofp) == 1;
-        }
+        if (!cryptor_encrypt(cryptor, ibuffer, isize, obuffer, &osize))
+            return 0;
+        return fwrite(obuffer, osize, 1, ofp) == 1;
     }
     return 1;
 }
@@ -475,9 +475,9 @@ int _binfield_num_write_crypt(
         memcpy(ibuffer, field->val, field->len);
         isize = field->len;
         bytes_to_bigend(ibuffer, isize);
-        if (cryptor_encrypt(cryptor, ibuffer, isize, obuffer, &osize)) {
-            return fwrite(obuffer, osize, 1, ofp) == 1;
-        }
+        if (!cryptor_encrypt(cryptor, ibuffer, isize, obuffer, &osize))
+            return 0;
+        return fwrite(obuffer, osize, 1, ofp) == 1;
     }
     return 1;
 }
@@ -668,13 +668,10 @@ int _stream_size_to_encrypted_size(
 
     if (!cryptor_algo_get(cryptor, &algo))
         return 0;
-    if (algo == CRYPTOR_ALGORITHM_XOR) {
-        *out = *size;
-        return 1;
-    }
-    else {
+    if (algo != CRYPTOR_ALGORITHM_XOR)
         return 0;
-    }
+    *out = *size;
+    return 1;
 }
 
 /* binfield_raw_free: free raw field value and field itself */
