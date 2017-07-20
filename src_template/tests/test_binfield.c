@@ -40,6 +40,7 @@ void test_can_skip_number_field(void);
 void test_can_create_stream_field(void);
 void test_can_set_stream_field(void);
 void test_can_get_stream_field(void);
+void test_can_write_stream_field(void);
 
 int _is_big_endian(void);
 int _is_little_endian(void);
@@ -91,7 +92,9 @@ int main(void)
      || CU_add_test(suite1, "can set stream field",
                     test_can_set_stream_field) == NULL
      || CU_add_test(suite1, "test can get stream field",
-                    test_can_get_stream_field) == NULL) {
+                    test_can_get_stream_field) == NULL
+     || CU_add_test(suite1, "test can write stream field",
+                    test_can_write_stream_field) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -655,4 +658,54 @@ void test_can_get_stream_field(void)
     CU_ASSERT_EQUAL(out, fp);
 
     binfield_end(&field);
+}
+
+void test_can_write_stream_field(void)
+{
+    struct binfield field;
+    struct binfield_stream *data;
+
+    FILE *iofp;
+    FILE *srcifp;
+    unsigned char buffer[100];
+    size_t buflen;
+    int retval;
+
+    srcifp = tmpfile();
+    if (srcifp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    fprintf(srcifp, "abc");
+    rewind(srcifp);
+
+    binfield_start(&field, NULL);
+
+    data = binfield_stream_create(&field);
+
+    CU_ASSERT_PTR_NOT_NULL(data);
+
+    retval = binfield_stream_set(&field, data, srcifp);
+
+    CU_ASSERT_EQUAL(retval, 1);
+
+    retval = binfield_stream_write(&field, data, iofp);
+
+    CU_ASSERT_EQUAL(retval, 1);
+
+    rewind(iofp);
+
+    buflen = 3;
+    memset(buffer, 0, buflen);
+    CU_ASSERT_EQUAL(fread(buffer, 1, buflen, iofp), buflen);
+
+    CU_ASSERT_NSTRING_EQUAL(buffer, "abc", buflen);
+
+    binfield_end(&field);
+
+    fclose(srcifp);
+    fclose(iofp);
 }
