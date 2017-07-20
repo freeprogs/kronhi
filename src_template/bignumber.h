@@ -33,6 +33,8 @@ struct bignumber {
 int bignumber_set_value_string(struct bignumber *number, const char *str);
 int bignumber_set_value_int(struct bignumber *number, int value);
 char *bignumber_tostr(const struct bignumber *number, char out[]);
+int bignumber_eq_big(const struct bignumber *number_left,
+                     const struct bignumber *number_right);
 int bignumber_lt_big(const struct bignumber *number_left,
                      const struct bignumber *number_right);
 int bignumber_add_int(struct bignumber *number, int value);
