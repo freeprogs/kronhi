@@ -37,6 +37,8 @@ void test_can_read_number_field(void);
 void test_can_write_number_field(void);
 void test_can_skip_number_field(void);
 
+void test_can_create_stream_field(void);
+
 int _is_big_endian(void);
 int _is_little_endian(void);
 void *_bytes_reverse(void *bytes, size_t size);
@@ -81,7 +83,9 @@ int main(void)
      || CU_add_test(suite1, "test can write number field",
                     test_can_write_number_field) == NULL
      || CU_add_test(suite1, "test can skip number field",
-                    test_can_skip_number_field) == NULL) {
+                    test_can_skip_number_field) == NULL
+     || CU_add_test(suite1, "can create stream field",
+                    test_can_create_stream_field) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -568,4 +572,25 @@ void test_can_skip_number_field(void)
     binfield_end(&field);
 
     fclose(iofp);
+}
+
+void test_can_create_stream_field(void)
+{
+    struct binfield field;
+
+    struct bignumber len;
+    struct binfield_stream *out;
+
+    binfield_start(&field, NULL);
+
+    out = NULL;
+    out = binfield_stream_create(&field);
+
+    CU_ASSERT_PTR_NOT_NULL(out);
+    CU_ASSERT_PTR_NULL(out->valfp);
+
+    bignumber_set_value_int(&len, 0);
+    CU_ASSERT_EQUAL(memcmp(&out->len, &len, sizeof len), 0);
+
+    binfield_end(&field);
 }
