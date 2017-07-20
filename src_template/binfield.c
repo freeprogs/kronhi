@@ -609,10 +609,10 @@ int _binfield_stream_write_crypt(
 }
 
 int _binfield_stream_skip_plain(
-    const struct binfield_stream *field,
+    struct binfield_stream *field,
     FILE *iofp);
 int _binfield_stream_skip_crypt(
-    const struct binfield_stream *field,
+    struct binfield_stream *field,
     FILE *ofp,
     struct cryptor *cryptor);
 
@@ -621,7 +621,7 @@ int _binfield_stream_skip_crypt(
                          return 0 if an error happened */
 int binfield_stream_skip(
     struct binfield *self,
-    const struct binfield_stream *field,
+    struct binfield_stream *field,
     FILE *iofp)
 {
     int retval;
@@ -636,7 +636,7 @@ int binfield_stream_skip(
 }
 
 int _binfield_stream_skip_plain(
-    const struct binfield_stream *field,
+    struct binfield_stream *field,
     FILE *iofp)
 {
     return file_skip_bytes(iofp, &field->len);
@@ -648,7 +648,7 @@ int _stream_size_to_encrypted_size(
     struct bignumber *out);
 
 int _binfield_stream_skip_crypt(
-    const struct binfield_stream *field,
+    struct binfield_stream *field,
     FILE *iofp,
     struct cryptor *cryptor)
 {
