@@ -43,6 +43,8 @@ void test_can_get_stream_field(void);
 void test_can_write_stream_field(void);
 void test_can_skip_stream_field(void);
 
+void test_can_read_raw_field_with_xor(void);
+
 int _is_big_endian(void);
 int _is_little_endian(void);
 void *_bytes_reverse(void *bytes, size_t size);
@@ -50,12 +52,19 @@ void *_bytes_reverse(void *bytes, size_t size);
 int main(void)
 {
     CU_pSuite suite1 = NULL;
+    CU_pSuite suite2 = NULL;
 
     if (CU_initialize_registry() != CUE_SUCCESS)
         return CU_get_error();
 
     suite1 = CU_add_suite("plain", NULL, NULL);
     if (suite1 == NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+
+    suite2 = CU_add_suite("xor", NULL, NULL);
+    if (suite2 == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -98,6 +107,12 @@ int main(void)
                     test_can_write_stream_field) == NULL
      || CU_add_test(suite1, "test can skip stream field",
                     test_can_skip_stream_field) == NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+
+    if (CU_add_test(suite2, "can read raw field with xor",
+                    test_can_read_raw_field_with_xor) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -762,6 +777,50 @@ void test_can_skip_stream_field(void)
     CU_ASSERT_EQUAL(memcmp(&data->len, &len, sizeof len), 0);
 
     binfield_end(&field);
+
+    fclose(iofp);
+}
+
+void test_can_read_raw_field_with_xor(void)
+{
+    struct binfield field;
+    struct binfield_raw *data;
+    size_t maxsize = 3;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+
+    FILE *iofp;
+    size_t vlen;
+    int retval;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    fprintf(iofp, "PPP");
+    rewind(iofp);
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+
+    binfield_start(&field, &cryptor);
+
+    data = binfield_raw_create(&field, maxsize);
+
+    CU_ASSERT_PTR_NOT_NULL(data);
+
+    vlen = 3;
+    memset(data->val, 0, vlen);
+    data->len = 0;
+    retval = binfield_raw_read(&field, data, iofp, vlen);
+
+    CU_ASSERT_EQUAL(retval, 1);
+    CU_ASSERT_NSTRING_EQUAL(data->val, "123", vlen);
+    CU_ASSERT_EQUAL(data->len, vlen);
+
+    binfield_end(&field);
+
+    cryptor_end(&cryptor);
 
     fclose(iofp);
 }
