@@ -654,6 +654,11 @@ int _binfield_stream_skip_crypt(
 {
     struct bignumber len;
 
+    bignumber_set_value_int(&len, 0);
+    if (bignumber_eq_big(&field->len, &len)) {
+        if (!file_get_size(field->valfp, &field->len))
+            return 0;
+    }
     if (!_stream_size_to_encrypted_size(cryptor, &field->len, &len))
         return 0;
     return file_skip_bytes(iofp, &len);
