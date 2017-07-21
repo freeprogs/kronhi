@@ -75,13 +75,13 @@ int main(void)
                     test_can_set_raw_field) == NULL
      || CU_add_test(suite1, "raise on set raw field with value overflow",
                     test_raise_on_set_raw_field_with_value_overflow) == NULL
-     || CU_add_test(suite1, "test can get raw field",
+     || CU_add_test(suite1, "can get raw field",
                     test_can_get_raw_field) == NULL
-     || CU_add_test(suite1, "test can read raw field",
+     || CU_add_test(suite1, "can read raw field",
                     test_can_read_raw_field) == NULL
-     || CU_add_test(suite1, "test can write raw field",
+     || CU_add_test(suite1, "can write raw field",
                     test_can_write_raw_field) == NULL
-     || CU_add_test(suite1, "test can skip raw field",
+     || CU_add_test(suite1, "can skip raw field",
                     test_can_skip_raw_field) == NULL
      || CU_add_test(suite1, "can create number field",
                     test_can_create_number_field) == NULL
@@ -89,23 +89,23 @@ int main(void)
                     test_can_set_number_field) == NULL
      || CU_add_test(suite1, "raise on set number field with value overflow",
                     test_raise_on_set_number_field_with_value_overflow) == NULL
-     || CU_add_test(suite1, "test can get number field",
+     || CU_add_test(suite1, "can get number field",
                     test_can_get_number_field) == NULL
-     || CU_add_test(suite1, "test can read number field",
+     || CU_add_test(suite1, "can read number field",
                     test_can_read_number_field) == NULL
-     || CU_add_test(suite1, "test can write number field",
+     || CU_add_test(suite1, "can write number field",
                     test_can_write_number_field) == NULL
-     || CU_add_test(suite1, "test can skip number field",
+     || CU_add_test(suite1, "can skip number field",
                     test_can_skip_number_field) == NULL
      || CU_add_test(suite1, "can create stream field",
                     test_can_create_stream_field) == NULL
      || CU_add_test(suite1, "can set stream field",
                     test_can_set_stream_field) == NULL
-     || CU_add_test(suite1, "test can get stream field",
+     || CU_add_test(suite1, "can get stream field",
                     test_can_get_stream_field) == NULL
-     || CU_add_test(suite1, "test can write stream field",
+     || CU_add_test(suite1, "can write stream field",
                     test_can_write_stream_field) == NULL
-     || CU_add_test(suite1, "test can skip stream field",
+     || CU_add_test(suite1, "can skip stream field",
                     test_can_skip_stream_field) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
