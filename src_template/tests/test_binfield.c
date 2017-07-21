@@ -184,6 +184,8 @@ void test_can_create_raw_field(void)
     CU_ASSERT_EQUAL(out->maxsize, 3);
     CU_ASSERT_EQUAL(out->len, 0);
 
+    binfield_raw_free(&field, out);
+
     binfield_end(&field);
 }
 
@@ -211,6 +213,8 @@ void test_can_set_raw_field(void)
     CU_ASSERT_NSTRING_EQUAL(value, data->val, vlen);
     CU_ASSERT_EQUAL(data->len, vlen);
 
+    binfield_raw_free(&field, data);
+
     binfield_end(&field);
 }
 
@@ -235,6 +239,8 @@ void test_raise_on_set_raw_field_with_value_overflow(void)
     retval = binfield_raw_set(&field, data, value, vlen);
 
     CU_ASSERT_EQUAL(retval, 0);
+
+    binfield_raw_free(&field, data);
 
     binfield_end(&field);
 }
@@ -268,6 +274,8 @@ void test_can_get_raw_field(void)
 
     CU_ASSERT_EQUAL(retval, 1);
     CU_ASSERT_NSTRING_EQUAL(out, value, vlen);
+
+    binfield_raw_free(&field, data);
 
     binfield_end(&field);
 }
@@ -303,6 +311,8 @@ void test_can_read_raw_field(void)
     CU_ASSERT_EQUAL(retval, 1);
     CU_ASSERT_NSTRING_EQUAL(data->val, "abc", vlen);
     CU_ASSERT_EQUAL(data->len, vlen);
+
+    binfield_raw_free(&field, data);
 
     binfield_end(&field);
 
@@ -344,6 +354,8 @@ void test_can_write_raw_field(void)
 
     CU_ASSERT_NSTRING_EQUAL(value, data->val, vlen);
 
+    binfield_raw_free(&field, data);
+
     binfield_end(&field);
 
     fclose(iofp);
@@ -384,6 +396,8 @@ void test_can_skip_raw_field(void)
     c = getc(iofp);
     CU_ASSERT_EQUAL(c, 'd');
 
+    binfield_raw_free(&field, data);
+
     binfield_end(&field);
 
     fclose(iofp);
@@ -403,6 +417,8 @@ void test_can_create_number_field(void)
     CU_ASSERT_PTR_NOT_NULL(out);
     CU_ASSERT_EQUAL(out->maxsize, 3);
     CU_ASSERT_EQUAL(out->len, 0);
+
+    binfield_num_free(&field, out);
 
     binfield_end(&field);
 }
@@ -431,6 +447,8 @@ void test_can_set_number_field(void)
     CU_ASSERT_NSTRING_EQUAL(value, data->val, vlen);
     CU_ASSERT_EQUAL(data->len, vlen);
 
+    binfield_num_free(&field, data);
+
     binfield_end(&field);
 }
 
@@ -455,6 +473,8 @@ void test_raise_on_set_number_field_with_value_overflow(void)
     retval = binfield_num_set(&field, data, value, vlen);
 
     CU_ASSERT_EQUAL(retval, 0);
+
+    binfield_num_free(&field, data);
 
     binfield_end(&field);
 }
@@ -488,6 +508,8 @@ void test_can_get_number_field(void)
 
     CU_ASSERT_EQUAL(retval, 1);
     CU_ASSERT_NSTRING_EQUAL(out, value, vlen);
+
+    binfield_num_free(&field, data);
 
     binfield_end(&field);
 }
@@ -529,6 +551,8 @@ void test_can_read_number_field(void)
     CU_ASSERT_EQUAL(retval, 1);
     CU_ASSERT_NSTRING_EQUAL(data->val, "abc", vlen);
     CU_ASSERT_EQUAL(data->len, vlen);
+
+    binfield_num_free(&field, data);
 
     binfield_end(&field);
 
@@ -577,6 +601,8 @@ void test_can_write_number_field(void)
 
     CU_ASSERT_NSTRING_EQUAL(value, data->val, vlen);
 
+    binfield_num_free(&field, data);
+
     binfield_end(&field);
 
     fclose(iofp);
@@ -617,6 +643,8 @@ void test_can_skip_number_field(void)
     c = getc(iofp);
     CU_ASSERT_EQUAL(c, 'd');
 
+    binfield_num_free(&field, data);
+
     binfield_end(&field);
 
     fclose(iofp);
@@ -639,6 +667,8 @@ void test_can_create_stream_field(void)
 
     bignumber_set_value_int(&len, 0);
     CU_ASSERT_EQUAL(memcmp(&out->len, &len, sizeof len), 0);
+
+    binfield_stream_free(&field, out);
 
     binfield_end(&field);
 }
@@ -665,6 +695,8 @@ void test_can_set_stream_field(void)
     CU_ASSERT_EQUAL(data->valfp, 1);
     bignumber_set_value_int(&len, 0);
     CU_ASSERT_EQUAL(memcmp(&data->len, &len, sizeof len), 0);
+
+    binfield_stream_free(&field, data);
 
     binfield_end(&field);
 }
@@ -695,6 +727,8 @@ void test_can_get_stream_field(void)
 
     CU_ASSERT_EQUAL(retval, 1);
     CU_ASSERT_EQUAL(out, fp);
+
+    binfield_stream_free(&field, data);
 
     binfield_end(&field);
 }
@@ -742,6 +776,8 @@ void test_can_write_stream_field(void)
     CU_ASSERT_EQUAL(fread(buffer, 1, buflen, iofp), buflen);
 
     CU_ASSERT_NSTRING_EQUAL(buffer, "abc", buflen);
+
+    binfield_stream_free(&field, data);
 
     binfield_end(&field);
 
@@ -797,6 +833,8 @@ void test_can_skip_stream_field(void)
     bignumber_set_value_int(&len, 3);
     CU_ASSERT_EQUAL(memcmp(&data->len, &len, sizeof len), 0);
 
+    binfield_stream_free(&field, data);
+
     binfield_end(&field);
 
     fclose(iofp);
@@ -838,6 +876,8 @@ void test_can_read_raw_field_with_xor(void)
     CU_ASSERT_EQUAL(retval, 1);
     CU_ASSERT_NSTRING_EQUAL(data->val, "123", vlen);
     CU_ASSERT_EQUAL(data->len, vlen);
+
+    binfield_raw_free(&field, data);
 
     binfield_end(&field);
 
@@ -886,6 +926,8 @@ void test_can_write_raw_field_with_xor(void)
 
     CU_ASSERT_NSTRING_EQUAL(value, "PPP", vlen);
 
+    binfield_raw_free(&field, data);
+
     binfield_end(&field);
 
     cryptor_end(&cryptor);
@@ -932,6 +974,8 @@ void test_can_skip_raw_field_with_xor(void)
 
     c = getc(iofp);
     CU_ASSERT_EQUAL(c, 'd');
+
+    binfield_raw_free(&field, data);
 
     binfield_end(&field);
 
@@ -988,6 +1032,8 @@ void test_can_read_number_field_with_xor(void)
     }
     CU_ASSERT_EQUAL(data->len, vlen);
 
+    binfield_num_free(&field, data);
+
     binfield_end(&field);
 
     fclose(iofp);
@@ -1040,6 +1086,8 @@ void test_can_write_number_field_with_xor(void)
 
     CU_ASSERT_NSTRING_EQUAL(value, "RPR", vlen);
 
+    binfield_num_free(&field, data);
+
     binfield_end(&field);
 
     fclose(iofp);
@@ -1084,6 +1132,8 @@ void test_can_skip_number_field_with_xor(void)
 
     c = getc(iofp);
     CU_ASSERT_EQUAL(c, 'd');
+
+    binfield_num_free(&field, data);
 
     binfield_end(&field);
 
@@ -1138,6 +1188,8 @@ void test_can_write_stream_field_with_xor(void)
     CU_ASSERT_EQUAL(fread(buffer, 1, buflen, iofp), buflen);
 
     CU_ASSERT_NSTRING_EQUAL(buffer, "PPP", buflen);
+
+    binfield_stream_free(&field, data);
 
     binfield_end(&field);
 
@@ -1197,6 +1249,8 @@ void test_can_skip_stream_field_with_xor(void)
 
     bignumber_set_value_int(&len, 3);
     CU_ASSERT_EQUAL(memcmp(&data->len, &len, sizeof len), 0);
+
+    binfield_stream_free(&field, data);
 
     binfield_end(&field);
 
