@@ -48,6 +48,7 @@ void test_can_write_raw_field_with_xor(void);
 void test_can_skip_raw_field_with_xor(void);
 void test_can_read_number_field_with_xor(void);
 void test_can_write_number_field_with_xor(void);
+void test_can_skip_number_field_with_xor(void);
 
 int _is_big_endian(void);
 int _is_little_endian(void);
@@ -124,7 +125,9 @@ int main(void)
      || CU_add_test(suite2, "can read number field with xor",
                     test_can_read_number_field_with_xor) == NULL
      || CU_add_test(suite2, "can write number field with xor",
-                    test_can_write_number_field_with_xor) == NULL) {
+                    test_can_write_number_field_with_xor) == NULL
+     || CU_add_test(suite2, "can skip number field with xor",
+                    test_can_skip_number_field_with_xor) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -1030,6 +1033,51 @@ void test_can_write_number_field_with_xor(void)
     }
 
     CU_ASSERT_NSTRING_EQUAL(value, "RPR", vlen);
+
+    binfield_end(&field);
+
+    fclose(iofp);
+}
+
+void test_can_skip_number_field_with_xor(void)
+{
+    struct binfield field;
+    struct binfield_num *data;
+    size_t maxsize = 3;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+
+    FILE *iofp;
+    size_t vlen;
+    int c;
+    int retval;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    fprintf(iofp, "abcd");
+    rewind(iofp);
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+
+    binfield_start(&field, &cryptor);
+
+    data = binfield_num_create(&field, maxsize);
+
+    CU_ASSERT_PTR_NOT_NULL(data);
+
+    vlen = 3;
+    memcpy(data->val, "123", vlen);
+    data->len = vlen;
+
+    retval = binfield_num_skip(&field, data, iofp);
+
+    CU_ASSERT_EQUAL(retval, 1);
+
+    c = getc(iofp);
+    CU_ASSERT_EQUAL(c, 'd');
 
     binfield_end(&field);
 
