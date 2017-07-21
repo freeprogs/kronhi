@@ -127,7 +127,7 @@ int binfield_stream_write(
     FILE *ofp);
 int binfield_stream_skip(
     struct binfield *self,
-    const struct binfield_stream *field,
+    struct binfield_stream *field,
     FILE *iofp);
 void binfield_raw_free(
     struct binfield *self,
