@@ -50,6 +50,7 @@ void test_can_read_number_field_with_xor(void);
 void test_can_write_number_field_with_xor(void);
 void test_can_skip_number_field_with_xor(void);
 void test_can_write_stream_field_with_xor(void);
+void test_can_skip_stream_field_with_xor(void);
 
 int _is_big_endian(void);
 int _is_little_endian(void);
@@ -130,7 +131,9 @@ int main(void)
      || CU_add_test(suite2, "can skip number field with xor",
                     test_can_skip_number_field_with_xor) == NULL
      || CU_add_test(suite2, "can write stream field with xor",
-                    test_can_write_stream_field_with_xor) == NULL) {
+                    test_can_write_stream_field_with_xor) == NULL
+     || CU_add_test(suite2, "can skip stream field with xor",
+                    test_can_skip_stream_field_with_xor) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -1139,5 +1142,63 @@ void test_can_write_stream_field_with_xor(void)
     binfield_end(&field);
 
     fclose(srcifp);
+    fclose(iofp);
+}
+
+void test_can_skip_stream_field_with_xor(void)
+{
+    struct binfield field;
+    struct binfield_stream *data;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+
+    FILE *iofp;
+    FILE *srcifp;
+    struct bignumber len;
+    int c;
+    int retval;
+
+    srcifp = tmpfile();
+    if (srcifp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    fprintf(iofp, "abcd");
+    rewind(iofp);
+
+    fprintf(srcifp, "abc");
+    rewind(srcifp);
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+
+    binfield_start(&field, &cryptor);
+
+    data = binfield_stream_create(&field);
+
+    CU_ASSERT_PTR_NOT_NULL(data);
+
+    retval = binfield_stream_set(&field, data, srcifp);
+
+    CU_ASSERT_EQUAL(retval, 1);
+
+    bignumber_set_value_int(&len, 0);
+    CU_ASSERT_EQUAL(memcmp(&data->len, &len, sizeof len), 0);
+
+    retval = binfield_stream_skip(&field, data, iofp);
+
+    CU_ASSERT_EQUAL(retval, 1);
+
+    c = getc(iofp);
+    CU_ASSERT_EQUAL(c, 'd');
+
+    bignumber_set_value_int(&len, 3);
+    CU_ASSERT_EQUAL(memcmp(&data->len, &len, sizeof len), 0);
+
+    binfield_end(&field);
+
     fclose(iofp);
 }
