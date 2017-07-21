@@ -1036,6 +1036,8 @@ void test_can_read_number_field_with_xor(void)
 
     binfield_end(&field);
 
+    cryptor_end(&cryptor);
+
     fclose(iofp);
 }
 
@@ -1090,6 +1092,8 @@ void test_can_write_number_field_with_xor(void)
 
     binfield_end(&field);
 
+    cryptor_end(&cryptor);
+
     fclose(iofp);
 }
 
@@ -1136,6 +1140,8 @@ void test_can_skip_number_field_with_xor(void)
     binfield_num_free(&field, data);
 
     binfield_end(&field);
+
+    cryptor_end(&cryptor);
 
     fclose(iofp);
 }
@@ -1192,6 +1198,8 @@ void test_can_write_stream_field_with_xor(void)
     binfield_stream_free(&field, data);
 
     binfield_end(&field);
+
+    cryptor_end(&cryptor);
 
     fclose(srcifp);
     fclose(iofp);
@@ -1253,6 +1261,8 @@ void test_can_skip_stream_field_with_xor(void)
     binfield_stream_free(&field, data);
 
     binfield_end(&field);
+
+    cryptor_end(&cryptor);
 
     fclose(iofp);
 }
