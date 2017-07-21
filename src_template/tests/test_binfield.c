@@ -44,6 +44,7 @@ void test_can_write_stream_field(void);
 void test_can_skip_stream_field(void);
 
 void test_can_read_raw_field_with_xor(void);
+void test_can_write_raw_field_with_xor(void);
 
 int _is_big_endian(void);
 int _is_little_endian(void);
@@ -112,7 +113,9 @@ int main(void)
     }
 
     if (CU_add_test(suite2, "can read raw field with xor",
-                    test_can_read_raw_field_with_xor) == NULL) {
+                    test_can_read_raw_field_with_xor) == NULL
+     || CU_add_test(suite2, "can write raw field with xor",
+                    test_can_write_raw_field_with_xor) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -817,6 +820,53 @@ void test_can_read_raw_field_with_xor(void)
     CU_ASSERT_EQUAL(retval, 1);
     CU_ASSERT_NSTRING_EQUAL(data->val, "123", vlen);
     CU_ASSERT_EQUAL(data->len, vlen);
+
+    binfield_end(&field);
+
+    cryptor_end(&cryptor);
+
+    fclose(iofp);
+}
+
+void test_can_write_raw_field_with_xor(void)
+{
+    struct binfield field;
+    struct binfield_raw *data;
+    size_t maxsize = 3;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+
+    FILE *iofp;
+    unsigned char value[100];
+    size_t vlen;
+    int retval;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+
+    binfield_start(&field, &cryptor);
+
+    data = binfield_raw_create(&field, maxsize);
+
+    CU_ASSERT_PTR_NOT_NULL(data);
+
+    vlen = 3;
+    memcpy(data->val, "123", vlen);
+    data->len = vlen;
+
+    retval = binfield_raw_write(&field, data, iofp);
+
+    CU_ASSERT_EQUAL(retval, 1);
+
+    rewind(iofp);
+    memset(value, 0, vlen);
+    CU_ASSERT_EQUAL(fread(value, 1, vlen, iofp), vlen);
+
+    CU_ASSERT_NSTRING_EQUAL(value, "PPP", vlen);
 
     binfield_end(&field);
 
