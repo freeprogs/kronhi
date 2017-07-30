@@ -31,6 +31,7 @@ void can_read_dir_header(void);
 void can_read_file_header(void);
 
 void test_can_write_dir_with_xor(void);
+void test_can_write_file_with_xor(void);
 
 int main(void)
 {
@@ -73,7 +74,9 @@ int main(void)
     }
 
     if (CU_add_test(suite2, "can write dir with xor",
-                    test_can_write_dir_with_xor) == NULL) {
+                    test_can_write_dir_with_xor) == NULL
+     || CU_add_test(suite2, "can write file with xor",
+                    test_can_write_file_with_xor) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -1234,5 +1237,100 @@ void test_can_write_dir_with_xor(void)
 
     bindir_end(&dir);
 
+    fclose(iofp);
+}
+
+void test_can_write_file_with_xor(void)
+{
+    struct node node;
+    struct binfield field;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+    FILE *iofp;
+    FILE *ifp;
+
+    int i;
+    unsigned char filebytes[100];
+    size_t filesize;
+    struct binfile file;
+    unsigned char buffer[100];
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    ifp = tmpfile();
+    if (ifp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    fprintf(ifp, "abc");
+    rewind(ifp);
+
+    binfile_start(&file);
+
+    /*
+    filesize = 33;
+    memcpy(filebytes,
+           "\x66"
+           "\x01"
+           "\x61"
+           "\x00\x01"
+           "\x62"
+           "\x32\x30\x31\x37\x30\x31\x30\x32\x30\x33\x30\x34\x30\x35"
+           "\x01\x02\x03\x04"
+           "\x33\x00"
+           "\x61\x62\x63"
+           "\x00\x00\x00\x01",
+           filesize);
+    */
+
+    filesize = 33;
+    memcpy(filebytes,
+           "\x07"
+           "\x63"
+           "\x02"
+           "\x61\x63"
+           "\x01"
+           "\x53\x52\x52\x56\x52\x52\x51\x50\x53\x52\x52\x57\x51\x57"
+           "\x62\x63\x61\x67"
+           "\x52\x62"
+           "\x02\x03\x01"
+           "\x63\x61\x62\x62",
+           filesize);
+
+    binfile_type_set(&file, 'f');
+    binfile_namesize_set(&file, 1);
+    binfile_name_set(&file, "a");
+    binfile_descsize_set(&file, 1);
+    binfile_desc_set(&file, "b");
+    binfile_datetime_set(&file, "20170102030405");
+    binfile_ctrlsum_set(&file, 0x01020304);
+    binfile_contentsize_set(&file, "3");
+    binfile_contentstream_set(&file, ifp);
+    binfile_file_offset_set(&file, 1);
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+    binfield_start(&field, &cryptor);
+    node_start(&node, &field);
+
+    node_write_file(&node, iofp, &file);
+    rewind(iofp);
+
+    node_end(&node);
+    binfield_end(&field);
+    cryptor_end(&cryptor);
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, iofp);
+
+    CU_ASSERT_EQUAL(memcmp(buffer, filebytes, filesize), 0);
+
+    binfile_end(&file);
+    fclose(ifp);
     fclose(iofp);
 }
