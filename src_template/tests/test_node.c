@@ -27,8 +27,8 @@ void test_can_write_dir(void);
 void test_can_write_file(void);
 void test_can_write_dir_header_by_field(void);
 void test_can_write_file_header_by_field(void);
-void can_read_dir_header(void);
-void can_read_file_header(void);
+void test_can_read_dir_header(void);
+void test_can_read_file_header(void);
 
 void test_can_write_dir_with_xor(void);
 void test_can_write_file_with_xor(void);
@@ -60,7 +60,7 @@ int main(void)
      || CU_add_test(suite1, "can write dir header by field",
                     test_can_write_dir_header_by_field) == NULL
      || CU_add_test(suite1, "can read dir header",
-                    can_read_dir_header) == NULL
+                    test_can_read_dir_header) == NULL
      || CU_add_test(suite1, "can test for file type",
                     test_can_test_for_file_type) == NULL
      || CU_add_test(suite1, "can write file",
@@ -68,7 +68,7 @@ int main(void)
      || CU_add_test(suite1, "can write file header by field",
                     test_can_write_file_header_by_field) == NULL
      || CU_add_test(suite1, "can read file header",
-                    can_read_file_header) == NULL) {
+                    test_can_read_file_header) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -1013,7 +1013,7 @@ void test_can_write_file_header_by_field(void)
     fclose(iofp);
 }
 
-void can_read_dir_header(void)
+void test_can_read_dir_header(void)
 {
     struct node node;
     struct binfield field;
@@ -1079,7 +1079,7 @@ void can_read_dir_header(void)
     fclose(iofp);
 }
 
-void can_read_file_header(void)
+void test_can_read_file_header(void)
 {
     struct node node;
     struct binfield field;
