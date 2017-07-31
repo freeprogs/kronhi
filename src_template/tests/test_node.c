@@ -32,6 +32,7 @@ void test_can_read_file_header(void);
 
 void test_can_write_dir_with_xor(void);
 void test_can_write_file_with_xor(void);
+void test_can_read_dir_header_with_xor(void);
 
 int main(void)
 {
@@ -76,7 +77,9 @@ int main(void)
     if (CU_add_test(suite2, "can write dir with xor",
                     test_can_write_dir_with_xor) == NULL
      || CU_add_test(suite2, "can write file with xor",
-                    test_can_write_file_with_xor) == NULL) {
+                    test_can_write_file_with_xor) == NULL
+     || CU_add_test(suite2, "can read dir header with xor",
+                    test_can_read_dir_header_with_xor) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -1332,5 +1335,87 @@ void test_can_write_file_with_xor(void)
 
     binfile_end(&file);
     fclose(ifp);
+    fclose(iofp);
+}
+
+void test_can_read_dir_header_with_xor(void)
+{
+    struct node node;
+    struct binfield field;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+    FILE *iofp;
+
+    int i;
+    unsigned char bytes[100];
+    size_t size;
+    struct bindir dir;
+    char dir_type_sign;
+    unsigned short dir_descsize;
+    char dir_desc[100];
+    size_t dir_num_of_files;
+    size_t dir_file_offset;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    for (i = 0; i < 100; i++)
+        putc('\0', iofp);
+    rewind(iofp);
+
+    /*
+    size = 12;
+    memcpy(bytes,
+           "\x64"
+           "\x00\x01"
+           "\x61"
+           "\x00\x00\x00\x01"
+           "\x00\x00\x00\x02",
+           size);
+    */
+
+    size = 12;
+    memcpy(bytes,
+           "\x05"
+           "\x62\x62"
+           "\x00"
+           "\x62\x63\x61\x63"
+           "\x63\x61\x62\x61",
+           size);
+
+    if (fwrite(bytes, 1, size, iofp) != size)
+        CU_FAIL("can't prepare data in temporary file");
+    rewind(iofp);
+
+    bindir_start(&dir);
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+    binfield_start(&field, &cryptor);
+    node_start(&node, &field);
+
+    node_read_dir_header(&node, iofp, &dir);
+
+    node_end(&node);
+    binfield_end(&field);
+    cryptor_end(&cryptor);
+
+    bindir_type_get(&dir, &dir_type_sign);
+    CU_ASSERT_EQUAL(dir_type_sign, 'd');
+
+    bindir_descsize_get(&dir, &dir_descsize);
+    CU_ASSERT_EQUAL(dir_descsize, 1);
+
+    bindir_desc_get(&dir, dir_desc);
+    CU_ASSERT_NSTRING_EQUAL(dir_desc, "a", dir_descsize);
+
+    bindir_num_of_files_get(&dir, &dir_num_of_files);
+    CU_ASSERT_EQUAL(dir_num_of_files, 1);
+
+    bindir_file_offset_get(&dir, &dir_file_offset);
+    CU_ASSERT_EQUAL(dir_file_offset, 2);
+
+    bindir_end(&dir);
     fclose(iofp);
 }
