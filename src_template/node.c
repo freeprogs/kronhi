@@ -272,6 +272,12 @@ int node_read_file_header(struct node *self, FILE *ifp, struct binfile *file)
         f_error = 1;
 
     for (p = buffer; (c = getc(ifp)) != EOF; p++) {
+        if (field->cryptor != NULL) {
+            unsigned char ch = c;
+            size_t ps;
+            cryptor_decrypt(field->cryptor, &ch, 1, &ch, &ps);
+            c = ch;
+        }
         *p = c;
         if (c == '\0')
             break;
@@ -282,10 +288,16 @@ int node_read_file_header(struct node *self, FILE *ifp, struct binfile *file)
     if (!binfile_contentsize_set(file, buffer))
         f_error = 1;
 
+    if (!binfile_contentstream_set(file, NULL))
+        f_error = 1;
+
     bignumber_set_value_string(&contentsize, buffer);
     bignumber_set_value_int(&i, 0);
     while (bignumber_lt_big(&i, &contentsize)) {
         c = getc(ifp);
+        if (field->cryptor != NULL) {
+            cryptor_pos_rshift(field->cryptor, 1);
+        }
         bignumber_add_int(&i, 1);
     }
     if (c == EOF)
