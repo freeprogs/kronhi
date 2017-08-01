@@ -24,6 +24,7 @@
 void test_raise_on_very_big_file_offset(void);
 void test_raise_on_very_big_directory_size(void);
 void test_can_write_directory_to_the_end_of_file(void);
+
 void test_raise_on_absent_directory(void);
 void test_can_append_file_to_empty_directory(void);
 void test_can_append_file_to_non_empty_directory(void);
