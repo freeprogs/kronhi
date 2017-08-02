@@ -54,10 +54,10 @@ int main(void)
     }
 
     if (CU_add_test(suite1, "raise on very big file offset",
-                    test_raise_on_very_big_file_offset) == NULL ||
-        CU_add_test(suite1, "raise on very big directory size",
-                    test_raise_on_very_big_directory_size) == NULL ||
-        CU_add_test(suite1, "can write directory to the end of file",
+                    test_raise_on_very_big_file_offset) == NULL
+     || CU_add_test(suite1, "raise on very big directory size",
+                    test_raise_on_very_big_directory_size) == NULL
+     || CU_add_test(suite1, "can write directory to the end of file",
                     test_can_write_directory_to_the_end_of_file) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
