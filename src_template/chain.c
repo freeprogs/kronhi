@@ -53,7 +53,7 @@ enum chain_code chain_create_dir(
     bindir_type_set(&dir, 'd');
     bindir_descsize_set(&dir, strlen(dirdesc));
     bindir_desc_set(&dir, dirdesc);
-    bindir_num_of_files_set(&dir, 0);
+    bindir_num_of_files_set(&dir, num_of_files);
     bindir_file_offset_set(&dir, 0);
     ofp = fopen(self->dst, "r+b");
     if (ofp == NULL)
