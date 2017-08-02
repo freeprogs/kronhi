@@ -34,10 +34,13 @@ void test_raise_on_append_file_to_broken_file(void);
 void test_can_append_file_with_offset_to_directory(void);
 void test_can_append_file_with_offset_to_file(void);
 
+void test_can_create_directory_with_xor(void);
+
 int main(void)
 {
     CU_pSuite suite1 = NULL;
     CU_pSuite suite2 = NULL;
+    CU_pSuite suite3 = NULL;
 
     if (CU_initialize_registry() != CUE_SUCCESS)
         return CU_get_error();
@@ -50,6 +53,12 @@ int main(void)
 
     suite2 = CU_add_suite("chain append file", NULL, NULL);
     if (suite2 == NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+
+    suite3 = CU_add_suite("chain create dir xor", NULL, NULL);
+    if (suite3 == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -80,6 +89,12 @@ int main(void)
                     test_can_append_file_with_offset_to_directory) == NULL
      || CU_add_test(suite2, "can append file with offset to file",
                     test_can_append_file_with_offset_to_file) == NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+
+    if (CU_add_test(suite3, "can create directory with xor",
+                    test_can_create_directory_with_xor) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -1260,5 +1275,87 @@ void test_can_append_file_with_offset_to_file(void)
 
 
     remove(source);
+    remove(destination);
+}
+
+void test_can_create_directory_with_xor(void)
+{
+    const char *destination = "file.txt";
+    const char *dirdesc = "abc";
+    size_t dirnof = 1;
+    size_t dirro = 2;
+    const int DIRSIZE = 14;
+
+    struct chain chain;
+    struct node node;
+    struct binfield field;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+    enum chain_code retval;
+    struct file_offset offset;
+
+    FILE *fp;
+    int i;
+    unsigned char dirbytes[100];
+    size_t dirsize;
+    unsigned char buffer[100];
+
+    fp = fopen(destination, "wb");
+    if (fp == NULL)
+        CU_FAIL("can't create temporary file");
+    for (i = 0; i < DIRSIZE; i++)
+        putc('x', fp);
+    fclose(fp);
+
+    /*
+    dirsize = 14;
+    memcpy(
+        dirbytes,
+        "\x64"
+        "\x00\x03"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x01"
+        "\x00\x00\x00\x02",
+        dirsize);
+    */
+
+    dirsize = 14;
+    memcpy(
+        dirbytes,
+        "\x05"
+        "\x62\x60"
+        "\x00\x00\x00"
+        "\x61\x62\x63\x60"
+        "\x62\x63\x61\x60",
+        dirsize);
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+    binfield_start(&field, &cryptor);
+    node_start(&node, &field);
+
+    fileoffset_clear(&offset);
+
+    chain_start(&chain, destination, &offset, &node);
+    retval = chain_create_dir(&chain, dirdesc, dirnof, dirro);
+    chain_end(&chain);
+
+    node_end(&node);
+    binfield_end(&field);
+    cryptor_end(&cryptor);
+
+    CU_ASSERT_EQUAL(retval, CHAIN_OK);
+
+    fp = fopen(destination, "rb");
+    if (fp == NULL)
+        CU_FAIL("can't read temporary file");
+
+    memset(buffer, 0, sizeof buffer);
+    fread(buffer, 1, sizeof buffer, fp);
+
+    fclose(fp);
+
+    CU_ASSERT_EQUAL(memcmp(buffer, dirbytes, dirsize), 0);
+
     remove(destination);
 }
