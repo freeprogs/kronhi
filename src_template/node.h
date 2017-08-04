@@ -30,6 +30,11 @@ struct node {
     struct binfield *field;
 };
 
+struct node_state {
+    int has_cryptor;
+    size_t cryptor_password_position;
+};
+
 enum node_dir_field_flags {
     DIRFLD_TYPESIGN = 0x1,
     DIRFLD_DESCSIZE = 0x2,
