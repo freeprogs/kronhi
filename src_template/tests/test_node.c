@@ -30,6 +30,7 @@ void test_can_write_file_header_by_field(void);
 void test_can_read_dir_header(void);
 void test_can_read_file_header(void);
 void test_can_get_state(void);
+void test_can_set_state(void);
 
 void test_can_write_dir_with_xor(void);
 void test_can_write_file_with_xor(void);
@@ -73,7 +74,9 @@ int main(void)
      || CU_add_test(suite1, "can read file header",
                     test_can_read_file_header) == NULL
      || CU_add_test(suite1, "can get state",
-                    test_can_get_state) == NULL) {
+                    test_can_get_state) == NULL
+     || CU_add_test(suite1, "can set state",
+                    test_can_set_state) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -1194,6 +1197,33 @@ void test_can_get_state(void)
 
     CU_ASSERT_EQUAL(state.has_cryptor, 0);
     CU_ASSERT_EQUAL(state.cryptor_password_position, 0);
+}
+
+void test_can_set_state(void)
+{
+    struct node node;
+    struct binfield field;
+    struct node_state state;
+
+    struct node nodeprev;
+
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    memcpy(&nodeprev, &node, sizeof(struct node));
+
+    state.has_cryptor = 0;
+    state.cryptor_password_position = 0;
+    CU_ASSERT_TRUE(node_state_set(&node, &state));
+    CU_ASSERT_EQUAL(memcmp(&node, &nodeprev, sizeof(struct node)), 0);
+
+    state.has_cryptor = 1;
+    state.cryptor_password_position = 1;
+    CU_ASSERT_TRUE(node_state_set(&node, &state));
+    CU_ASSERT_EQUAL(memcmp(&node, &nodeprev, sizeof(struct node)), 0);
+
+    node_end(&node);
+    binfield_end(&field);
 }
 
 void test_can_write_dir_with_xor(void)
