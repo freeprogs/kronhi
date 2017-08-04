@@ -43,6 +43,24 @@ int node_state_get(struct node *self, struct node_state *out)
     return 1;
 }
 
+/* node_state_set: set internal state of the node
+                   return 1 if has set correctly
+                   return 0 if errors happened */
+int node_state_set(struct node *self, const struct node_state *state)
+{
+    if (self->field->cryptor != NULL) {
+        if (state->has_cryptor) {
+            return cryptor_pos_set(
+                self->field->cryptor,
+                state->cryptor_password_position);
+        }
+        else {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 /* node_write_dir: write directory node to output stream
                    return 1 if has written correctly
                    return 0 if errors happened */

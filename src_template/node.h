@@ -58,6 +58,7 @@ enum node_file_field_flags {
 
 void node_start(struct node *self, struct binfield *field);
 int node_state_get(struct node *self, struct node_state *out);
+int node_state_set(struct node *self, const struct node_state *state);
 int node_write_dir(struct node *self, FILE *ofp, const struct bindir *dir);
 int node_test_isdir(struct node *self, FILE *ifp);
 int node_read_dir_header(struct node *self, FILE *ifp, struct bindir *dir);
