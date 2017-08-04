@@ -37,6 +37,7 @@ void test_can_write_file_with_xor(void);
 void test_can_read_dir_header_with_xor(void);
 void test_can_read_file_header_with_xor(void);
 void test_can_get_state_with_xor(void);
+void test_can_set_state_with_xor(void);
 
 int main(void)
 {
@@ -91,7 +92,9 @@ int main(void)
      || CU_add_test(suite2, "can read file header with xor",
                     test_can_read_file_header_with_xor) == NULL
      || CU_add_test(suite2, "can get state with xor",
-                    test_can_get_state_with_xor) == NULL) {
+                    test_can_get_state_with_xor) == NULL
+     || CU_add_test(suite2, "can set state with xor",
+                    test_can_set_state_with_xor) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -1612,4 +1615,31 @@ void test_can_get_state_with_xor(void)
     
     CU_ASSERT_EQUAL(state.has_cryptor, 1);
     CU_ASSERT_EQUAL(state.cryptor_password_position, 1);
+}
+
+void test_can_set_state_with_xor(void)
+{
+    struct node node;
+    struct binfield field;
+    struct node_state state;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+
+    size_t out;
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+    binfield_start(&field, &cryptor);
+    node_start(&node, &field);
+
+    state.has_cryptor = 1;
+    state.cryptor_password_position = 1;
+    cryptor_pos_set(&cryptor, 0);
+    CU_ASSERT_TRUE(node_state_set(&node, &state));
+    cryptor_pos_get(&cryptor, &out);
+    CU_ASSERT_EQUAL(out, 1);
+
+    node_end(&node);
+    binfield_end(&field);
+    cryptor_end(&cryptor);
 }
