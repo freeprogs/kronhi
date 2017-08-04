@@ -25,6 +25,24 @@ void node_start(struct node *self, struct binfield *field)
     self->field = field;
 }
 
+/* node_state_get: get internal state of the node
+                   return 1 if has gotten correctly
+                   return 0 if errors happened */
+int node_state_get(struct node *self, struct node_state *out)
+{
+    if (self->field->cryptor != NULL) {
+        out->has_cryptor = 1;
+        cryptor_pos_get(
+            self->field->cryptor,
+            &out->cryptor_password_position);
+    }
+    else {
+        out->has_cryptor = 0;
+        out->cryptor_password_position = 0;
+    }
+    return 1;
+}
+
 /* node_write_dir: write directory node to output stream
                    return 1 if has written correctly
                    return 0 if errors happened */
