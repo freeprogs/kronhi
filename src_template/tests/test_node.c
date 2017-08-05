@@ -29,11 +29,16 @@ void test_can_write_dir_header_by_field(void);
 void test_can_write_file_header_by_field(void);
 void test_can_read_dir_header(void);
 void test_can_read_file_header(void);
+void test_can_get_state(void);
+void test_can_set_state(void);
 
 void test_can_write_dir_with_xor(void);
 void test_can_write_file_with_xor(void);
 void test_can_read_dir_header_with_xor(void);
 void test_can_read_file_header_with_xor(void);
+void test_can_get_state_with_xor(void);
+void test_can_set_state_with_xor(void);
+void test_raise_on_set_corrupted_state_with_xor(void);
 
 int main(void)
 {
@@ -70,7 +75,11 @@ int main(void)
      || CU_add_test(suite1, "can write file header by field",
                     test_can_write_file_header_by_field) == NULL
      || CU_add_test(suite1, "can read file header",
-                    test_can_read_file_header) == NULL) {
+                    test_can_read_file_header) == NULL
+     || CU_add_test(suite1, "can get state",
+                    test_can_get_state) == NULL
+     || CU_add_test(suite1, "can set state",
+                    test_can_set_state) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -82,7 +91,13 @@ int main(void)
      || CU_add_test(suite2, "can read dir header with xor",
                     test_can_read_dir_header_with_xor) == NULL
      || CU_add_test(suite2, "can read file header with xor",
-                    test_can_read_file_header_with_xor) == NULL) {
+                    test_can_read_file_header_with_xor) == NULL
+     || CU_add_test(suite2, "can get state with xor",
+                    test_can_get_state_with_xor) == NULL
+     || CU_add_test(suite2, "can set state with xor",
+                    test_can_set_state_with_xor) == NULL
+     || CU_add_test(suite2, "raise on set corrupted state with xor",
+                    test_raise_on_set_corrupted_state_with_xor) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -1174,6 +1189,52 @@ void test_can_read_file_header(void)
     fclose(iofp);
 }
 
+void test_can_get_state(void)
+{
+    struct node node;
+    struct binfield field;
+    struct node_state state;
+
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    memset(&state, 0, sizeof state);
+    CU_ASSERT_TRUE(node_state_get(&node, &state));
+
+    node_end(&node);
+    binfield_end(&field);
+
+    CU_ASSERT_EQUAL(state.has_cryptor, 0);
+    CU_ASSERT_EQUAL(state.cryptor_password_position, 0);
+}
+
+void test_can_set_state(void)
+{
+    struct node node;
+    struct binfield field;
+    struct node_state state;
+
+    struct node nodeprev;
+
+    binfield_start(&field, NULL);
+    node_start(&node, &field);
+
+    memcpy(&nodeprev, &node, sizeof(struct node));
+
+    state.has_cryptor = 0;
+    state.cryptor_password_position = 0;
+    CU_ASSERT_TRUE(node_state_set(&node, &state));
+    CU_ASSERT_EQUAL(memcmp(&node, &nodeprev, sizeof(struct node)), 0);
+
+    state.has_cryptor = 1;
+    state.cryptor_password_position = 1;
+    CU_ASSERT_TRUE(node_state_set(&node, &state));
+    CU_ASSERT_EQUAL(memcmp(&node, &nodeprev, sizeof(struct node)), 0);
+
+    node_end(&node);
+    binfield_end(&field);
+}
+
 void test_can_write_dir_with_xor(void)
 {
     struct node node;
@@ -1531,4 +1592,84 @@ void test_can_read_file_header_with_xor(void)
 
     binfile_end(&file);
     fclose(iofp);
+}
+
+void test_can_get_state_with_xor(void)
+{
+    struct node node;
+    struct binfield field;
+    struct node_state state;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+    binfield_start(&field, &cryptor);
+    node_start(&node, &field);
+
+    cryptor_pos_set(&cryptor, 1);
+
+    memset(&state, 0, sizeof state);
+    CU_ASSERT_TRUE(node_state_get(&node, &state));
+
+    node_end(&node);
+    binfield_end(&field);
+    cryptor_end(&cryptor);
+    
+    CU_ASSERT_EQUAL(state.has_cryptor, 1);
+    CU_ASSERT_EQUAL(state.cryptor_password_position, 1);
+}
+
+void test_can_set_state_with_xor(void)
+{
+    struct node node;
+    struct binfield field;
+    struct node_state state;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+
+    size_t out;
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+    binfield_start(&field, &cryptor);
+    node_start(&node, &field);
+
+    state.has_cryptor = 1;
+    state.cryptor_password_position = 1;
+    cryptor_pos_set(&cryptor, 0);
+    CU_ASSERT_TRUE(node_state_set(&node, &state));
+    cryptor_pos_get(&cryptor, &out);
+    CU_ASSERT_EQUAL(out, 1);
+
+    node_end(&node);
+    binfield_end(&field);
+    cryptor_end(&cryptor);
+}
+
+void test_raise_on_set_corrupted_state_with_xor(void)
+{
+    struct node node;
+    struct binfield field;
+    struct node_state state;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+
+    size_t out;
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+    binfield_start(&field, &cryptor);
+    node_start(&node, &field);
+
+    state.has_cryptor = 0;
+    state.cryptor_password_position = 1;
+    cryptor_pos_set(&cryptor, 0);
+    CU_ASSERT_FALSE(node_state_set(&node, &state));
+    cryptor_pos_get(&cryptor, &out);
+    CU_ASSERT_EQUAL(out, 0);
+
+    node_end(&node);
+    binfield_end(&field);
+    cryptor_end(&cryptor);
 }

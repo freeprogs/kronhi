@@ -53,8 +53,8 @@ enum chain_code chain_create_dir(
     bindir_type_set(&dir, 'd');
     bindir_descsize_set(&dir, strlen(dirdesc));
     bindir_desc_set(&dir, dirdesc);
-    bindir_num_of_files_set(&dir, 0);
-    bindir_file_offset_set(&dir, 0);
+    bindir_num_of_files_set(&dir, num_of_files);
+    bindir_file_offset_set(&dir, relative_offset);
     ofp = fopen(self->dst, "r+b");
     if (ofp == NULL)
         return CHAIN_ERROR_DIR_OPENFILE;
@@ -106,10 +106,12 @@ enum chain_code chain_append_file(
     char filesizestr[100];
     char datetime[DATETIMESIZE];
 
+    struct node_state dirnodestate;
     fpos_t dirpos;
     struct bindir dirtmp;
     size_t tmp_num_of_files;
 
+    struct node_state filenodestate;
     fpos_t filepos;
     struct binfile filetmp;
     size_t tmp_dir_rel_off;
@@ -164,6 +166,7 @@ enum chain_code chain_append_file(
     }
 
 
+    node_state_get(node, &dirnodestate);
     fgetpos(ofp, &dirpos);
 
     bindir_start(&dirtmp);
@@ -195,6 +198,7 @@ enum chain_code chain_append_file(
             binfile_end(&file);
             return CHAIN_ERROR_FILE_FILESIZE;
         }
+        node_state_get(node, &filenodestate);
         if (!node_write_file(node, ofp, &file)) {
             fclose(ifp);
             fclose(ofp);
@@ -203,10 +207,12 @@ enum chain_code chain_append_file(
             return CHAIN_ERROR_FILE_WRITENODE;
         }
 
+        node_state_set(node, &dirnodestate);
         fsetpos(ofp, &dirpos);
         bindir_file_offset_set(&dirtmp, filereloff);
         node_write_dir_header_field(node, ofp, &dirtmp, DIRFLD_FILEOFFSET);
 
+        node_state_set(node, &dirnodestate);
         fsetpos(ofp, &dirpos);
         bindir_num_of_files_set(&dirtmp, 1);
         node_write_dir_header_field(node, ofp, &dirtmp, DIRFLD_NUMOFFILES);
@@ -238,6 +244,7 @@ enum chain_code chain_append_file(
                 binfile_end(&file);
                 return CHAIN_ERROR_FILE_NOFILE;
             }
+            node_state_get(node, &filenodestate);
             if (!node_read_file_header(node, ofp, &filetmp)) {
                 fclose(ifp);
                 fclose(ofp);
@@ -278,10 +285,12 @@ enum chain_code chain_append_file(
             return CHAIN_ERROR_FILE_WRITENODE;
         }
 
+        node_state_set(node, &filenodestate);
         fsetpos(ofp, &filepos);
         binfile_file_offset_set(&filetmp, filereloff);
         node_write_file_header_field(node, ofp, &filetmp, FILFLD_FILEOFFSET);
 
+        node_state_set(node, &dirnodestate);
         fsetpos(ofp, &dirpos);
         bindir_num_of_files_set(&dirtmp, tmp_num_of_files + 1);
         node_write_dir_header_field(node, ofp, &dirtmp, DIRFLD_NUMOFFILES);

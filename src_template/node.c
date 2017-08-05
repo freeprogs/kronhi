@@ -25,6 +25,42 @@ void node_start(struct node *self, struct binfield *field)
     self->field = field;
 }
 
+/* node_state_get: get internal state of the node
+                   return 1 if has gotten correctly
+                   return 0 if errors happened */
+int node_state_get(struct node *self, struct node_state *out)
+{
+    if (self->field->cryptor != NULL) {
+        out->has_cryptor = 1;
+        cryptor_pos_get(
+            self->field->cryptor,
+            &out->cryptor_password_position);
+    }
+    else {
+        out->has_cryptor = 0;
+        out->cryptor_password_position = 0;
+    }
+    return 1;
+}
+
+/* node_state_set: set internal state of the node
+                   return 1 if has set correctly
+                   return 0 if errors happened */
+int node_state_set(struct node *self, const struct node_state *state)
+{
+    if (self->field->cryptor != NULL) {
+        if (state->has_cryptor) {
+            return cryptor_pos_set(
+                self->field->cryptor,
+                state->cryptor_password_position);
+        }
+        else {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 /* node_write_dir: write directory node to output stream
                    return 1 if has written correctly
                    return 0 if errors happened */
@@ -68,7 +104,15 @@ int node_test_isdir(struct node *self, FILE *ifp)
 
     fgetpos(ifp, &pos);
     f = binfield_raw_create(field, 1);
-    binfield_raw_read(field, f, ifp, 1);
+    if (field->cryptor == NULL) {
+        binfield_raw_read(field, f, ifp, 1);
+    }
+    else {
+        size_t oldpos;
+        cryptor_pos_get(field->cryptor, &oldpos);
+        binfield_raw_read(field, f, ifp, 1);
+        cryptor_pos_set(field->cryptor, oldpos);
+    }
     retval = f->val[0] == 'd';
     binfield_raw_free(field, f);
     fsetpos(ifp, &pos);
@@ -229,7 +273,15 @@ int node_test_isfile(struct node *self, FILE *ifp)
 
     fgetpos(ifp, &pos);
     f = binfield_raw_create(field, 1);
-    binfield_raw_read(field, f, ifp, 1);
+    if (field->cryptor == NULL) {
+        binfield_raw_read(field, f, ifp, 1);
+    }
+    else {
+        size_t oldpos;
+        cryptor_pos_get(field->cryptor, &oldpos);
+        binfield_raw_read(field, f, ifp, 1);
+        cryptor_pos_set(field->cryptor, oldpos);
+    }
     retval = f->val[0] == 'f';
     binfield_raw_free(field, f);
     fsetpos(ifp, &pos);
