@@ -39,11 +39,11 @@
  *                   this offset is relative to its place in memory
 */
 struct bindir {
-    struct field_raw *type_sign;
-    struct field_num *descsize;
-    struct field_raw *desc;
-    struct field_num *num_of_files;
-    struct field_num *file_offset;
+    struct binfield_raw *type_sign;
+    struct binfield_num *descsize;
+    struct binfield_raw *desc;
+    struct binfield_num *num_of_files;
+    struct binfield_num *file_offset;
 };
 
 int bindir_start(struct bindir *dir);

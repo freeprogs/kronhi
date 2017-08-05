@@ -51,6 +51,16 @@ char *bignumber_tostr(const struct bignumber *number, char out[])
     return out;
 }
 
+/* bignumber_eq_big:
+   test if left big number is equal to right big number
+   return 1 if left big number is equal to right big number
+   return 0 if left big number is not equal to right big number */
+int bignumber_eq_big(const struct bignumber *number_left,
+                     const struct bignumber *number_right)
+{
+    return number_left->number == number_right->number;
+}
+
 /* bignumber_lt_big:
    test if left big number is less than right big number
    return 1 if left big number is less than right big number

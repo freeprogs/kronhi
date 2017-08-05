@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <time.h>
 
-/* fixed size of datetime string with null charachter */
+/* fixed size of datetime string with null character */
 #define DATETIMESIZE  15
 
 int datetime_get_now(char out[]);

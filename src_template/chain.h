@@ -61,12 +61,14 @@ enum chain_code {
 struct chain {
     const char *dst;
     const struct file_offset *start;
+    struct node *node;
 };
 
 void chain_start(
     struct chain *self,
     const char *dst,
-    const struct file_offset *start);
+    const struct file_offset *start,
+    struct node *node);
 enum chain_code chain_create_dir(
     const struct chain *self,
     const char *dirdesc,

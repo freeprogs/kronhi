@@ -73,6 +73,9 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
         else if (strcmp(input, "init read") == 0) {
             return CMD_INIT_READ;
         }
+        else if (strcmp(input, "init password") == 0) {
+            return CMD_INIT_PASSWORD;
+        }
         else if (strcmp(input, "status write") == 0) {
             return CMD_STATUS_WRITE;
         }
@@ -84,6 +87,9 @@ cmdshell_prompt_command(const char *prompt, char in[], int maxsize)
         }
         else if (strcmp(input, "status read") == 0) {
             return CMD_STATUS_READ;
+        }
+        else if (strcmp(input, "status password") == 0) {
+            return CMD_STATUS_PASSWORD;
         }
         else if (strcmp(input, "write dir") == 0) {
             return CMD_WRITE_DIR;
@@ -126,10 +132,12 @@ void cmdshell_print_help(void)
         "                      (archive filename, description, relative offset)\n",
         "init read         --  initialize options for reading\n",
         "                      (source, destination, offset, cipher)\n"
+        "init password     --  initialize password for read and write operations\n",
         "status write      --  show set write options\n",
         "status write dir  --  show write directory contents\n",
         "status write file --  show write file data\n",
         "status read       --  show set read options\n",
+        "status password   --  show set password for read and write operations\n",
         "write dir         --  write directory data to destination\n",
         "write file        --  write file data and contents to destination\n",
         "\n",
@@ -304,6 +312,40 @@ int cmdshell_init_read(
     return retval;
 }
 
+/* cmdshell_init_password: input password for read and write operations
+                           return 0 when password was not input
+                           return 1 when password was input */
+int cmdshell_init_password(char password[])
+{
+    char input[CMDSHELL_MAXINPUT];
+    int retval, retin;
+
+    *input = '\0';
+
+    retin = input_line("Input password: ", input, sizeof input);
+    if (!retin) {
+        *password = '\0';
+        printf("Ok empty\n");
+        retval = 1;
+    }
+    else {
+        size_t len = strlen(input);
+        if (len <= MAXPASSWORD) {
+            strcpy(password, input);
+            printf("Ok %u characters\n", len);
+            retval = 1;
+        }
+        else {
+            printf("Fail too long password %u, "
+                   "maximum may be %u characters\n",
+                   len,
+                   MAXPASSWORD);
+            retval = 0;
+        }
+    }
+    return retval;
+}
+
 /* cmdshell_print_status_write:
    print status of set write options to standard output */
 void cmdshell_print_status_write(
@@ -372,6 +414,21 @@ void cmdshell_print_status_read(
         "\n"
         ,
         rsrc, rdst, roffset, rcipher);
+}
+
+/* cmdshell_print_status_password:
+   print status of set password for read and write operations to
+   standard output */
+void cmdshell_print_status_password(const char *password)
+{
+    printf(
+        "\n"
+        "Password (in angle brackets):\n"
+        "<%s>\n"
+        "%u characters\n",
+        password,
+        (unsigned) strlen(password)
+    );
 }
 
 /* cmdshell_init_write_dir: input settings for write directory

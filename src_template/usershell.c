@@ -31,6 +31,8 @@ int run_command_shell(void)
     struct directory wdir;
     struct file wfile;
 
+    char password[MAXPASSWORDZ];
+
     cmdshell_start();
     cmdshell_print_message("Input `help' for help or `quit' for exit.\n");
     write_options_clear(&wopts);
@@ -124,6 +126,14 @@ int run_command_shell(void)
                 cmdshell_print_error("can't input read options");
             }
         }
+        else if (retcmd == CMD_INIT_PASSWORD) {
+            if (cmdshell_init_password(password)) {
+                cmdshell_print_message("Password has set");
+            }
+            else {
+                cmdshell_print_error("can't set password");
+            }
+        }
         else if (retcmd == CMD_STATUS_WRITE) {
             char src[CMDSHELL_MAXINPUT];
             char dst[CMDSHELL_MAXINPUT];
@@ -162,6 +172,9 @@ int run_command_shell(void)
             read_options_tostr_cipher(&ropts, cipher);
             cmdshell_print_status_read(src, dst, offset, cipher);
         }
+        else if (retcmd == CMD_STATUS_PASSWORD) {
+            cmdshell_print_status_password(password);
+        }
         else if (retcmd == CMD_WRITE_DIR) {
             enum binarycmd_code retbin;
             char dest[CMDSHELL_MAXINPUT];
@@ -175,7 +188,8 @@ int run_command_shell(void)
             directory_description_get(&wdir, dirdesc);
             cipher = write_options_cipher_get(&wopts);
 
-            retbin = binarycmd_write_dir(dest, &offset, dirdesc, cipher);
+            retbin = binarycmd_write_dir(
+                dest, &offset, dirdesc, cipher, password);
             if (retbin == BINCMD_ERROR_DIR_OPENFILE) {
                 cmdshell_print_error("can't open file \"%s\"", dest);
             }
@@ -223,7 +237,9 @@ int run_command_shell(void)
             cipher = write_options_cipher_get(&wopts);
 
             retbin = binarycmd_write_file(
-                src, dst, &offset, filename, filedesc, filereloff, cipher);
+                src, dst, &offset,
+                filename, filedesc, filereloff,
+                cipher, password);
             if (retbin == BINCMD_ERROR_FILE_DIRENTRY) {
                 cmdshell_print_error(
                     "directory not found on \"%s\" with offset %s",

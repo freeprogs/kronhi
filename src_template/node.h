@@ -26,7 +26,16 @@
 #include "file_operation.h"
 #include "binfield.h"
 
-enum dir_field_flags {
+struct node {
+    struct binfield *field;
+};
+
+struct node_state {
+    int has_cryptor;
+    size_t cryptor_password_position;
+};
+
+enum node_dir_field_flags {
     DIRFLD_TYPESIGN = 0x1,
     DIRFLD_DESCSIZE = 0x2,
     DIRFLD_DESC = 0x4,
@@ -34,7 +43,7 @@ enum dir_field_flags {
     DIRFLD_FILEOFFSET = 0x10
 };
 
-enum file_field_flags {
+enum node_file_field_flags {
     FILFLD_TYPESIGN = 0x1,
     FILFLD_NAMESIZE = 0x2,
     FILFLD_NAME = 0x4,
@@ -47,19 +56,25 @@ enum file_field_flags {
     FILFLD_FILEOFFSET = 0x200
 };
 
-int node_write_dir(FILE *ofp, const struct bindir *dir);
-int node_test_isdir(FILE *ifp);
-int node_read_dir_header(FILE *ifp, struct bindir *dir);
+void node_start(struct node *self, struct binfield *field);
+int node_state_get(struct node *self, struct node_state *out);
+int node_state_set(struct node *self, const struct node_state *state);
+int node_write_dir(struct node *self, FILE *ofp, const struct bindir *dir);
+int node_test_isdir(struct node *self, FILE *ifp);
+int node_read_dir_header(struct node *self, FILE *ifp, struct bindir *dir);
 int node_write_dir_header_field(
+    struct node *self,
     FILE *ofp,
     const struct bindir *dir,
-    enum dir_field_flags fieldflags);
-int node_write_file(FILE *ofp, const struct binfile *file);
-int node_test_isfile(FILE *ifp);
-int node_read_file_header(FILE *ifp, struct binfile *file);
+    enum node_dir_field_flags fieldflags);
+int node_write_file(struct node *self, FILE *ofp, const struct binfile *file);
+int node_test_isfile(struct node *self, FILE *ifp);
+int node_read_file_header(struct node *self, FILE *ifp, struct binfile *file);
 int node_write_file_header_field(
+    struct node *self,
     FILE *ofp,
     const struct binfile *file,
-    enum file_field_flags fieldflags);
+    enum node_file_field_flags fieldflags);
+void node_end(struct node *self);
 
 #endif

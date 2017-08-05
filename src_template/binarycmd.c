@@ -24,16 +24,47 @@
    return success code if written without errors
    return error code if was not written or was written with errors */
 enum binarycmd_code binarycmd_write_dir(
-    const char *destination, const struct file_offset *offset,
-    const char *dirdesc, enum write_cipher_type cipher)
+    const char *destination,
+    const struct file_offset *offset,
+    const char *dirdesc,
+    enum write_cipher_type cipher,
+    const char *password)
 {
     struct chain chain;
+    struct node node;
+    struct binfield binfield;
+    struct cryptor cryptor;
     enum chain_code chret;
     enum binarycmd_code retval;
 
-    chain_start(&chain, destination, offset);
-    chret = chain_create_dir(&chain, dirdesc, 0, 0);
-    chain_end(&chain);
+    if (cipher == W_CIPHER_NONE) {
+        binfield_start(&binfield, NULL);
+        node_start(&node, &binfield);
+
+        chain_start(&chain, destination, offset, &node);
+        chret = chain_create_dir(&chain, dirdesc, 0, 0);
+        chain_end(&chain);
+
+        node_end(&node);
+        binfield_end(&binfield);
+    }
+    else if (cipher == W_CIPHER_XOR) {
+        cryptor_start(
+            &cryptor,
+            CRYPTOR_ALGORITHM_XOR,
+            (unsigned char *) password,
+            strlen(password));
+        binfield_start(&binfield, &cryptor);
+        node_start(&node, &binfield);
+
+        chain_start(&chain, destination, offset, &node);
+        chret = chain_create_dir(&chain, dirdesc, 0, 0);
+        chain_end(&chain);
+
+        node_end(&node);
+        binfield_end(&binfield);
+        cryptor_end(&cryptor);
+    }
 
     switch (chret) {
     case CHAIN_ERROR_DIR_OPENFILE:
@@ -72,15 +103,43 @@ enum binarycmd_code binarycmd_write_file(
     const char *filename,
     const char *filedesc,
     size_t filereloff,
-    enum write_cipher_type cipher)
+    enum write_cipher_type cipher,
+    const char *password)
 {
     struct chain chain;
+    struct node node;
+    struct binfield binfield;
+    struct cryptor cryptor;
     enum chain_code chret;
     enum binarycmd_code retval;
 
-    chain_start(&chain, destination, offset);
-    chret = chain_append_file(&chain, source, filename, filedesc, filereloff);
-    chain_end(&chain);
+    if (cipher == W_CIPHER_NONE) {
+        binfield_start(&binfield, NULL);
+        node_start(&node, &binfield);
+
+        chain_start(&chain, destination, offset, &node);
+        chret = chain_append_file(&chain, source, filename, filedesc, filereloff);
+        chain_end(&chain);
+
+        node_end(&node);
+        binfield_end(&binfield);
+    }
+    else if (cipher == W_CIPHER_XOR) {
+        cryptor_start(
+            &cryptor, CRYPTOR_ALGORITHM_XOR,
+            (unsigned char *) password,
+            strlen(password));
+        binfield_start(&binfield, &cryptor);
+        node_start(&node, &binfield);
+
+        chain_start(&chain, destination, offset, &node);
+        chret = chain_append_file(&chain, source, filename, filedesc, filereloff);
+        chain_end(&chain);
+
+        node_end(&node);
+        binfield_end(&binfield);
+        cryptor_end(&cryptor);
+    }
 
     switch (chret) {
     case CHAIN_ERROR_FILE_DIRENTRY:

@@ -29,6 +29,7 @@
 #include "write_options.h"
 #include "read_options.h"
 #include "bignumber.h"
+#include "password.h"
 
 /* maximum command shell input line length */
 #define CMDSHELL_MAXINPUT      1000
@@ -44,10 +45,12 @@ enum cmdshell_code {
     CMD_INIT_WRITE_DIR,
     CMD_INIT_WRITE_FILE,
     CMD_INIT_READ,
+    CMD_INIT_PASSWORD,
     CMD_STATUS_WRITE,
     CMD_STATUS_WRITE_DIR,
     CMD_STATUS_WRITE_FILE,
     CMD_STATUS_READ,
+    CMD_STATUS_PASSWORD,
     CMD_WRITE_DIR,
     CMD_WRITE_FILE,
     CMD_HELP,
@@ -72,6 +75,7 @@ int cmdshell_init_write(
     char src[], char dst[], char offset[], char cipher[]);
 int cmdshell_init_read(
     char src[], char dst[], char offset[], char cipher[]);
+int cmdshell_init_password(char password[]);
 void cmdshell_print_status_write(
     const char *wsrc, const char *wdst,
     const char *woffset, const char *wcipher);
@@ -81,6 +85,7 @@ void cmdshell_print_status_write_file(
 void cmdshell_print_status_read(
     const char *rsrc, const char *rdst,
     const char *roffset, const char *rcipher);
+void cmdshell_print_status_password(const char *password);
 enum cmdshell_dir_code
 cmdshell_init_write_dir(char descinter[], char descfile[]);
 int cmdshell_init_write_file(

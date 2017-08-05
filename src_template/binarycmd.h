@@ -53,8 +53,11 @@ enum binarycmd_code {
 };
 
 enum binarycmd_code binarycmd_write_dir(
-    const char *destination, const struct file_offset *offset,
-    const char *dirdesc, enum write_cipher_type cipher);
+    const char *destination,
+    const struct file_offset *offset,
+    const char *dirdesc,
+    enum write_cipher_type cipher,
+    const char *password);
 enum binarycmd_code binarycmd_write_file(
     const char *source,
     const char *destination,
@@ -62,6 +65,7 @@ enum binarycmd_code binarycmd_write_file(
     const char *filename,
     const char *filedesc,
     size_t filereloff,
-    enum write_cipher_type cipher);
+    enum write_cipher_type cipher,
+    const char *password);
 
 #endif
