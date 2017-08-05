@@ -273,7 +273,15 @@ int node_test_isfile(struct node *self, FILE *ifp)
 
     fgetpos(ifp, &pos);
     f = binfield_raw_create(field, 1);
-    binfield_raw_read(field, f, ifp, 1);
+    if (field->cryptor == NULL) {
+        binfield_raw_read(field, f, ifp, 1);
+    }
+    else {
+        size_t oldpos;
+        cryptor_pos_get(field->cryptor, &oldpos);
+        binfield_raw_read(field, f, ifp, 1);
+        cryptor_pos_set(field->cryptor, oldpos);
+    }
     retval = f->val[0] == 'f';
     binfield_raw_free(field, f);
     fsetpos(ifp, &pos);
