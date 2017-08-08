@@ -88,14 +88,14 @@ int main(void)
 
     if (CU_add_test(suite2, "can test for dir type with xor",
                     test_can_test_for_dir_type_with_xor) == NULL
-     || CU_add_test(suite2, "can test for file type with xor",
-                    test_can_test_for_file_type_with_xor) == NULL
      || CU_add_test(suite2, "can write dir with xor",
                     test_can_write_dir_with_xor) == NULL
-     || CU_add_test(suite2, "can write file with xor",
-                    test_can_write_file_with_xor) == NULL
      || CU_add_test(suite2, "can read dir header with xor",
                     test_can_read_dir_header_with_xor) == NULL
+     || CU_add_test(suite2, "can test for file type with xor",
+                    test_can_test_for_file_type_with_xor) == NULL
+     || CU_add_test(suite2, "can write file with xor",
+                    test_can_write_file_with_xor) == NULL
      || CU_add_test(suite2, "can read file header with xor",
                     test_can_read_file_header_with_xor) == NULL
      || CU_add_test(suite2, "can get state with xor",
