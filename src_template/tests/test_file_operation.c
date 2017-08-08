@@ -25,6 +25,7 @@ void test_can_skip_a_byte(void);
 void test_raise_on_skip_beyond_end_of_file(void);
 void test_can_get_file_size(void);
 void test_can_write_file_to_file(void);
+void test_can_test_write_size(void);
 
 int main(void)
 {
@@ -46,7 +47,9 @@ int main(void)
      || CU_add_test(suite, "can get file size",
                     test_can_get_file_size) == NULL
      || CU_add_test(suite, "can write file to file",
-                    test_can_write_file_to_file) == NULL) {
+                    test_can_write_file_to_file) == NULL
+     || CU_add_test(suite, "can test write size",
+                    test_can_test_write_size) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -149,4 +152,28 @@ void test_can_write_file_to_file(void)
     remove(ifname);
 
     fclose(fp);
+}
+
+void test_can_test_write_size(void)
+{
+    struct bignumber size;
+
+    FILE *iofp;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+    fprintf(iofp, "abc");
+
+    rewind(iofp);
+    CU_ASSERT_TRUE(bignumber_set_value_int(&size, 3));
+    CU_ASSERT_TRUE(file_test_write_size(iofp, &size));
+    CU_ASSERT_EQUAL(getc(iofp), 'a');
+
+    rewind(iofp);
+    CU_ASSERT_TRUE(bignumber_set_value_int(&size, 4));
+    CU_ASSERT_FALSE(file_test_write_size(iofp, &size));
+    CU_ASSERT_EQUAL(getc(iofp), 'a');
+
+    fclose(iofp);
 }
