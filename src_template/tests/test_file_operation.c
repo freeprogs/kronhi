@@ -26,6 +26,7 @@ void test_raise_on_skip_beyond_end_of_file(void);
 void test_can_get_file_size(void);
 void test_can_write_file_to_file(void);
 void test_can_test_write_size(void);
+void test_can_get_control_sum(void);
 
 int main(void)
 {
@@ -49,7 +50,9 @@ int main(void)
      || CU_add_test(suite, "can write file to file",
                     test_can_write_file_to_file) == NULL
      || CU_add_test(suite, "can test write size",
-                    test_can_test_write_size) == NULL) {
+                    test_can_test_write_size) == NULL
+     || CU_add_test(suite, "can get control sum",
+                    test_can_get_control_sum) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -173,6 +176,25 @@ void test_can_test_write_size(void)
     rewind(iofp);
     CU_ASSERT_TRUE(bignumber_set_value_int(&size, 4));
     CU_ASSERT_FALSE(file_test_write_size(iofp, &size));
+    CU_ASSERT_EQUAL(getc(iofp), 'a');
+
+    fclose(iofp);
+}
+
+void test_can_get_control_sum(void)
+{
+    FILE *iofp;
+
+    unsigned long out;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+    fprintf(iofp, "abc");
+
+    rewind(iofp);
+    CU_ASSERT_TRUE(file_get_ctrlsum(iofp, &out));
+    CU_ASSERT_EQUAL(out, 0x352441C2UL);
     CU_ASSERT_EQUAL(getc(iofp), 'a');
 
     fclose(iofp);
