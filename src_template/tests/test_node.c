@@ -1661,7 +1661,7 @@ void test_can_get_state_with_xor(void)
     node_end(&node);
     binfield_end(&field);
     cryptor_end(&cryptor);
-    
+
     CU_ASSERT_EQUAL(state.has_cryptor, 1);
     CU_ASSERT_EQUAL(state.cryptor_password_position, 1);
 }
