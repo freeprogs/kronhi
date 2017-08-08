@@ -23,9 +23,7 @@
 
 void test_can_skip_a_byte(void);
 void test_raise_on_skip_beyond_end_of_file(void);
-
 void test_can_get_file_size(void);
-
 void test_can_write_file_to_file(void);
 
 int main(void)
