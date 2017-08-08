@@ -32,6 +32,7 @@ void test_can_read_file_header(void);
 void test_can_get_state(void);
 void test_can_set_state(void);
 
+void test_can_test_for_dir_type_with_xor(void);
 void test_can_write_dir_with_xor(void);
 void test_can_write_file_with_xor(void);
 void test_can_read_dir_header_with_xor(void);
@@ -84,7 +85,9 @@ int main(void)
         return CU_get_error();
     }
 
-    if (CU_add_test(suite2, "can write dir with xor",
+    if (CU_add_test(suite2, "can test for dir type with xor",
+                    test_can_test_for_dir_type_with_xor) == NULL
+     || CU_add_test(suite2, "can write dir with xor",
                     test_can_write_dir_with_xor) == NULL
      || CU_add_test(suite2, "can write file with xor",
                     test_can_write_file_with_xor) == NULL
@@ -1233,6 +1236,49 @@ void test_can_set_state(void)
 
     node_end(&node);
     binfield_end(&field);
+}
+
+void test_can_test_for_dir_type_with_xor(void)
+{
+    struct node node;
+    struct binfield field;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+    FILE *iofp;
+
+    size_t pos;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+    binfield_start(&field, &cryptor);
+    node_start(&node, &field);
+
+    putc('\x05', iofp);
+    rewind(iofp);
+    CU_ASSERT_TRUE(cryptor_pos_get(&cryptor, &pos));
+    CU_ASSERT_EQUAL(pos, 0);
+    CU_ASSERT_TRUE(node_test_isdir(&node, iofp));
+    CU_ASSERT_TRUE(cryptor_pos_get(&cryptor, &pos));
+    CU_ASSERT_EQUAL(pos, 0);
+
+    rewind(iofp);
+    putc('x', iofp);
+    rewind(iofp);
+    CU_ASSERT_TRUE(cryptor_pos_get(&cryptor, &pos));
+    CU_ASSERT_EQUAL(pos, 0);
+    CU_ASSERT_FALSE(node_test_isdir(&node, iofp));
+    CU_ASSERT_TRUE(cryptor_pos_get(&cryptor, &pos));
+    CU_ASSERT_EQUAL(pos, 0);
+
+    node_end(&node);
+    binfield_end(&field);
+    cryptor_end(&cryptor);
+
+    fclose(iofp);
 }
 
 void test_can_write_dir_with_xor(void)
