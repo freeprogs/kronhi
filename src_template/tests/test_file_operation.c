@@ -27,6 +27,7 @@ void test_can_get_file_size(void);
 void test_can_write_file_to_file(void);
 void test_can_test_write_size(void);
 void test_can_get_control_sum(void);
+void test_can_skip_bytes(void);
 
 int main(void)
 {
@@ -52,7 +53,9 @@ int main(void)
      || CU_add_test(suite, "can test write size",
                     test_can_test_write_size) == NULL
      || CU_add_test(suite, "can get control sum",
-                    test_can_get_control_sum) == NULL) {
+                    test_can_get_control_sum) == NULL
+     || CU_add_test(suite, "can skip bytes",
+                    test_can_skip_bytes) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -196,6 +199,34 @@ void test_can_get_control_sum(void)
     CU_ASSERT_TRUE(file_get_ctrlsum(iofp, &out));
     CU_ASSERT_EQUAL(out, 0x352441C2UL);
     CU_ASSERT_EQUAL(getc(iofp), 'a');
+
+    fclose(iofp);
+}
+
+void test_can_skip_bytes(void)
+{
+    struct bignumber count;
+    FILE *iofp;
+
+    iofp = tmpfile();
+    if (iofp == NULL)
+        CU_FAIL("can't create temporary file");
+    fprintf(iofp, "abc");
+
+    rewind(iofp);
+    CU_ASSERT_TRUE(bignumber_set_value_int(&count, 2));
+    CU_ASSERT_TRUE(file_skip_bytes(iofp, &count));
+    CU_ASSERT_EQUAL(getc(iofp), 'c');
+
+    rewind(iofp);
+    CU_ASSERT_TRUE(bignumber_set_value_int(&count, 3));
+    CU_ASSERT_TRUE(file_skip_bytes(iofp, &count));
+    CU_ASSERT_EQUAL(getc(iofp), EOF);
+
+    rewind(iofp);
+    CU_ASSERT_TRUE(bignumber_set_value_int(&count, 4));
+    CU_ASSERT_TRUE(file_skip_bytes(iofp, &count));
+    CU_ASSERT_EQUAL(getc(iofp), EOF);
 
     fclose(iofp);
 }
