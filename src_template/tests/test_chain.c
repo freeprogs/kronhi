@@ -38,6 +38,8 @@ void test_can_create_directory_with_xor(void);
 
 void test_can_append_file_to_empty_directory_with_xor(void);
 void test_can_append_file_to_non_empty_directory_with_xor(void);
+void test_can_append_file_with_offset_to_directory_with_xor(void);
+void test_can_append_file_with_offset_to_file_with_xor(void);
 
 int main(void)
 {
@@ -112,7 +114,11 @@ int main(void)
     if (CU_add_test(suite4, "can append file to empty directory with xor",
                     test_can_append_file_to_empty_directory_with_xor) == NULL
      || CU_add_test(suite4, "can append file to non-empty directory with xor",
-                    test_can_append_file_to_non_empty_directory_with_xor) == NULL) {
+                    test_can_append_file_to_non_empty_directory_with_xor) == NULL
+     || CU_add_test(suite4, "can append file with offset to directory with xor",
+                    test_can_append_file_with_offset_to_directory_with_xor) == NULL
+     || CU_add_test(suite4, "can append file with offset to file with xor",
+                    test_can_append_file_with_offset_to_file_with_xor) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -1908,6 +1914,568 @@ void test_can_append_file_to_non_empty_directory_with_xor(void)
 
     /* assert: first file has been read from destination and matched
        with pattern */
+
+    if (fread(filebytes, 1, filebytes2_match_size, ifp_dst)
+     != filebytes2_match_size)
+        CU_FAIL("can't read destination file");
+    retval = memcmp(
+        filebytes,
+        filebytes2_match,
+        filebytes2_match_size
+    );
+
+    CU_ASSERT_EQUAL(((void) "file 2 correct" , retval), 0);
+
+    /* assert: source file has been read from destination and matched
+       with pattern */
+
+    fclose(ifp_dst);
+
+
+    remove(source);
+    remove(destination);
+}
+
+void test_can_append_file_with_offset_to_directory_with_xor(void)
+{
+    struct chain chain;
+    struct node node;
+    struct binfield field;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+    const char *destination = "file.txt";
+    struct file_offset offset;
+    enum chain_code chretval;
+
+    const char *source = "source.txt";
+    const char *filename;
+    const char *filedesc;
+    size_t filereloff;
+
+    FILE *ofp_src, *ofp_dst, *ifp_dst;
+    int i;
+    char dirbytes[100];
+    size_t dirsize;
+    char filebytes[100];
+    int retval;
+
+    char dirbytes_match[100];
+    size_t dirbytes_match_size;
+    char filebytes_match[100];
+    size_t filebytes_match_size;
+    char datetime[100];
+
+    ofp_dst = fopen(destination, "wb");
+    if (ofp_dst == NULL)
+        CU_FAIL("can't create temporary file");
+    for (i = 0; i < 100; i++)
+        putc('x', ofp_dst);
+    rewind(ofp_dst);
+
+    /* assert: destination has filled by x characters */
+
+    /*
+    dirsize = 14;
+    memcpy(
+        dirbytes,
+        "\x64"
+        "\x00\x03"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x00"
+        "\x00\x00\x00\x01",
+        dirsize);
+    */
+
+    dirsize = 14;
+    memcpy(
+        dirbytes,
+        "\x05"
+        "\x62\x60"
+        "\x00\x00\x00"
+        "\x61\x62\x63\x61"
+        "\x62\x63\x61\x63",
+        dirsize);
+
+    if (fwrite(dirbytes, 1, dirsize, ofp_dst) != dirsize)
+        CU_FAIL("can't prepare directory in temporary file");
+
+    fclose(ofp_dst);
+
+    /* assert: directory has been prepared and written on
+       destination */
+
+    ofp_src = fopen(source, "wb");
+    if (ofp_src == NULL)
+        CU_FAIL("can't create temporary file");
+    fprintf(ofp_src, "abc");
+    fclose(ofp_src);
+
+    /* assert: source file has been prepared for write */
+
+    /*
+    dirbytes_match_size = 14;
+    memcpy(
+        dirbytes_match,
+        "\x64"
+        "\x00\x03"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x01"
+        "\x00\x00\x00\x0A",
+        dirbytes_match_size);
+    */
+
+    dirbytes_match_size = 14;
+    memcpy(
+        dirbytes_match,
+        "\x05"
+        "\x62\x60"
+        "\x00\x00\x00"
+        "\x61\x62\x63\x60"
+        "\x62\x63\x61\x68",
+        dirbytes_match_size);
+
+    /* assert: directory binary data pattern for match has been
+       prepared */
+
+    /*
+    filebytes_match_size = 37;
+    memcpy(
+        filebytes_match,
+        "\x66"
+        "\x03"
+        "\x61\x62\x63"
+        "\x00\x03"
+        "\x61\x62\x63",
+        10
+    );
+    datetime_get_now(datetime);
+    memcpy(filebytes_match + 10, datetime, 14);
+    memcpy(
+        filebytes_match + 10 + 14,
+        "\x35\x24\x41\xC2"
+        "\x33\x00"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x00",
+        13
+    );
+    */
+
+    filebytes_match_size = 37;
+    memcpy(
+        filebytes_match,
+        "\x05"
+        "\x62"
+        "\x03\x01\x02"
+        "\x62\x60"
+        "\x00\x00\x00",
+        10
+    );
+    {
+        struct cryptor cryptor;
+        unsigned char psw[100] = {'a', 'b', 'c'};
+        size_t pswlen = 3;
+        size_t osize;
+        cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+        cryptor_pos_set(&cryptor, 0);
+        datetime_get_now(datetime);
+        cryptor_encrypt(
+            &cryptor,
+            (unsigned char *) datetime,
+            14,
+            (unsigned char *) datetime,
+            &osize
+        );
+        memcpy(filebytes_match + 10, datetime, 14);
+        cryptor_end(&cryptor);
+    }
+    memcpy(
+        filebytes_match + 10 + 14,
+        "\x56\x45\x23\xa1"
+        "\x52\x62"
+        "\x02\x03\x01"
+        "\x63\x61\x62\x63",
+        13
+    );
+
+    /* assert: source file binary data pattern for match has been
+       prepared */
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+    binfield_start(&field, &cryptor);
+    node_start(&node, &field);
+
+    fileoffset_clear(&offset);
+    chain_start(&chain, destination, &offset, &node);
+
+    filename = "abc";
+    filedesc = "abc";
+    filereloff = 10;
+    chretval = chain_append_file(
+        &chain, source, filename, filedesc, filereloff);
+
+    chain_end(&chain);
+
+    node_end(&node);
+    binfield_end(&field);
+    cryptor_end(&cryptor);
+
+    CU_ASSERT_EQUAL(chretval, CHAIN_OK);
+
+    /* assert: source file has been written to directory on
+       destination */
+
+    ifp_dst = fopen(destination, "rb");
+    if (ifp_dst == NULL)
+        CU_FAIL("can't open destination file");
+
+    rewind(ifp_dst);
+    memset(dirbytes, 0, sizeof dirbytes);
+    if (fread(dirbytes, 1, dirbytes_match_size, ifp_dst)
+     != dirbytes_match_size)
+        CU_FAIL("can't read destination file");
+    retval = memcmp(
+        dirbytes,
+        dirbytes_match,
+        dirbytes_match_size
+    );
+
+    CU_ASSERT_EQUAL(((void) "directory correct" , retval), 0);
+
+    /* assert: directory has been read from destination and matched
+       with pattern */
+
+    for (i = 0; i < filereloff; i++)
+        getc(ifp_dst);
+
+    /* assert: file offset bytes have been skipped on destination */
+
+    if (fread(filebytes, 1, filebytes_match_size, ifp_dst)
+     != filebytes_match_size)
+        CU_FAIL("can't read destination file");
+    retval = memcmp(
+        filebytes,
+        filebytes_match,
+        filebytes_match_size
+    );
+
+    CU_ASSERT_EQUAL(((void) "file correct" , retval), 0);
+
+    /* assert: source file has been read from destination and matched
+       with pattern */
+
+    fclose(ifp_dst);
+
+
+    remove(source);
+    remove(destination);
+}
+
+void test_can_append_file_with_offset_to_file_with_xor(void)
+{
+    struct chain chain;
+    struct node node;
+    struct binfield field;
+    struct cryptor cryptor;
+    unsigned char psw[100] = {'a', 'b', 'c'};
+    size_t pswlen = 3;
+    const char *destination = "file.txt";
+    struct file_offset offset;
+    enum chain_code chretval;
+
+    const char *source = "source.txt";
+    const char *filename;
+    const char *filedesc;
+    size_t filereloff;
+
+    FILE *ofp_src, *ofp_dst, *ifp_dst;
+    int i;
+    char dirbytes[100];
+    size_t dirsize;
+    char filebytes[100];
+    size_t filesize;
+    int retval;
+
+    char dirbytes_match[100];
+    size_t dirbytes_match_size;
+    char filebytes1_match[100];
+    size_t filebytes1_match_size;
+    char filebytes2_match[100];
+    size_t filebytes2_match_size;
+    char datetime[100];
+
+    ofp_dst = fopen(destination, "wb");
+    if (ofp_dst == NULL)
+        CU_FAIL("can't create temporary file");
+    for (i = 0; i < 100; i++)
+        putc('x', ofp_dst);
+    rewind(ofp_dst);
+
+    /* assert: destination has filled by x characters */
+
+    /*
+    dirsize = 14;
+    memcpy(
+        dirbytes,
+        "\x64"
+        "\x00\x03"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x01"
+        "\x00\x00\x00\x00",
+        dirsize);
+    */
+
+    dirsize = 14;
+    memcpy(
+        dirbytes,
+        "\x05"
+        "\x62\x60"
+        "\x00\x00\x00"
+        "\x61\x62\x63\x60"
+        "\x62\x63\x61\x62",
+        dirsize);
+
+    if (fwrite(dirbytes, 1, dirsize, ofp_dst) != dirsize)
+        CU_FAIL("can't prepare directory in temporary file");
+
+
+    /* assert: directory has been prepared and written on
+       destination */
+
+    /*
+    filesize = 37;
+    memcpy(
+        filebytes,
+        "\x66"
+        "\x03"
+        "\x61\x62\x63"
+        "\x00\x03"
+        "\x61\x62\x63"
+        "\x32\x30\x31\x37\x30\x31\x30\x32\x30\x33\x30\x34\x30\x35"
+        "\x01\x02\x03\x04"
+        "\x33\x00"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x01",
+        filesize);
+    */
+
+    filesize = 37;
+    memcpy(
+        filebytes,
+        "\x05"
+        "\x62"
+        "\x03\x01\x02"
+        "\x62\x60"
+        "\x00\x00\x00"
+        "\x53\x52\x52\x56\x52\x52\x52\x50\x53\x52\x52\x57\x51\x57"
+        "\x62\x63\x61\x67"
+        "\x52\x62"
+        "\x02\x03\x01"
+        "\x63\x61\x62\x62",
+        filesize);
+
+    if (fwrite(filebytes, 1, filesize, ofp_dst) != filesize)
+        CU_FAIL("can't prepare file in directory in temporary file");
+
+    fclose(ofp_dst);
+
+    /* assert: first file has been prepared and written to directory
+       on destination */
+
+    ofp_src = fopen(source, "wb");
+    if (ofp_src == NULL)
+        CU_FAIL("can't create temporary file");
+    fprintf(ofp_src, "abc");
+    fclose(ofp_src);
+
+    /* assert: source file has been prepared for write */
+
+    /*
+    dirbytes_match_size = 14;
+    memcpy(
+        dirbytes_match,
+        "\x64"
+        "\x00\x03"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x02"
+        "\x00\x00\x00\x00",
+        dirbytes_match_size);
+    */
+
+    dirbytes_match_size = 14;
+    memcpy(
+        dirbytes_match,
+        "\x05"
+        "\x62\x60"
+        "\x00\x00\x00"
+        "\x61\x62\x63\x63"
+        "\x62\x63\x61\x62",
+        dirbytes_match_size);
+
+    /* assert: directory binary data pattern for match has been
+       prepared */
+
+    /*
+    filebytes1_match_size = 37;
+    memcpy(
+        filebytes1_match,
+        "\x66"
+        "\x03"
+        "\x61\x62\x63"
+        "\x00\x03"
+        "\x61\x62\x63"
+        "\x32\x30\x31\x37\x30\x31\x30\x32\x30\x33\x30\x34\x30\x35"
+        "\x01\x02\x03\x04"
+        "\x33\x00"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x0A",
+        filebytes1_match_size
+    );
+    */
+
+    filebytes1_match_size = 37;
+    memcpy(
+        filebytes1_match,
+        "\x05"
+        "\x62"
+        "\x03\x01\x02"
+        "\x62\x60"
+        "\x00\x00\x00"
+        "\x53\x52\x52\x56\x52\x52\x52\x50\x53\x52\x52\x57\x51\x57"
+        "\x62\x63\x61\x67"
+        "\x52\x62"
+        "\x02\x03\x01"
+        "\x63\x61\x62\x69",
+        filebytes1_match_size
+    );
+
+    /* assert: first file binary data pattern for match has been
+       prepared */
+
+    /*
+    filebytes2_match_size = 37;
+    memcpy(
+        filebytes2_match,
+        "\x66"
+        "\x03"
+        "\x61\x62\x63"
+        "\x00\x03"
+        "\x61\x62\x63",
+        10
+    );
+    datetime_get_now(datetime);
+    memcpy(filebytes2_match + 10, datetime, 14);
+    memcpy(
+        filebytes2_match + 10 + 14,
+        "\x35\x24\x41\xC2"
+        "\x33\x00"
+        "\x61\x62\x63"
+        "\x00\x00\x00\x00",
+        13
+    );
+    */
+
+    filebytes2_match_size = 37;
+    memcpy(
+        filebytes2_match,
+        "\x07"
+        "\x61"
+        "\x02\x03\x01"
+        "\x63\x62"
+        "\x03\x01\x02",
+        10
+    );
+    {
+        struct cryptor cryptor;
+        unsigned char psw[100] = {'a', 'b', 'c'};
+        size_t pswlen = 3;
+        size_t osize;
+        cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+        cryptor_pos_set(&cryptor, 1);
+        datetime_get_now(datetime);
+        cryptor_encrypt(
+            &cryptor,
+            (unsigned char *) datetime,
+            14,
+            (unsigned char *) datetime,
+            &osize
+        );
+        memcpy(filebytes2_match + 10, datetime, 14);
+        cryptor_end(&cryptor);
+    }
+    memcpy(
+        filebytes2_match + 10 + 14,
+        "\x54\x46\x22\xa3"
+        "\x51\x63"
+        "\x00\x00\x00"
+        "\x61\x62\x63\x61",
+        13
+    );
+
+    /* assert: source file binary data pattern for match has been
+       prepared */
+
+    cryptor_start(&cryptor, CRYPTOR_ALGORITHM_XOR, psw, pswlen);
+    binfield_start(&field, &cryptor);
+    node_start(&node, &field);
+
+    fileoffset_clear(&offset);
+    chain_start(&chain, destination, &offset, &node);
+
+    filename = "abc";
+    filedesc = "abc";
+    filereloff = 10;
+    chretval = chain_append_file(
+        &chain, source, filename, filedesc, filereloff);
+
+    chain_end(&chain);
+
+    node_end(&node);
+    binfield_end(&field);
+    cryptor_end(&cryptor);
+
+    CU_ASSERT_EQUAL(chretval, CHAIN_OK);
+
+    /* assert: source file has been written to directory with file on
+       destination */
+
+    ifp_dst = fopen(destination, "rb");
+    if (ifp_dst == NULL)
+        CU_FAIL("can't open destination file");
+
+    rewind(ifp_dst);
+    if (fread(dirbytes, 1, dirbytes_match_size, ifp_dst)
+     != dirbytes_match_size)
+        CU_FAIL("can't read destination file");
+    retval = memcmp(
+        dirbytes,
+        dirbytes_match,
+        dirbytes_match_size
+    );
+
+    CU_ASSERT_EQUAL(((void) "directory correct" , retval), 0);
+
+    /* assert: directory has been read from destination and matched
+       with pattern */
+
+    if (fread(filebytes, 1, filebytes1_match_size, ifp_dst)
+     != filebytes1_match_size)
+        CU_FAIL("can't read destination file");
+    retval = memcmp(
+        filebytes,
+        filebytes1_match,
+        filebytes1_match_size
+    );
+
+    CU_ASSERT_EQUAL(((void) "file 1 correct" , retval), 0);
+
+    /* assert: first file has been read from destination and matched
+       with pattern */
+
+    for (i = 0; i < filereloff; i++)
+        getc(ifp_dst);
+
+    /* assert: file offset bytes have been skipped on destination */
 
     if (fread(filebytes, 1, filebytes2_match_size, ifp_dst)
      != filebytes2_match_size)
