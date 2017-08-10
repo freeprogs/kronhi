@@ -277,9 +277,28 @@ int run_command_shell(void)
                 cmdshell_print_error(
                     "can't write source file meta data to destination file");
             }
+            else if (retbin == BINCMD_ERROR_FILE_WRITEDIRHEADER_FO) {
+                cmdshell_print_error(
+                    "can't write relative offset to directory meta data "
+                    "in destination file");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_WRITEDIRHEADER_NOF) {
+                cmdshell_print_error(
+                    "can't write number of files to directory meta data "
+                    "in destination file");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_WRITEFILEHEADER_FO) {
+                cmdshell_print_error(
+                    "can't write relative offset to file meta data "
+                    "in destination file");
+            }
             else if (retbin == BINCMD_ERROR_FILE_DIRGETOFFSET) {
                 cmdshell_print_error(
                     "can't get offset of the first file in directory");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_DIRJUMP) {
+                cmdshell_print_error(
+                    "can't skip bytes by relative offset of directory meta data");
             }
             else if (retbin == BINCMD_ERROR_FILE_NOFILE) {
                 cmdshell_print_error("can't find file at offset in directory");
@@ -291,6 +310,10 @@ int run_command_shell(void)
             else if (retbin == BINCMD_ERROR_FILE_FILEGETOFFSET) {
                 cmdshell_print_error(
                     "can't get offset of the next file in file");
+            }
+            else if (retbin == BINCMD_ERROR_FILE_FILEJUMP) {
+                cmdshell_print_error(
+                    "can't skip bytes by relative offset of file meta data");
             }
             else if (retbin == BINCMD_ERROR_FILE_WRITEFILE) {
                 cmdshell_print_error(

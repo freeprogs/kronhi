@@ -210,12 +210,26 @@ enum chain_code chain_append_file(
         node_state_set(node, &dirnodestate);
         fsetpos(ofp, &dirpos);
         bindir_file_offset_set(&dirtmp, filereloff);
-        node_write_dir_header_field(node, ofp, &dirtmp, DIRFLD_FILEOFFSET);
+        if (!node_write_dir_header_field(
+            node, ofp, &dirtmp, DIRFLD_FILEOFFSET)) {
+            fclose(ifp);
+            fclose(ofp);
+            bindir_end(&dirtmp);
+            binfile_end(&file);
+            return CHAIN_ERROR_FILE_WRITEDIRHEADER_FO;
+        }
 
         node_state_set(node, &dirnodestate);
         fsetpos(ofp, &dirpos);
         bindir_num_of_files_set(&dirtmp, 1);
-        node_write_dir_header_field(node, ofp, &dirtmp, DIRFLD_NUMOFFILES);
+        if (!node_write_dir_header_field(
+            node, ofp, &dirtmp, DIRFLD_NUMOFFILES)) {
+            fclose(ifp);
+            fclose(ofp);
+            bindir_end(&dirtmp);
+            binfile_end(&file);
+            return CHAIN_ERROR_FILE_WRITEDIRHEADER_NOF;
+        }
 
     }
     else {
@@ -228,7 +242,13 @@ enum chain_code chain_append_file(
             return CHAIN_ERROR_FILE_DIRGETOFFSET;
         }
 
-        jumper_dir_jump_file_offset(ofp, tmp_dir_rel_off);
+        if (!jumper_dir_jump_file_offset(ofp, tmp_dir_rel_off)) {
+            fclose(ifp);
+            fclose(ofp);
+            bindir_end(&dirtmp);
+            binfile_end(&file);
+            return CHAIN_ERROR_FILE_DIRJUMP;
+        }
 
         binfile_start(&filetmp);
 
@@ -261,10 +281,26 @@ enum chain_code chain_append_file(
                 binfile_end(&file);
                 return CHAIN_ERROR_FILE_FILEGETOFFSET;
             }
-            if (i + 1 < tmp_num_of_files)
-                jumper_file_jump_file_offset(ofp, tmp_file_rel_off);
-            else
-                jumper_file_jump_file_offset(ofp, filereloff);
+            if (i + 1 < tmp_num_of_files) {
+                if (!jumper_file_jump_file_offset(ofp, tmp_file_rel_off)) {
+                    fclose(ifp);
+                    fclose(ofp);
+                    bindir_end(&dirtmp);
+                    binfile_end(&filetmp);
+                    binfile_end(&file);
+                    return CHAIN_ERROR_FILE_FILEJUMP;
+                }
+            }
+            else {
+                if (!jumper_file_jump_file_offset(ofp, filereloff)) {
+                    fclose(ifp);
+                    fclose(ofp);
+                    bindir_end(&dirtmp);
+                    binfile_end(&filetmp);
+                    binfile_end(&file);
+                    return CHAIN_ERROR_FILE_FILEJUMP;
+                }
+            }
 
         }
 
@@ -288,12 +324,28 @@ enum chain_code chain_append_file(
         node_state_set(node, &filenodestate);
         fsetpos(ofp, &filepos);
         binfile_file_offset_set(&filetmp, filereloff);
-        node_write_file_header_field(node, ofp, &filetmp, FILFLD_FILEOFFSET);
+        if (!node_write_file_header_field(
+            node, ofp, &filetmp, FILFLD_FILEOFFSET)) {
+            fclose(ifp);
+            fclose(ofp);
+            bindir_end(&dirtmp);
+            binfile_end(&filetmp);
+            binfile_end(&file);
+            return CHAIN_ERROR_FILE_WRITEFILEHEADER_FO;
+        }
 
         node_state_set(node, &dirnodestate);
         fsetpos(ofp, &dirpos);
         bindir_num_of_files_set(&dirtmp, tmp_num_of_files + 1);
-        node_write_dir_header_field(node, ofp, &dirtmp, DIRFLD_NUMOFFILES);
+        if (!node_write_dir_header_field(
+            node, ofp, &dirtmp, DIRFLD_NUMOFFILES)) {
+            fclose(ifp);
+            fclose(ofp);
+            bindir_end(&dirtmp);
+            binfile_end(&filetmp);
+            binfile_end(&file);
+            return CHAIN_ERROR_FILE_WRITEDIRHEADER_NOF;
+        }
 
         binfile_end(&filetmp);
 

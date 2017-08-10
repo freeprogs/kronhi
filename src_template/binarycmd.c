@@ -166,8 +166,20 @@ enum binarycmd_code binarycmd_write_file(
     case CHAIN_ERROR_FILE_WRITENODE:
         retval = BINCMD_ERROR_FILE_WRITENODE;
         break;
+    case CHAIN_ERROR_FILE_WRITEDIRHEADER_FO:
+        retval = BINCMD_ERROR_FILE_WRITEDIRHEADER_FO;
+        break;
+    case CHAIN_ERROR_FILE_WRITEDIRHEADER_NOF:
+        retval = BINCMD_ERROR_FILE_WRITEDIRHEADER_NOF;
+        break;
+    case CHAIN_ERROR_FILE_WRITEFILEHEADER_FO:
+        retval = BINCMD_ERROR_FILE_WRITEFILEHEADER_FO;
+        break;
     case CHAIN_ERROR_FILE_DIRGETOFFSET:
         retval = BINCMD_ERROR_FILE_DIRGETOFFSET;
+        break;
+    case CHAIN_ERROR_FILE_DIRJUMP:
+        retval = BINCMD_ERROR_FILE_DIRJUMP;
         break;
     case CHAIN_ERROR_FILE_NOFILE:
         retval = BINCMD_ERROR_FILE_NOFILE;
@@ -177,6 +189,9 @@ enum binarycmd_code binarycmd_write_file(
         break;
     case CHAIN_ERROR_FILE_FILEGETOFFSET:
         retval = BINCMD_ERROR_FILE_FILEGETOFFSET;
+        break;
+    case CHAIN_ERROR_FILE_FILEJUMP:
+        retval = BINCMD_ERROR_FILE_FILEJUMP;
         break;
     case CHAIN_ERROR_FILE_WRITEFILE:
         retval = BINCMD_ERROR_FILE_WRITEFILE;
