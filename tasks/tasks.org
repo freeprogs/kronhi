@@ -3,7 +3,7 @@
 #+TODO: BUG(b!) | FIXED(f) REJECT(r)
 #+PRIORITIES: A F C
 #+TAGS: current(c) testing(t)
-#+CONSTANTS: last_issue_id=18
+#+CONSTANTS: last_issue_id=19
 
 * Задачи
   :PROPERTIES:
@@ -160,6 +160,18 @@
   :COLUMNS:  %3issue_id(ID) %4issue_type(TYPE) %TODO %40ITEM %SCHEDULED %DEADLINE %1PRIORITY
   :ARCHIVE:  tasks_archive.org::* Архив багов
   :END:
+
+** BUG Исправить запись в xor без установленного пароля
+   :PROPERTIES:
+   :issue_id: 19
+   :issue_type: bug
+   :END:
+
+   [2017-08-11 Пт]
+
+   Сейчас если выбрать для записи алгоритм xor, а пароль не
+   установить, то происходит выпад программы.
+   Нужно сделать сообщение об ошибке с руководством к действию.
 
 
 * Окружение
