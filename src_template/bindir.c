@@ -188,6 +188,7 @@ int bindir_num_of_files_get(const struct bindir *dir, size_t *out)
     int retval;
 
     binfield_start(&field, NULL);
+    *out = 0;
     retval = binfield_num_get(&field, dir->num_of_files, out);
     binfield_end(&field);
     return retval;
@@ -220,6 +221,7 @@ int bindir_file_offset_get(const struct bindir *dir, size_t *out)
     int retval;
 
     binfield_start(&field, NULL);
+    *out = 0;
     retval = binfield_num_get(&field, dir->file_offset, out);
     binfield_end(&field);
     return retval;
