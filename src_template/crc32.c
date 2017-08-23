@@ -107,7 +107,8 @@ unsigned long crc32(const void *bytes, size_t size)
         byte = *p++;
         crc = (crc >> 8) ^ _crc32_table[(crc ^ byte) & 0xFF];
     }
-    return ~crc;
+    crc = ~crc & 0xFFFFFFFF;
+    return crc;
 }
 
 /* crc32: count for stream CRC32 by polynomial 0x04C11DB7
@@ -123,5 +124,6 @@ unsigned long crc32stream(FILE *fp)
         byte = c;
         crc = (crc >> 8) ^ _crc32_table[(crc ^ byte) & 0xFF];
     }
-    return ~crc;
+    crc = ~crc & 0xFFFFFFFF;
+    return crc;
 }
