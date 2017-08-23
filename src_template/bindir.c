@@ -78,7 +78,7 @@ int bindir_type_set(struct bindir *dir, char type)
         &field,
         dir->type_sign,
         &type,
-        sizeof type);
+        _TYPE_SIGN_FIELD_SIZE);
     binfield_end(&field);
     return retval;
 }
@@ -110,7 +110,7 @@ int bindir_descsize_set(struct bindir *dir, unsigned short dirdescsize)
         &field,
         dir->descsize,
         &dirdescsize,
-        sizeof dirdescsize);
+        _DESCSIZE_FIELD_SIZE);
     binfield_end(&field);
     return retval;
 }
@@ -174,7 +174,7 @@ int bindir_num_of_files_set(struct bindir *dir, size_t num_of_files)
         &field,
         dir->num_of_files,
         &num_of_files,
-        sizeof num_of_files);
+        _NUM_OF_FILES_FIELD_SIZE);
     binfield_end(&field);
     return retval;
 }
@@ -206,7 +206,7 @@ int bindir_file_offset_set(struct bindir *dir, size_t file_offset)
         &field,
         dir->file_offset,
         &file_offset,
-        sizeof file_offset);
+        _FILE_OFFSET_FIELD_SIZE);
     binfield_end(&field);
     return retval;
 }
