@@ -219,6 +219,7 @@ int binfile_descsize_get(struct binfile *file, unsigned short *out)
     int retval;
 
     binfield_start(&field, NULL);
+    *out = 0;
     retval = binfield_num_get(&field, file->descsize, out);
     binfield_end(&field);
     return retval;
@@ -315,6 +316,7 @@ int binfile_ctrlsum_get(const struct binfile *file, unsigned long *out)
     int retval;
 
     binfield_start(&field, NULL);
+    *out = 0;
     retval = binfield_num_get(&field, file->ctrlsum, out);
     binfield_end(&field);
     return retval;
@@ -378,6 +380,7 @@ int binfile_contentstream_get(const struct binfile *file, FILE **out)
     int retval;
 
     binfield_start(&field, NULL);
+    *out = 0;
     retval = binfield_stream_get(&field, file->contentstream, out);
     binfield_end(&field);
     return retval;
@@ -410,6 +413,7 @@ int binfile_file_offset_get(const struct binfile *file, size_t *out)
     int retval;
 
     binfield_start(&field, NULL);
+    *out = 0;
     retval = binfield_num_get(&field, file->file_offset, out);
     binfield_end(&field);
     return retval;
