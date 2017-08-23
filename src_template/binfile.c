@@ -109,7 +109,7 @@ int binfile_type_set(struct binfile *file, char type)
         &field,
         file->type_sign,
         &type,
-        sizeof type);
+        _TYPE_SIGN_FIELD_SIZE);
     binfield_end(&field);
     return retval;
 }
@@ -141,7 +141,7 @@ int binfile_namesize_set(struct binfile *file, unsigned char filenamesize)
         &field,
         file->namesize,
         &filenamesize,
-        sizeof filenamesize);
+        _NAMESIZE_FIELD_SIZE);
     binfield_end(&field);
     return retval;
 }
@@ -205,7 +205,7 @@ int binfile_descsize_set(struct binfile *file, unsigned short filedescsize)
         &field,
         file->descsize,
         &filedescsize,
-        sizeof filedescsize);
+        _DESCSIZE_FIELD_SIZE);
     binfield_end(&field);
     return retval;
 }
@@ -301,7 +301,7 @@ int binfile_ctrlsum_set(struct binfile *file, unsigned long ctrlsum)
         &field,
         file->ctrlsum,
         &ctrlsum,
-        sizeof ctrlsum);
+        _CTRLSUM_FIELD_SIZE);
     binfield_end(&field);
     return retval;
 }
@@ -396,7 +396,7 @@ int binfile_file_offset_set(struct binfile *file, size_t file_offset)
         &field,
         file->file_offset,
         &file_offset,
-        sizeof file_offset);
+        _FILE_OFFSET_FIELD_SIZE);
     binfield_end(&field);
     return retval;
 }
