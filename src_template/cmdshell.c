@@ -329,7 +329,7 @@ int cmdshell_init_password(char password[])
         retval = 1;
     }
     else {
-        size_t len = strlen(input);
+        unsigned int len = strlen(input);
         if (len <= MAXPASSWORD) {
             strcpy(password, input);
             printf("Ok %u characters\n", len);
